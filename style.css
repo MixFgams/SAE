@@ -1,0 +1,64 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    justify-content: flex-start;
+    min-height: 100vh; /*100vh pour prendre toute la hauteur de la fenêtre */
+    margin: 0;
+    background-image: url('img/AizenBackground.png');
+    height: 400px;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/*-------------- Styles communs pour Header et Footer --------------*/
+header, footer {
+    background-color: lightgray;
+    color: black;
+    padding: 5px;
+    font-family: "Century Gothic", sans-serif;
+    text-align: center;
+}
+
+header nav, footer nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3em;
+    font-weight: bold;
+}
+
+header a, footer a {
+    color: black;
+    text-decoration: none;
+    transition: 0.5s; /*Pour la transition en bleu et la taille des liens sur le header seulement, j'ai laissé la couleur sur le noir et la taille en normal pour le footer*/
+}
+
+header a:hover {
+    text-decoration: underline;
+    color: darkblue;
+    font-size: larger;
+    transition: 0.5s;
+}
+
+header img, footer img {
+    width: 5em;
+    margin-right: 15px;
+}
+
+/*-------------- Styles spécifiques au Footer --------------*/
+footer {
+    margin-top: auto; /* Aide à pousser le footer en bas */
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+footer p#droits-footer {
+    margin: 0.5em;
+    font-style: italic;
+    font-size: 0.8em;
+}
