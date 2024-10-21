@@ -1,0 +1,23 @@
+h1 {
+    font-size : 2.5em ;
+    text-align : center ;
+}
+
+form {
+    display : grid ;
+    grid-template-rows: 1fr 1fr 1fr 1fr;
+    row-gap : 0.5em ;
+    margin-left : 30em ;
+    margin-right : 30em ;
+}
+
+.connexionButton {
+    margin-left : 8em ;
+    margin-right : 8em ;
+    display : grid ;
+    grid-template-rows: 1fr 1fr;
+}
+
+a {
+    text-align : center ;
+}

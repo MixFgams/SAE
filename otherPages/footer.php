@@ -4,7 +4,7 @@
         <a href="#">Contacter l'assistance</a> <!--On remplacera les # avec les liens de pages qu'on va creer-->
         <a href="#">FAQ</a>
         <a href="#">Conditions et confidentialité</a>
-        <a href="#">Connexion</a>
+        <a href="./otherPages/connexion.php">Connexion</a>
     </nav>
     <p id="droits-footer">
         @OB 2024 - Tout contenu externe reste la propriété du propriétaire légitime
