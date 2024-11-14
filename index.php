@@ -5,9 +5,14 @@
         <link rel="stylesheet" href="style.css">
         <script src="script.js"></script>
     </head>
+
     <body>
-        <?php include 'otherPages/header.php'?>
-        
-        <?php include 'otherPages/footer.php'?>
+        <?php include 'pagesOutils/header.php'?>
+
+        <main>
+            
+        </main>
+    
+        <?php include 'pagesOutils/footer.php'?>
     </body>
 </html>
