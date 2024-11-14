@@ -1,0 +1,7 @@
+body{
+    background-color: black;
+}
+
+input[name='connexion-email']{
+    display: none;
+}
