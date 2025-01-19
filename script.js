@@ -10,12 +10,16 @@ document.addEventListener("DOMContentLoaded", function () {
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------------------------------------------//
 function initShowMoreButton() {
-    const showMoreBtn = document.getElementById("showMoreBtn");
-    const extraForums = document.querySelectorAll(".forums-container .forum-item:nth-child(n+3)");
+    try {
+        const showMoreBtn = document.getElementById("showMoreBtn");
+        const extraForums = document.querySelectorAll(".forums-container .forum-item:nth-child(n+3)");
 
-    showMoreBtn.addEventListener("click", function () {
-        toggleShowMore(showMoreBtn, extraForums);
-    });
+        showMoreBtn.addEventListener("click", function () {
+            toggleShowMore(showMoreBtn, extraForums);
+        });
+    } catch (error){
+        console.log();
+    }
 }
 //-----------------------------------------------------------------------------------------------------------------------------------//
 

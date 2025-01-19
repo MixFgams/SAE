@@ -53,10 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
             $itemsPerPage = 10;
             $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
             $offset = ($page - 1) * $itemsPerPage;
+            $totalPages = 0;
 
             try {
                 // Requête pour récupérer les forums
-                $sql = "SELECT title, description FROM forum LIMIT :limit OFFSET :offset";
+                $sql = "SELECT forumTitle, description FROM forum LIMIT :limit OFFSET :offset";
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindValue(':limit', $itemsPerPage, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);

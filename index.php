@@ -29,9 +29,9 @@ try {
         <h2>Forums populaires</h2>
         <div class="forums-container">
             <?php
-            $sql = "SELECT name, author, releaseDate, description 
-                    FROM book 
-                    ORDER BY releaseDate DESC 
+            $sql = "SELECT forumTitle, creationDate, description 
+                    FROM forum 
+                    ORDER BY creationDate DESC 
                     LIMIT 5";
 
             $stmt = $pdo->query($sql);
@@ -87,7 +87,9 @@ try {
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div class="recommendations-scrollable scrollable-content">
                 <?php
-                $sql = "SELECT name FROM book WHERE genreID = 1 LIMIT 7";
+                $sql = "SELECT name, description 
+                    FROM film
+                    ORDER BY releaseDate DESC Limit 20";
                 $stmt = $pdo->query($sql);
 
                 if ($stmt->rowCount() > 0) {
