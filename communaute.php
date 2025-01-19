@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -56,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
 
             try {
                 // Requête pour récupérer les forums
-                $sql = "SELECT title, description FROM forum LIMIT :limit OFFSET :offset";
+                $sql = "SELECT forumID,forumTitle, description FROM forum LIMIT :limit OFFSET :offset";
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindValue(':limit', $itemsPerPage, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -71,25 +74,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
                 if (!empty($forums)) {
                     foreach ($forums as $forum) {
                         echo '<div class="Forum">';
-                        echo '<h3>' . htmlspecialchars($forum['title']) . '</h3>';
+                        echo '<h3>' . htmlspecialchars($forum['forumTitle']) . '</h3>';
                         echo '<p>' . htmlspecialchars($forum['description']) . '</p>';
+                        echo '<form method="post" action="forum.php">
+        <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
+        <input type="submit" value="Rejoindre">
+      </form>';
+
+
                         echo '</div>';
                     }
                 } else {
-                    echo "<p>Aucun message pour le moment.</p>";
+                    echo "<p>Aucun forum pour le moment.</p>";
                 }
             } catch (PDOException $e) {
                 echo "<p>Erreur lors de la récupération des forums : " . $e->getMessage() . "</p>";
             }
+            if (isset($_GET['acceder'])) {
+                $_SESSION['idForum'] = $forum['forumID'];
+                header('Location: forum.php');
+            }
             ?>
         </div>
 
-        <!-- Formulaire pour ajouter un message -->
-        <form method="post">
-            <input name="message" type="text" placeholder="Écrivez votre message ici" required>
-            <input type="submit" value="Envoyer">
-        </form>
-    </section>
 
     <!-- Pagination -->
     <ul class="pagination">
