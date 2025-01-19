@@ -43,14 +43,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
         echo "<p>Erreur lors de l'envoi du message : " . $e->getMessage() . "</p>";
     }
 }
+if (isset ($_POST['creerForum'])){
+
+    echo '<div>
+          <form method="post">
+          <input type="text " name="forumName" placeholder="Nom du forum">
+          <input type="text " name="forumDescription" placeholder="description">
+          <input type="submit" name="creerMonForum" value="Creer">
+          </div>
+';
+
+}
+if (isset($_POST['creerMonForum']) && isset($_POST['forumName']) && isset($_POST['forumDescription'])) {
+    // Sanitize input
+    $forumName = htmlspecialchars($_POST['forumName']);
+    $forumDescription = htmlspecialchars($_POST['forumDescription']);
+    $creationDate = date('Y-m-d H:i:s'); // Date de création actuelle
+
+    // Insertion du forum dans la base de données
+    $sql = "INSERT INTO forum (forumTitle, description, creationDate, pk_ContentID, totalSubjectNumber, pk_ContentType) 
+            VALUES (:forumTitle, :description, :creationDate, :pk_ContentID, :totalSubjectNumber, :pk_ContentType)";
+    $stmt = $pdo->prepare($sql);
+
+    try {
+        $stmt->execute([
+            ':forumTitle' => $forumName,
+            ':description' => $forumDescription,
+            ':creationDate' => $creationDate,
+            ':pk_ContentID' => 1, // Valeur de pk_ContentID (si nécessaire)
+            ':totalSubjectNumber' => 0, // Nombre de sujets initialement
+            ':pk_ContentType' => 1 // Type de contenu (ajuster si nécessaire)
+        ]);
+        echo "<p>Le forum a été créé avec succès.</p>";
+    } catch (PDOException $e) {
+        echo "<p>Erreur lors de la création du forum : " . $e->getMessage() . "</p>";
+    }
+}
+
 ?>
 
 <main>
     <section id="forum">
         <h2>Forum de Discussion</h2>
-
+        <form method="POST">
+            <input type="submit" name="creerForum" value="creer mon forum">
+        </form>
         <!-- Affichage des messages -->
         <div id="discussion">
+
             <?php
             // Gestion de la pagination
             $itemsPerPage = 10;
