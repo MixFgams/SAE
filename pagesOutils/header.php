@@ -7,7 +7,7 @@
             </form>
             <a href="index.php">Accueil</a>
             <a href="communaute.php">Communauté</a>
-            <a href="pageContenu.php">Catalogue</a>
+            <a href="catalogue.php">Catalogue</a>
             <a href="aPropos.php">À propos</a>
 
             <!--A mettre dans le cas ou l'utilisateur n'est pas connecté-->

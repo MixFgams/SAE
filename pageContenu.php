@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="icon" href="img/obLogo.png   " type="image/x-icon">
+        <link rel="icon" href="img/obLogo.png" type="image/x-icon">
         <link rel="stylesheet" href="style.css">
 
     </head>
@@ -10,22 +10,16 @@
         <?php include "pagesOutils/header.php" ;
         include "pagesOutils/pdo.php" ;
         $contentId = $_GET["contentId"] ;
-        $sql = "SELECT ContentID, `name`, `description`, releaseDate, director 
-                    FROM film 
-                    WHERE ContentID = ?";
-
-        $stmt = $pdo->prepare($sql);
-        $stmt->bindParam(1, $contentId, PDO::PARAM_INT) ;
-        $stmt->execute() ;
-        $content = $stmt->fetch(PDO::FETCH_ASSOC) ;
-        if (!$content) {?>
+        $type = $_GET["type"] ;
+        $content = getContent($pdo, $contentId, $type);
+        if (!$content) {
+        ?>
             <section>
                 <h1>Contenu Inexistant</h1>
                 La page que vous cherchez n'existe pas
             </section>
         <?php }
         else {
-            $content['type'] = "Film" ;
         ?>
         <main>
             <section id="cadre-contenu">
@@ -35,7 +29,7 @@
                         <p id="titre"><?php echo $content["name"] ?></p>
                         
                         <h3>Type de Contenu</h3>
-                        <p id="type-contenu"><?php echo $content["type"] ?></p>
+                        <p id="type-contenu"><?php echo $content["contentType"] ?></p>
 
                         <h3>Date de Sortie</h3>
                         <p id="date-sortie"><?php echo $content["releaseDate"] ?></p>
@@ -46,7 +40,7 @@
                         <h3>Nombre total de volumes</h3>
                         <p id="nb-volumes"></p>
                     </div>
-                    <img src="./img/naruto.jpg" alt="chouine" class="image-contenu">
+                    <img src=<?php echo $content['posterUrl'] ;?> alt="chouine" class="image-contenu">
                 </div>
                 <div id="description-grid">
                     <div class="blue-box" id="collection">
@@ -119,3 +113,27 @@
         <?php include "pagesOutils/footer.php"?>
     </body>
 </html>
+
+<?php
+    function getContent(PDO $conn, int $contentID, string $type) {
+        if ($type == 'film')
+            $sql = "SELECT * FROM film 
+                    WHERE contentID = ?" ;
+
+        else if ($type == 'series')
+            $sql = "SELECT * FROM series 
+                    WHERE contentID = ?" ;
+
+        else
+            return null ;
+
+        $stmt = $conn->prepare($sql) ;
+        $stmt->bindParam(1, $contentID) ;
+        $stmt->execute() ;
+        
+        if ($stmt->rowCount() > 0)
+            return $stmt->fetch(PDO::FETCH_ASSOC) ;
+
+        return null ;
+    }
+?>

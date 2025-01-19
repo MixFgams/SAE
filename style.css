@@ -269,8 +269,8 @@ input:focus, textarea:focus {
 }
 
 #contenu img {
-    height : max-content ;
-    width: max-content ;
+    height : fit-content ;
+    max-width:100% ;
     padding : 5px ;
     object-fit:cover;
 }
@@ -528,9 +528,10 @@ input:focus, textarea:focus {
     width : 80vw ;
 }
 
-#catalogue, .catalogueDisplay {
+#catalogue, .catalogueDisplay, .radio-list {
     display : flex ;
     flex-wrap : wrap ;
+    flex-direction: column;
 }
 
 .catalogueDisplay {
@@ -546,6 +547,8 @@ input:focus, textarea:focus {
 
 #sortFilter {
     max-height: fit-content;
+    width:25vw ;
+    max-width: 200px;
 }
 
 .catalogueContent {
@@ -555,7 +558,18 @@ input:focus, textarea:focus {
 
 .catalogueContent h3 {
     height : 12% ;  
-    overflow : hidden ;
+}
+
+.catalogueImages {
+    max-width: 90%;
+    margin : 0 ;
+    padding : 0 ;
+}
+
+.catalogueSection {
+    display : flex ;
+    flex-direction: row;
+    flex-wrap: wrap;
 }
 
 @media (max-width: 1000px){

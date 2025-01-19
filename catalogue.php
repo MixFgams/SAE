@@ -31,48 +31,124 @@ try {
         <main>
             <section id="sortFilter">
                 <h3>Tris</h3>
-                <div>
-                    <input type="radio" name="alphabet"/>
-                    <label for="alphabet">Alphabétique</label>
+                <div class="radio-list">
+                    <div>
+                        <input type="radio" name="sort"/>
+                        <label for="sort">Alphabétique</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="sort"/>
+                        <label for="sort">Type de Contenu</label>
+                    </div>
                 </div>
             </section>
             <section class="catalogueDisplay">
-                <?php
-                if (!empty($_GET['searchBarCatalogue'])) {
-                    $searchQuery = htmlspecialchars($_GET['searchBarCatalogue']); // Protection contre XSS
-                    echo "<h1 class='section-title'>Résultats pour : $searchQuery</h1>";
-                // Requête SQL avec requêtes préparées
-                }
-                else {
-                    $searchQuery = "" ;
-                }
-                $sql = "SELECT ContentID, name, description, production, director 
-                FROM film 
-                WHERE name LIKE :searchQuery";
-
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute(['searchQuery' => "%$searchQuery%"]);
-
-                // Affichage des résultats
-                if ($stmt->rowCount() > 0) {
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        $id = $row['ContentID'];
-                        $contentName = $row['name'] ;
-                        echo "<div class=catalogueContent>
-                                <a href=PageContenu.php?contentId=$id>
-                                    <h3>$contentName</h3>
-                                    <img src=\"img/naruto.jpg\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
-                                </a>
-                            </div>
-                        " ;
-                    }
-                } else {
-                    echo "<p class='no-results'>Aucun résultat trouvé pour : $searchQuery. Essayez une autre recherche.</p>";
-                }
-                ?>
+                <?php showContentsByType($pdo) ; ?>
             </section>
         </main>
         <?php include 'pagesOutils/footer.php'?>
         <script src="script.js"></script>
     </body>
 </html>
+
+<?php
+    function getAllContents(PDO $conn) {
+        $sql = "SELECT * FROM film" ;
+
+        $stmt = $conn->prepare($sql) ;
+        $stmt->execute() ;
+        $res = [] ;
+        
+        if ($stmt->rowCount() > 0)
+            $res['film'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = "SELECT * FROM series" ; 
+        $stmt = $conn->prepare($sql) ;
+        $stmt->execute() ;
+        
+        if ($stmt->rowCount() > 0)
+            $res['series'] = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
+
+        return $res ;
+    }
+
+    function getContentsLike(PDO $conn, string $name) {
+        if ($name == "")
+            return getAllContents($conn) ;
+
+        $sql = "SELECT * FROM film 
+                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')" ;
+        $stmt = $conn->prepare($sql) ;
+        $stmt->bindParam(1, $name) ;
+        $stmt->execute() ;
+        $res = [] ;
+        
+        if ($stmt->rowCount() > 0)
+            $res['film'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $sql = "SELECT * FROM series 
+                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')" ;
+        $stmt = $conn->prepare($sql) ;
+        $stmt->bindParam(1, $name) ;
+        $stmt->execute() ;
+        
+        if ($stmt->rowCount() > 0)
+            $res['series'] = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
+
+        return $res ;
+    }
+
+    function showContentsByType(PDO $conn) {
+        if (!empty($_GET['searchBarCatalogue'])) {
+            $searchQuery = htmlspecialchars($_GET['searchBarCatalogue']); // Protection contre XSS
+            echo "<h1 class='section-title'>Résultats pour : $searchQuery</h1>";
+        }
+        else {
+            $searchQuery = "" ;
+        }
+
+        $contents = getContentsLike($conn, $searchQuery) ;
+        $hasContent = false ;
+        // Affichage des résultats pour les films
+        if (isset($contents['film'])) {
+            $hasContent = True ;
+            echo "<h3>Films</h3>" ;
+            foreach($contents['film'] as $row) {
+                $id = $row['ContentID'];
+                $contentName = $row['name'] ;
+                $imgURL = $row['posterURL'] ;
+                echo "<div class=catalogueContent>
+                        <a href=PageContenu.php?contentId=$id&type='film'>
+                            <h3>$contentName</h3>
+                            <img src=\"$imgURL\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                        </a>
+                    </div>
+                " ;
+            }
+        } 
+
+        // Affichage des résultats pour les séries
+        if (isset($contents['series'])) {
+            $hasContent = True ;
+            echo "<h3>Séries</h3>" ;
+            echo "<div class='catalogueSection'>" ;
+            foreach($contents['series'] as $row) {
+                $id = $row['contentID'];
+                $contentName = $row['name'] ;
+                $imgURL = $row['posterUrl'] ;
+                echo "<div class=catalogueContent>
+                        <a href=pageContenu.php?contentId=$id&type=series>
+                            <h3>$contentName</h3>
+                            <img src=\"$imgURL\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                        </a>
+                    </div>
+                " ;
+            }
+            echo "</div>" ;
+        } 
+        
+        if (!$hasContent) {
+            echo "<p class='no-results'>Aucun résultat trouvé pour : $searchQuery. Essayez une autre recherche.</p>";
+        }
+    }
+?>
