@@ -13,11 +13,11 @@
 <main>
     <?php 
     // Récupérer l'ID et le type depuis l'URL
-    $contentID = isset($_GET['id']) ? $_GET['id'] : -1 ;
+    $contentID = isset($_GET['id']) ? intval($_GET['id']) : -1 ;
     $contentType = isset($_GET['type']) ? $_GET['type'] : "" ;
     if ($contentID >= 0 and strcmp($contentType, "") != 0) {
         // Requête pour récupérer le contenu basé sur l'ID
-        $doQuerry = true ;
+        $doQuery = true ;
         if (strcmp($contentType, "film") == 0)
             $sql = "SELECT *
                     FROM film
