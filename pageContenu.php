@@ -27,15 +27,15 @@
             FROM series
             WHERE contentID = ?";
         else
-            $doQuerry = false ;
+            $doQuery = false ;
         
-        if ($doQuerry) {
+        if ($doQuery) {
             $stmt = $pdo->prepare($sql);
             $stmt->bindParam(1, $contentID) ;
             $stmt->execute() ;
         }
 
-        $hasContent = ($doQuerry and $stmt->rowCount() > 0) ;
+        $hasContent = ($doQuery and $stmt->rowCount() > 0) ;
     } else {
         $hasContent = false ;
     }

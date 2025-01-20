@@ -622,12 +622,14 @@ input:focus, textarea:focus {
     max-width: 90%;
     margin : 0 ;
     padding : 0 ;
+    object-fit: scale-down;
 }
 
 .catalogueSection {
     display : flex ;
     flex-direction: row;
     flex-wrap: wrap;
+    margin : 0 ;
 }
 
 @media (max-width: 1000px){
