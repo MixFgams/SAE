@@ -8,23 +8,12 @@
     </head>
     <?php
     session_start();
+    include 'pageOutils/connDB.php' ;
+
     if(isset($_SESSION['userID'])) {
         $userID = $_SESSION['userID'];
     } else {
         $userID = 1;
-    }
-
-    // Connexion à la base de données avec PDO
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ob";
-
-    try {
-        $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Erreur de connexion : " . $e->getMessage());
     }
     ?>
 

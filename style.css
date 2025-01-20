@@ -618,6 +618,10 @@ input:focus, textarea:focus {
     height : 12% ;  
 }
 
+.catalogueContent img {
+    border-radius: 8px ;
+}
+
 .catalogueImages {
     max-width: 90%;
     margin : 0 ;

@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="icon" href="img/obLogo.png" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+
     <link rel="stylesheet" href="contenu.css">
 </head>
 
@@ -18,16 +18,23 @@
     if ($contentID >= 0 and strcmp($contentType, "") != 0) {
         // Requête pour récupérer le contenu basé sur l'ID
         $doQuery = true ;
-        if (strcmp($contentType, "film") == 0)
-            $sql = "SELECT *
-                    FROM film
-                    WHERE contentID = ?";
-        else if (strcmp($contentType, "series") == 0) 
-            $sql = "SELECT *
-            FROM series
-            WHERE contentID = ?";
-        else
-            $doQuery = false ;
+        if (strcmp($contentType, "film") == 0 or strcmp($contentType, "series") == 0) {
+            // Requête pour récupérer le contenu basé sur l'ID, et joindre les tables pour obtenir la production
+            $sql = "SELECT 
+                c.contentID, c.name, c.description, c.releaseDate, c.runtime, c.posterUrl, c.contentType, c.viewsCount,
+                p.name AS productionName
+            FROM (
+                SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount 
+                FROM film
+                UNION ALL
+                SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount 
+                FROM series
+            ) AS c
+            LEFT JOIN productioncontentassociation pca ON c.contentID = pca.pk_ContentID AND c.contentType = pca.pk_ContentType
+            LEFT JOIN production p ON pca.pk_ProductionID = p.productionID
+            WHERE c.contentID = ?";
+            $doQuery = true ;
+        }
         
         if ($doQuery) {
             $stmt = $pdo->prepare($sql);
@@ -46,7 +53,7 @@
         <div id="contenu">
             <div id="info-contenu">
                 <?php
-                $row = $stmt->fetch(PDO::FETCH_ASSOC);
+                $row = $stmt->fetch(PDO::FETCH_ASSOC) ;
                 // Affichage des données dynamiquement
                 echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
                 echo '<p id="titre">' . htmlspecialchars($row['name']) . '</p>';
@@ -54,13 +61,14 @@
                 echo '<p id="type-contenu">' . htmlspecialchars($row['contentType']) . '</p>';
                 echo '<h3>Date de Sortie</h3>';
                 echo '<p id="date-sortie">' . htmlspecialchars($row['releaseDate']) . '</p>';
-                echo '<h3>Auteur</h3>';
-                echo '<p id="auteur">Non spécifié</p>';  // Auteur n'est pas dans la base de données, donc ajout de "Non spécifié"
+                echo '<h3>Production</h3>';
+                echo '<p id="production">' . htmlspecialchars($row['productionName']) . '</p>'; // Production récupérée ici
                 echo '<h3>Durée</h3>';
                 echo '<p id="runtime">' . htmlspecialchars($row['runtime']) . ' minutes</p>';
                 echo '<h3>Nombre de vues</h3>';
                 echo '<p id="views-count">' . htmlspecialchars($row['viewsCount']) . '</p>';
                 ?>
+
             </div>
             <img src=<?php echo htmlspecialchars($row['posterUrl']);?> alt="Image du contenu" class="image-contenu">
         </div>

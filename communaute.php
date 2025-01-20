@@ -8,25 +8,15 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum de la Communauté</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="communaute.css">
+
 </head>
 <body>
 
 <?php
 // Inclusion du header
 include 'pagesOutils/header.php';
-
-// Connexion à la base de données avec PDO
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ob";
-
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+include 'pageOutils/connDB.php';
 
 // Gestion des messages envoyés via le formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {

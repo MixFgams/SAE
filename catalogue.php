@@ -1,6 +1,6 @@
 <?php 
 session_start() ;
-include "pageOutils/connexions.php" ;
+include "pageOutils/connDB.php" ;
 ?>
 
 <!DOCTYPE html>

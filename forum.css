@@ -1,0 +1,226 @@
+/* Définir un style global */
+body {
+    font-family: 'Century Gothic', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fc;
+    color: #333;
+}
+
+/* Main container */
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    max-width: 1000px;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Forum Section */
+#forum {
+    margin-bottom: 40px;
+}
+
+#forum h2 {
+    font-size: 2.2rem;
+    color: #3a3a3a;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+/* Forum items */
+.Forum {
+    background-color: #ffffff;
+    padding: 20px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Forum:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.Forum h3 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.Forum p {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+    margin-bottom: 10px;
+}
+
+/* Create Forum Button */
+form input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+    font-size: 1rem;
+}
+
+form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin-top: 20px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.pagination a:hover {
+    background-color: #d9641d;
+    color: white;
+    border-color: #d9641d;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    cursor: default;
+}
+
+.pagination a.disabled {
+    color: #aaa;
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Form for creating forum */
+#forum input[type="text"] {
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 15px;
+    background-color: #fafafa;
+}
+
+#forum input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Messages sent */
+#discussion {
+    margin-top: 40px;
+}
+
+/* Message box */
+.message {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.message-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.message-header img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.message-header h4 {
+    font-size: 1rem;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.message-body {
+    font-size: 1rem;
+    color: #555;
+    line-height: 1.5;
+}
+
+/* Disabled state for submit button */
+input[type="submit"]:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Footer */
+footer {
+    background-color: #BECACF;
+    color: black;
+    padding: 15px;
+    text-align: center;
+    border-radius: 10px;
+    font-family: inherit;
+    margin-top: 40px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    main {
+        width: 90%;
+    }
+
+    .Forum {
+        margin-bottom: 15px;
+    }
+
+    .pagination {
+        flex-direction: column;
+    }
+
+    .pagination li {
+        margin: 5px 0;
+    }
+
+    form input[type="text"] {
+        width: 100%;
+    }
+}

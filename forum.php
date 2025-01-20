@@ -1,18 +1,6 @@
 <?php
 session_start();
-
-// Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ob";
-
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+include "pageOutils/connDB.php" ;
 
 // Vérification de l'ID du forum
 if (!isset($_POST['forumID']) || !is_numeric($_POST['forumID'])) {
@@ -132,6 +120,8 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Messages du Forum</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="forum.css">
+
 </head>
 <body>
 
