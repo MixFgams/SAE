@@ -1,0 +1,180 @@
+/* Définir un style global */
+body {
+    font-family: 'Century Gothic', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+}
+
+/* Main container */
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
+    max-width: 1000px;
+    width: 100%;
+    padding: 20px;
+}
+
+/* Forum Section */
+#forum {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#forum h2 {
+    font-size: 2em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Forum items */
+.Forum {
+    background-color: #fff;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.Forum:hover {
+    transform: scale(1.02);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.Forum h3 {
+    font-size: 1.5rem;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.Forum p {
+    font-size: 1rem;
+    color: #555;
+}
+
+/* Create Forum Button */
+form input[type="submit"] {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+form input[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin-top: 20px;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #d9641d;
+    color: white;
+    border-color: #d9641d;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+    color: white;
+    border-color: #007bff;
+    cursor: default;
+}
+
+.pagination a.disabled {
+    color: #aaa;
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Form for creating forum */
+#forum input[type="text"] {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+#forum input[type="text"]:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Messages Sent */
+#discussion {
+    margin-top: 30px;
+}
+
+/* Disabled state for submit button */
+input[type="submit"]:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Footer */
+footer {
+    background-color: #BECACF;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    main {
+        width: 90%;
+    }
+
+    .Forum {
+        margin-bottom: 15px;
+    }
+
+    .pagination {
+        flex-direction: column;
+    }
+
+    .pagination li {
+        margin: 5px 0;
+    }
+
+    form input[type="text"] {
+        width: 100%;
+    }
+}
