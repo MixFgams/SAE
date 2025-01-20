@@ -16,12 +16,14 @@ function montrerInscription() {
 // Affiche les champs pour se connecter avec un pseudo
 function connexionPseudo() {
     document.getElementById("connexion-email").style.display = "none";
+    document.getElementById("connexion-email").textContent = null;
     document.getElementById("connexion-pseudo").style.display = "block";
 }
 
 // Affiche les champs pour se connecter avec un email
 function connexionEmail() {
     document.getElementById("connexion-pseudo").style.display = "none";
+    document.getElementById("connexion-pseudo").textContent = null;
     document.getElementById("connexion-email").style.display = "block";
 }
 
