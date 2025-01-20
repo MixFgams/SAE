@@ -145,13 +145,13 @@ try {
             $hasContent = True ;
             echo "<h2>Films</h2>" ;
             foreach($contents['film'] as $row) {
-                $id = $row['ContentID'];
+                $id = $row['contentID'];
                 $contentName = $row['name'] ;
-                $imgURL = $row['posterURL'] ;
+                $imgURL = $row['posterUrl'] ;
                 echo "<div class=catalogueContent>
-                        <a href=PageContenu.php?contentId=$id&type='film'>
+                        <a href=pageContenu.php?id=$id&type=film>
                             <h3>$contentName</h3>
-                            <img src=\"$imgURL\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                            <img src=$imgURL class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
                         </a>
                     </div>
                 " ;
@@ -168,9 +168,9 @@ try {
                 $contentName = $row['name'] ;
                 $imgURL = $row['posterUrl'] ;
                 echo "<div class=catalogueContent>
-                        <a href=pageContenu.php?contentId=$id&type=series>
+                        <a href=pageContenu.php?id=$id&type=series>
                             <h3>$contentName</h3>
-                            <img src=\"$imgURL\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                            <img src=$imgURL class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
                         </a>
                     </div>
                 " ;
@@ -221,9 +221,9 @@ try {
             $contentName = $content['name'] ;
             $imgURL = $content['posterUrl'] ;
             echo "<div class=catalogueContent>
-                    <a href=pageContenu.php?contentId=$id&type=series>
+                    <a href=pageContenu.php?id=$id&type=series>
                         <h3>$contentName</h3>
-                        <img src=\"$imgURL\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                        <img src=$imgURL class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
                     </a>
                 </div>
             " ;

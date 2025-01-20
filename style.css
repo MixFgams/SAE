@@ -129,6 +129,58 @@ footer p#droits-footer {
         padding-right: 10px; /* Espacement avant la bordure */
     }
 }
+
+.search-container {
+    position: relative;
+    width: 300px;
+}
+
+#searchInput {
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.suggestions-box {
+    display: none;
+    position: absolute; /* Position relative à .search-container */
+    top: calc(100% + 5px); /* Juste en dessous de l'input */
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center; /* Aligner verticalement l'image et le texte */
+    padding: 8px;
+    cursor: pointer;
+    gap: 10px; /* Espacement entre l'image et le texte */
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+
+.suggestion-image {
+    width: 40px; /* Largeur de l'image */
+    height: 60px; /* Hauteur de l'image */
+    border-radius: 4px; /* Coins arrondis pour l'image */
+    object-fit: cover; /* Maintenir le ratio de l'image */
+}
+
+.suggestion-text {
+    font-size: 16px;
+    color: #333;
+}
+
 /*-------------------Fin Styles pour Header et Footer-------------------*/
 
 
@@ -227,6 +279,8 @@ input:focus, textarea:focus {
     outline: none;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
+
+
 
 /*---------------------Connexion / Inscription---------------------*/
 /*c'etait un conflit avec le javasript, easy peasy*/
@@ -452,6 +506,10 @@ input:focus, textarea:focus {
     padding: 10px;
 }
 
+.recommendation-card{
+    width : 600px;
+}
+
 .recommendations-scrollable img{
     width: 24%;
     border-radius: 8px;
@@ -654,6 +712,54 @@ h2:hover {
     width:100%
 }
 
+/*-------------------------Communaute-------------------------*/
+.pagination {
+    display: flex;
+    justify-content: center; /* Centrer les éléments */
+    align-items: center;
+    list-style: none; /* Retirer les puces des listes */
+    gap: 10px; /* Espace entre les éléments */
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 16px; /* Taille des boutons */
+    text-decoration: none;
+    color: #333;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+
+
+.pagination a:hover {
+    background-color: #d9641d;
+    color: white;
+    border-color: #d9641d;
+}
+
+.pagination a.active {
+    background-color: #282d5c;
+    color: white;
+    border-color: #282d5c;
+    cursor: default;
+}
+
+.pagination a.disabled {
+    color: #aaa;
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+
+/*----------------------------------------------------------*/
 
 
 

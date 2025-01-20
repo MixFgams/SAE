@@ -1,13 +1,10 @@
 <?php 
 // Connexion à la base de données
-$DBservername = "localhost";
-$DBusername = "root";
-$DBpassword = "";
-$DBdatabase = "OB";
+$host = 'localhost';
+$dbname = 'ob';
+$username = 'root';
+$password = '';
 
-$conn = new mysqli($DBservername, $DBusername, $DBpassword, $DBdatabase);
+$pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
 
-// Vérifier la connexion
-if ($conn->connect_error) {
-    die("Échec de la connexion : " . $conn->connect_error); // Arrête le script si la connexion échoue
-}
+$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
