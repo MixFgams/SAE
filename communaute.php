@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -40,14 +43,54 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
         echo "<p>Erreur lors de l'envoi du message : " . $e->getMessage() . "</p>";
     }
 }
+if (isset ($_POST['creerForum'])){
+
+    echo '<div>
+          <form method="post">
+          <input type="text " name="forumName" placeholder="Nom du forum">
+          <input type="text " name="forumDescription" placeholder="description">
+          <input type="submit" name="creerMonForum" value="Creer">
+          </div>
+';
+
+}
+if (isset($_POST['creerMonForum']) && isset($_POST['forumName']) && isset($_POST['forumDescription'])) {
+    // Sanitize input
+    $forumName = htmlspecialchars($_POST['forumName']);
+    $forumDescription = htmlspecialchars($_POST['forumDescription']);
+    $creationDate = date('Y-m-d H:i:s'); // Date de création actuelle
+
+    // Insertion du forum dans la base de données
+    $sql = "INSERT INTO forum (forumTitle, description, creationDate, pk_ContentID, totalSubjectNumber, pk_ContentType) 
+            VALUES (:forumTitle, :description, :creationDate, :pk_ContentID, :totalSubjectNumber, :pk_ContentType)";
+    $stmt = $pdo->prepare($sql);
+
+    try {
+        $stmt->execute([
+            ':forumTitle' => $forumName,
+            ':description' => $forumDescription,
+            ':creationDate' => $creationDate,
+            ':pk_ContentID' => 1, // Valeur de pk_ContentID (si nécessaire)
+            ':totalSubjectNumber' => 0, // Nombre de sujets initialement
+            ':pk_ContentType' => 1 // Type de contenu (ajuster si nécessaire)
+        ]);
+        echo "<p>Le forum a été créé avec succès.</p>";
+    } catch (PDOException $e) {
+        echo "<p>Erreur lors de la création du forum : " . $e->getMessage() . "</p>";
+    }
+}
+
 ?>
 
 <main>
     <section id="forum">
         <h2>Forum de Discussion</h2>
-
+        <form method="POST">
+            <input type="submit" name="creerForum" value="creer mon forum">
+        </form>
         <!-- Affichage des messages -->
         <div id="discussion">
+
             <?php
             // Gestion de la pagination
             $itemsPerPage = 10;
@@ -56,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
 
             try {
                 // Requête pour récupérer les forums
-                $sql = "SELECT title, description FROM forum LIMIT :limit OFFSET :offset";
+                $sql = "SELECT forumID,forumTitle, description FROM forum LIMIT :limit OFFSET :offset";
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindValue(':limit', $itemsPerPage, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -71,25 +114,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
                 if (!empty($forums)) {
                     foreach ($forums as $forum) {
                         echo '<div class="Forum">';
-                        echo '<h3>' . htmlspecialchars($forum['title']) . '</h3>';
+                        echo '<h3>' . htmlspecialchars($forum['forumTitle']) . '</h3>';
                         echo '<p>' . htmlspecialchars($forum['description']) . '</p>';
+                        echo '<form method="post" action="forum.php">
+        <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
+        <input type="submit" value="Rejoindre">
+      </form>';
+
+
                         echo '</div>';
                     }
                 } else {
-                    echo "<p>Aucun message pour le moment.</p>";
+                    echo "<p>Aucun forum pour le moment.</p>";
                 }
             } catch (PDOException $e) {
                 echo "<p>Erreur lors de la récupération des forums : " . $e->getMessage() . "</p>";
             }
+            if (isset($_GET['acceder'])) {
+                $_SESSION['idForum'] = $forum['forumID'];
+                header('Location: forum.php');
+            }
             ?>
         </div>
 
-        <!-- Formulaire pour ajouter un message -->
-        <form method="post">
-            <input name="message" type="text" placeholder="Écrivez votre message ici" required>
-            <input type="submit" value="Envoyer">
-        </form>
-    </section>
 
     <!-- Pagination -->
     <ul class="pagination">

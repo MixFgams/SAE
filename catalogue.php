@@ -29,8 +29,6 @@
             $sql = "
                 SELECT contentID, name, type, description 
                 FROM (
-                    SELECT contentID, name, 'Livre' AS type, description FROM book
-                    UNION ALL
                     SELECT contentID, name, 'Film' AS type, description FROM film
                     UNION ALL
                     SELECT contentID, name, 'Série' AS type, description FROM series

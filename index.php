@@ -28,23 +28,20 @@ try {
     <section class="SectionIndex">
         <h2>Forums populaires</h2>
         <div class="forums-container">
+
             <?php
-            $sql = "SELECT name, author, releaseDate, description 
-                    FROM book 
-                    ORDER BY releaseDate DESC 
-                    LIMIT 5";
+            $sql = "SELECT forumTitle
+                    FROM forum 
+                    ORDER BY totalSubjectNumber DESC 
+                    ";
 
             $stmt = $pdo->query($sql);
 
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     echo '<div class="forum-item">';
-                    echo '<img src="img/afficheFilm.jpg" alt="Image du forum">';
-                    echo '<div class="forum-description">';
-                    echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
-                    echo '<p>Créateur : ' . htmlspecialchars($row['author']) . '</p>';
-                    echo '<p>Date de création : ' . htmlspecialchars($row['releaseDate']) . '</p>';
-                    echo '<p>Description : ' . htmlspecialchars($row['description']) . '</p>';
+                    echo '<h3> ' . htmlspecialchars($row['forumTitle']) . ' </h3>';
+
                     echo '</div>';
                     echo '</div>';
                 }
@@ -87,12 +84,13 @@ try {
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div class="recommendations-scrollable scrollable-content">
                 <?php
-                $sql = "SELECT name FROM book WHERE genreID = 1 LIMIT 7";
+                $sql = "SELECT distinct f.name FROM film f join genecontentassociation a join genre g WHERE pk_ContentType='film' and pk_GenreID = 6 LIMIT 7";
                 $stmt = $pdo->query($sql);
 
                 if ($stmt->rowCount() > 0) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         echo '<img src="img/afficheFilm.jpg" alt="' . htmlspecialchars($row['name']) . '">';
+
                     }
                 } else {
                     echo '<p>Aucune recommandation trouvée.</p>';
