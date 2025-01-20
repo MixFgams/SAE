@@ -32,18 +32,24 @@ try {
                 <h3>Tris</h3>
                 <form id="radio-list">
                     <div>
-                        <input type="radio" name="sort" value="alphabet" onchange="this.form.submit()"/>
+                        <input type="radio" name="sort" value="alphabet" onchange="this.form.submit()"
+                            <?php if (!isset($_GET['sort']) or strcmp($_GET['sort'], "type"))
+                                echo "checked" ;?> />
                         <label>Alphabétique</label>
                     </div>
                     <div>
-                        <input type="radio" name="sort" value="type" onchange="this.form.submit()"/>
+                        <input type="radio" name="sort" value="type" onchange="this.form.submit()"
+                            <?php if (strcmp($_GET['sort'], "alphabet"))
+                            echo "checked" ;?> />
                         <label>Type de Contenu</label>
                     </div>
                 </form>
             </section>
             <section class="catalogueDisplay">
-                <?php if (!isset($_GET['sort']) or $_GET['sort'] == "type") { 
+                <?php if (!isset($_GET['sort']) or strcmp($_GET['sort'], "type") == 0) { 
                     showContentsByType($pdo) ; 
+                } else if (strcmp($_GET['sort'], "alphabet") == 0) {
+                    showContentsByCharacter($pdo) ;
                 }?>
 
             </section>
@@ -137,7 +143,7 @@ try {
         // Affichage des résultats pour les films
         if (isset($contents['film'])) {
             $hasContent = True ;
-            echo "<h3>Films</h3>" ;
+            echo "<h2>Films</h2>" ;
             foreach($contents['film'] as $row) {
                 $id = $row['ContentID'];
                 $contentName = $row['name'] ;
@@ -155,7 +161,7 @@ try {
         // Affichage des résultats pour les séries
         if (isset($contents['series'])) {
             $hasContent = True ;
-            echo "<h3>Séries</h3>" ;
+            echo "<h2>Séries</h2>" ;
             echo "<div class='catalogueSection'>" ;
             foreach($contents['series'] as $row) {
                 $id = $row['contentID'];
@@ -182,15 +188,46 @@ try {
         $i = 0 ; $j = 0 ;
         $previousLetter = null ;
         $currentLetter = null ;
-        while ($i <  sizeof($contents['film']) && $j < sizeof($contents['series'])) {
-            $film = $contents['film'][$i] ;
-            $serie = $contents['series'][$j] ;
-            if ($film['name'] <= $serie['name']) {
+
+        $filmCount = sizeof($contents['film']) ;
+        $seriesCount = sizeof($contents['series']) ;
+        while ($i <  $filmCount or $j < $seriesCount) {
+            if ($i < $filmCount)
+                $film = $contents['film'][$i] ;
+            if ($j < $seriesCount)
+                $serie = $contents['series'][$j] ;
+
+            if ($j >= $seriesCount or ($i < $filmCount and 
+                strcmp(strtolower($film['name']), strtolower($serie['name'])) <= 0)) {
                 $content = $film ;
+                $i += 1 ;
             } 
             else {
                 $content = $serie ;
+                $j += 1 ;
             }
+            $currentLetter = mb_substr($content['name'], 0, 1);
+
+            if ($currentLetter != $previousLetter) {
+                if ($previousLetter != null) {
+                    echo "</div>" ;
+                }
+                echo "<h2>" . strtoupper($currentLetter) . "</h2>" ;
+                echo "<div class='catalogueSection'>" ;
+            }
+
+            $previousLetter = $currentLetter ;
+            $id = $content['contentID'];
+            $contentName = $content['name'] ;
+            $imgURL = $content['posterUrl'] ;
+            echo "<div class=catalogueContent>
+                    <a href=pageContenu.php?contentId=$id&type=series>
+                        <h3>$contentName</h3>
+                        <img src=\"$imgURL\" class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                    </a>
+                </div>
+            " ;
         }
+        echo "</div>" ;
     }
 ?>

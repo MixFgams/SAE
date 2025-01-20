@@ -531,7 +531,7 @@ input:focus, textarea:focus {
 #catalogue, .catalogueDisplay, #radio-list {
     display : flex ;
     flex-wrap : wrap ;
-    flex-direction: column;
+    flex-direction: column; 
 }
 
 .catalogueDisplay {
