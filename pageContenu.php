@@ -2,7 +2,7 @@
 <html>
 <head>
     <link rel="icon" href="img/obLogo.png" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+
     <link rel="stylesheet" href="contenu.css">
 </head>
 
@@ -30,17 +30,24 @@
                     die("Erreur de connexion : " . $conn->connect_error);
                 }
 
-                // Requête pour récupérer le contenu basé sur l'ID
+                // Requête pour récupérer le contenu basé sur l'ID, et joindre les tables pour obtenir la production
                 $sql = "
-                        SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount
-                        FROM (
-                            SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount FROM film
-                            UNION ALL
-                            SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount FROM series
-                        ) AS catalogue
-                        WHERE contentID = $contentID
-                    ";
+    SELECT 
+        c.contentID, c.name, c.description, c.releaseDate, c.runtime, c.posterUrl, c.contentType, c.viewsCount,
+        p.name AS productionName
+    FROM (
+        SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount 
+        FROM film
+        UNION ALL
+        SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount 
+        FROM series
+    ) AS c
+    LEFT JOIN productioncontentassociation pca ON c.contentID = pca.pk_ContentID AND c.contentType = pca.pk_ContentType
+    LEFT JOIN production p ON pca.pk_ProductionID = p.productionID
+    WHERE c.contentID = $contentID
+";
 
+                // Exécution de la requête
                 $result = $conn->query($sql);
 
                 if ($result->num_rows > 0) {
@@ -52,8 +59,8 @@
                     echo '<p id="type-contenu">' . htmlspecialchars($row['contentType']) . '</p>';
                     echo '<h3>Date de Sortie</h3>';
                     echo '<p id="date-sortie">' . htmlspecialchars($row['releaseDate']) . '</p>';
-                    echo '<h3>Auteur</h3>';
-                    echo '<p id="auteur">Non spécifié</p>';  // Auteur n'est pas dans la base de données, donc ajout de "Non spécifié"
+                    echo '<h3>Production</h3>';
+                    echo '<p id="production">' . htmlspecialchars($row['productionName']) . '</p>'; // Production récupérée ici
                     echo '<h3>Durée</h3>';
                     echo '<p id="runtime">' . htmlspecialchars($row['runtime']) . ' minutes</p>';
                     echo '<h3>Nombre de vues</h3>';
@@ -64,6 +71,7 @@
 
                 $conn->close();
                 ?>
+
             </div>
             <img src="<?php echo htmlspecialchars($row['posterUrl']); ?>" alt="Image du contenu" class="image-contenu">
         </div>
