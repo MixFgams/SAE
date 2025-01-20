@@ -127,5 +127,3 @@ redirectionContenu.forEach(image => {
 
 
 
-
-

@@ -528,7 +528,7 @@ input:focus, textarea:focus {
     width : 80vw ;
 }
 
-#catalogue, .catalogueDisplay, .radio-list {
+#catalogue, .catalogueDisplay, #radio-list {
     display : flex ;
     flex-wrap : wrap ;
     flex-direction: column;

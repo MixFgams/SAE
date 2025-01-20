@@ -17,7 +17,6 @@ try {
     <head>
         <link rel="icon" src="img/obLogo.png" type="image/x-icon">
         <link rel="stylesheet" href="style.css">
-        <script src="script.js"></script>
     </head>
 
     <body id="catalogue">
@@ -31,19 +30,22 @@ try {
         <main>
             <section id="sortFilter">
                 <h3>Tris</h3>
-                <div class="radio-list">
+                <form id="radio-list">
                     <div>
-                        <input type="radio" name="sort"/>
-                        <label for="sort">Alphabétique</label>
+                        <input type="radio" name="sort" value="alphabet" onchange="this.form.submit()"/>
+                        <label>Alphabétique</label>
                     </div>
                     <div>
-                        <input type="radio" name="sort"/>
-                        <label for="sort">Type de Contenu</label>
+                        <input type="radio" name="sort" value="type" onchange="this.form.submit()"/>
+                        <label>Type de Contenu</label>
                     </div>
-                </div>
+                </form>
             </section>
             <section class="catalogueDisplay">
-                <?php showContentsByType($pdo) ; ?>
+                <?php if (!isset($_GET['sort']) or $_GET['sort'] == "type") { 
+                    showContentsByType($pdo) ; 
+                }?>
+
             </section>
         </main>
         <?php include 'pagesOutils/footer.php'?>
@@ -68,6 +70,29 @@ try {
         
         if ($stmt->rowCount() > 0)
             $res['series'] = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
+
+        return $res ;
+    }
+
+    function getAllContentsSorted(PDO $conn) {
+        $sql = "SELECT * FROM film
+                ORDER BY `name` ASC" ;
+
+        $stmt = $conn->prepare($sql) ;
+        $stmt->execute() ;
+        $res = [] ;
+        
+        if ($stmt->rowCount() > 0)
+            $res['film'] = $stmt->fetchAll(PDO::FETCH_BOTH);
+
+        $sql = "SELECT * FROM series
+                ORDER BY `name` ASC" ;
+        
+        $stmt = $conn->prepare($sql) ;
+        $stmt->execute() ;
+        
+        if ($stmt->rowCount() > 0)
+            $res['series'] = $stmt->fetchAll(PDO::FETCH_BOTH) ;
 
         return $res ;
     }
@@ -149,6 +174,23 @@ try {
         
         if (!$hasContent) {
             echo "<p class='no-results'>Aucun résultat trouvé pour : $searchQuery. Essayez une autre recherche.</p>";
+        }
+    }
+
+    function showContentsByCharacter(PDO $conn) {
+        $contents = getAllContents($conn) ;
+        $i = 0 ; $j = 0 ;
+        $previousLetter = null ;
+        $currentLetter = null ;
+        while ($i <  sizeof($contents['film']) && $j < sizeof($contents['series'])) {
+            $film = $contents['film'][$i] ;
+            $serie = $contents['series'][$j] ;
+            if ($film['name'] <= $serie['name']) {
+                $content = $film ;
+            } 
+            else {
+                $content = $serie ;
+            }
         }
     }
 ?>
