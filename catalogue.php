@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="icon" src="img/obLogo.png" type="image/x-icon">
+    <link rel="icon" href="img/obLogo.png" type="image/x-icon">
+    <link rel="stylesheet" href="catalogue.css">
     <link rel="stylesheet" href="style.css">
     <script src="script.js"></script>
 </head>
@@ -13,7 +14,6 @@
         <h2>Catalogue</h2>
         <div class="catalogue-container">
             <?php
-            // faudra faire une page pdo pour eviter de refaire a chaque fois
             $servername = "localhost";
             $username = "root";
             $password = "";
@@ -25,13 +25,12 @@
                 die("Erreur de connexion : " . $conn->connect_error);
             }
 
-            // Requête pour récupérer tous les livres, films et séries
             $sql = "
-                SELECT contentID, name, type, description 
+                SELECT contentID, name, type, description ,posterUrl
                 FROM (
-                    SELECT contentID, name, 'Film' AS type, description FROM film
+                    SELECT contentID, name, 'Film' AS type, description,posterUrl FROM film
                     UNION ALL
-                    SELECT contentID, name, 'Série' AS type, description FROM series
+                    SELECT contentID, name, 'Série' AS type, description,posterUrl FROM series
                 ) AS catalogue
                 ORDER BY type, name;
                 ";
@@ -40,10 +39,16 @@
 
             if ($result->num_rows > 0) {
                 while ($row = $result->fetch_assoc()) {
+                    // Créer un lien cliquable pour chaque élément du catalogue
+                    echo '<a href="pageContenu.php?id=' . htmlspecialchars($row['contentID']) . '&type=' . htmlspecialchars($row['type']) . '" class="catalogue-item-link">';
                     echo '<div class="catalogue-item">';
-                    echo '<h3>' . htmlspecialchars($row['name']) . ' (' . htmlspecialchars($row['type']) . ')</h3>';
-                    echo '<p>' . htmlspecialchars($row['description']) . '</p>';
+                    echo '<div class="catalogue-item-image"><img src="' . htmlspecialchars($row['posterUrl']) . '" alt="' . htmlspecialchars($row['name']) . '"></div>';
+                    echo '<div class="catalogue-item-info">';
+                    echo '<div class="catalogue-item-title">' . htmlspecialchars($row['name']) . ' (' . htmlspecialchars($row['type']) . ')</div>';
+                    echo '<div class="catalogue-item-description">' . htmlspecialchars($row['description']) . '</div>';
                     echo '</div>';
+                    echo '</div>';
+                    echo '</a>';
                 }
             } else {
                 echo "<p>Aucun élément trouvé dans le catalogue.</p>";
