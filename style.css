@@ -484,22 +484,7 @@ input:focus, textarea:focus {
     overflow: hidden;
 }
 
-.recommendations-scrollable {
-    display: flex;
-    overflow-x: scroll;
-    scroll-behavior: smooth;
-    gap: 15px;
-    padding: 10px;
-}
 
-.recommendation-card{
-    width : 600px;
-}
-
-.recommendations-scrollable img{
-    width: 24%;
-    border-radius: 8px;
-}
 
 .SectionIndex img, .Collection{
     transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
@@ -577,6 +562,59 @@ input:focus, textarea:focus {
         gap: 20px;
     }
 }
+
+.recommendations-scrollable {
+    display: flex;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    gap: 15px;
+    padding: 10px;
+    position: relative; /* Important pour les enfants en absolu */
+}
+
+.recommendation-card {
+    position: relative; /* Définit une référence pour l'icône d'œil */
+    display: inline-block;
+    margin: 5px;
+}
+
+.recommendation-card img {
+    width: 200px; /* Largeur de l'image */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Icône d'œil */
+.eye-icon {
+    position: absolute;
+    top: 10px; /* Aligner en bas à droite de l'image */
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6); /* Fond semi-transparent */
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 10; /* Assurez-vous qu'elle apparaît par-dessus l'image */
+}
+
+.eye-icon img {
+    width: 20px; /* Taille de l'icône */
+    height: 20px;
+    filter: invert(1); /* Si l'icône est noire, cela la rend blanche */
+}
+
+/* Animation au survol */
+.recommendation-card:hover .eye-icon {
+    transform: scale(1.1); /* L'icône grossit légèrement au survol */
+}
+
+
+
+
 
 /*------------------Profil-------------------------*/
 

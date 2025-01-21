@@ -111,16 +111,22 @@
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">
                         <?php
-                            $sql = "SELECT filmID from film Join filmwatched on film.contentID = filmwatched.filmID join
-                            user on user.userID = filmwatched.pk_UserID";"
-                            FROM film
-                            where user.userID = :userID";"
-                            ORDER BY releaseDate DESC Limit 20";
-                            $stmt = $pdo->query($sql);
+                        $sql = "
+                                SELECT film.contentID, film.posterUrl 
+                                FROM film
+                                JOIN filmwatched ON film.contentID = filmwatched.filmID
+                                JOIN user ON user.userID = filmwatched.pk_UserID
+                                WHERE user.userID = :userID
+                                LIMIT 10
+                            ";
+                            $stmt = $pdo->prepare($sql);
+                            $stmt->execute([':userID' => $userID]);
 
                             if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                            echo '<img src="img/afficheFilm.jpg" alt="' . htmlspecialchars($row['filmID']) . '">';
+                                echo '<div class="recommendation-card" data-id="' . htmlspecialchars($row['contentID']) . '">';
+                                echo '<img src="' . htmlspecialchars($row['posterUrl']) . '" alt="' .  '">';
+                                echo '</div>';
                             }
                             } else {
                             echo '<p>Aucuns films trouvés.</p>';

@@ -7,6 +7,14 @@
 </head>
 <body>
 <?php
+session_start();
+if(isset($_SESSION['userID'])) {
+    $userID = $_SESSION['userID'];
+} else {
+    $userID = 1;
+}
+
+
 // Connexion à la base de données avec PDO
 $servername = "localhost";
 $username = "root";
@@ -28,20 +36,22 @@ try {
     <section class="SectionIndex">
         <h2>Forums populaires</h2>
         <div class="forums-container">
-
             <?php
-            $sql = "SELECT forumTitle
-                    FROM forum 
-                    ORDER BY totalSubjectNumber DESC 
-                    ";
+            $sql = "SELECT forumTitle, description, totalSubjectNumber 
+                FROM forum 
+                ORDER BY totalSubjectNumber DESC 
+                LIMIT 5"; // Ajouter une limite pour éviter un affichage trop long
 
             $stmt = $pdo->query($sql);
 
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     echo '<div class="forum-item">';
-                    echo '<h3> ' . htmlspecialchars($row['forumTitle']) . ' </h3>';
-
+                    echo '<img src="img/afficheFilm.jpg" alt="Image du forum">'; // Ajouter une image par défaut
+                    echo '<div class="forum-description">';
+                    echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
+                    echo '<p>Nombre de sujets : ' . htmlspecialchars($row['totalSubjectNumber']) . '</p>'; // Ajouter les sujets
+                    echo '<p>Description : ' . htmlspecialchars($row['description']) . '</p>'; // Description (optionnel si présent)
                     echo '</div>';
                     echo '</div>';
                 }
@@ -84,22 +94,61 @@ try {
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div class="recommendations-scrollable scrollable-content">
                 <?php
-                $sql = "SELECT distinct f.name FROM film f join genecontentassociation a join genre g WHERE pk_ContentType='film' and pk_GenreID = 6 LIMIT 7";
+                $sql = "SELECT DISTINCT f.contentID, f.name, f.posterUrl
+            FROM film f 
+            LIMIT 7";
                 $stmt = $pdo->query($sql);
-
                 if ($stmt->rowCount() > 0) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        echo '<img src="img/afficheFilm.jpg" alt="' . htmlspecialchars($row['name']) . '">';
-
+                        // Utiliser pk_ContentType comme data-id dynamique
+                        echo '<div class="recommendation-card" data-id="' . htmlspecialchars($row['contentID']) . '">';
+                        echo '<img src="' . htmlspecialchars($row['posterUrl']) . '" alt="' . htmlspecialchars($row['name']) . '">';
+                        echo '<div class="eye-icon">';
+                        echo '<img src="img/eye-icon.png" alt="Voir">';
+                        echo '</div>';
+                        echo '</div>';
                     }
                 } else {
                     echo '<p>Aucune recommandation trouvée.</p>';
                 }
                 ?>
             </div>
+
             <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
         </div>
     </section>
+
+    <?php
+
+    // Vérifiez si un filmId est passé dans l'URL
+    if (isset($_GET['filmId'])) {
+        $filmId = intval($_GET['filmId']);
+
+        // Vérifier si l'entrée existe déjà dans la base
+        try {
+            // Vérification de l'existence de la ligne
+            $stmt = $pdo->prepare('SELECT COUNT(*) FROM filmwatched WHERE pk_UserID = :user_id AND filmID = :film_id');
+            $stmt->execute([
+                ':user_id' => $userID,
+                ':film_id' => $filmId
+            ]);
+            $exists = $stmt->fetchColumn();
+            if ($exists > 0) {
+                echo '';
+            } else {
+                // Si l'entrée n'existe pas, on l'ajoute
+                $stmt = $pdo->prepare('INSERT INTO filmwatched VALUES (:film_id,:user_id)');
+                $stmt->execute([
+                    ':film_id' => $filmId,
+                    ':user_id' => $userID
+                ]);
+                echo 'Film ajouté avec succès !';
+            }
+        } catch (PDOException $e) {
+            echo 'Erreur : ' . $e->getMessage();
+        }
+    }
+    ?>
 </main>
 
 <?php

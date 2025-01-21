@@ -101,6 +101,7 @@ const parentsAfficheRedirection = document.querySelectorAll('.recommendations-sc
 parentsAfficheRedirection.forEach(parent => {
     const enfants = parent.children;
     for (let enfant of enfants) {
+        // Gestion du clic sur la carte pour redirection
         enfant.addEventListener('click', () => {
             // Redirection vers la page cible
             const lien = 'pageContenu.php';
@@ -108,11 +109,35 @@ parentsAfficheRedirection.forEach(parent => {
             console.log(window.location.href);
             window.location.href = lien;
         });
+        // Empêcher la redirection lorsqu'on clique sur l'icône
+        const eyeIcon = enfant.querySelector('.eye-icon');
+        if (eyeIcon) {
+            eyeIcon.addEventListener('click', (event) => {
+                event.stopPropagation(); // Bloque la propagation du clic vers l'élément parent
+                console.log('Clic sur l\'icône, pas de redirection');
+            });
+        }
     }
 });
+
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
+const icone = document.querySelectorAll('.eye-icon');
+icone.forEach(icon => {
+    icon.addEventListener('click', (event) => {
+        // Empêcher l'action par défaut (évite le rafraîchissement ou la redirection automatique)
+        event.preventDefault();
 
+        // Récupérer l'ID du film à partir de l'attribut data-id
+        const filmId = icon.closest('.recommendation-card').getAttribute('data-id');
+
+        // Créer un lien avec le filmId dans l'URL
+        const url = `index.php?filmId=${filmId}`;
+
+        // Rediriger vers la page sans rafraîchir
+        window.location.href = url;  // Cela met à jour l'URL et charge le contenu sans un rechargement complet de la page
+    });
+});
 
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-------------------- Méthode pour afficher dynamiquement la barre de recherche              ---------------------------------------//
