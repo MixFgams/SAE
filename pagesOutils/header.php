@@ -33,6 +33,7 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
     <head>
         <title>header</title>
 
+
     </head>
     <header>
         <nav class="header-nav">
