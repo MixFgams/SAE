@@ -113,7 +113,6 @@
         <title>LogIn - OB</title>
         <link rel="stylesheet" href="style.css">
         <link rel="stylesheet" href="cssExtraPages/connexion.css">
-        <script src="script.js"></script>
     </head>
 
     <body id="connexion-body">
@@ -166,5 +165,7 @@
             </main>
         </section>
         <?php include "pagesOutils/footer.php"?>
+
+        <script src="script.js"></script>
     </body>
 </html>

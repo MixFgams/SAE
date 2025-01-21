@@ -38,5 +38,6 @@
     </main>
 
     <?php include 'pagesOutils/footer.php'?>
+    <script src="script.js"></script>
 </body>
 </html>

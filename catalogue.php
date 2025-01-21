@@ -4,9 +4,24 @@
     <link rel="icon" href="img/obLogo.png" type="image/x-icon">
     <link rel="stylesheet" href="catalogue.css">
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
+
 </head>
 <body>
+<?php
+// Connexion à la base de données avec PDO
+$servername = "localhost";
+$username = "root";
+$password = "";
+$dbname = "ob";
+
+try {
+    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Erreur de connexion : " . $e->getMessage());
+}
+?>
+
 <?php include 'pagesOutils/header.php'; ?>
 
 <main>
@@ -14,17 +29,6 @@
         <h2>Catalogue</h2>
         <div class="catalogue-container">
             <?php
-            $servername = "localhost";
-            $username = "root";
-            $password = "";
-            $dbname = "ob";
-
-            $conn = new mysqli($servername, $username, $password, $dbname);
-
-            if ($conn->connect_error) {
-                die("Erreur de connexion : " . $conn->connect_error);
-            }
-
             $sql = "
                 SELECT contentID, name, type, description ,posterUrl
                 FROM (
@@ -35,10 +39,10 @@
                 ORDER BY type, name;
                 ";
 
-            $result = $conn->query($sql);
+            $stmt = $pdo->query($sql);
 
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
+            if ($stmt->rowCount() > 0) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     // Créer un lien cliquable pour chaque élément du catalogue
                     echo '<a href="pageContenu.php?id=' . htmlspecialchars($row['contentID']) . '&type=' . htmlspecialchars($row['type']) . '" class="catalogue-item-link">';
                     echo '<div class="catalogue-item">';
@@ -53,13 +57,12 @@
             } else {
                 echo "<p>Aucun élément trouvé dans le catalogue.</p>";
             }
-
-            $conn->close();
             ?>
         </div>
     </section>
 </main>
 
 <?php include 'pagesOutils/footer.php'; ?>
+<script src="./script.js"></script>
 </body>
 </html>

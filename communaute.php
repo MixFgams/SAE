@@ -14,8 +14,6 @@ session_start();
 <body>
 
 <?php
-// Inclusion du header
-include 'pagesOutils/header.php';
 
 // Connexion à la base de données avec PDO
 $servername = "localhost";
@@ -29,6 +27,9 @@ try {
 } catch (PDOException $e) {
     die("Erreur de connexion : " . $e->getMessage());
 }
+
+// Inclusion du header
+include 'pagesOutils/header.php';
 
 // Gestion des messages envoyés via le formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
@@ -182,5 +183,6 @@ include 'pagesOutils/footer.php';
 ?>
 
 <script src="communaute.js"></script>
+<script src="script.js"></script>
 </body>
 </html>

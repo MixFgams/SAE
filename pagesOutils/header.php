@@ -15,7 +15,7 @@ try {
 // Vérifier si une recherche est effectuée
 if (isset($_GET['query']) && !empty($_GET['query'])) {
     $query = htmlspecialchars($_GET['query']);
-    $sql = "SELECT ContentID, name FROM film WHERE name LIKE :query LIMIT 10";
+    $sql = "SELECT ContentID, name, posterURL FROM film WHERE name LIKE :query LIMIT 10";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['query' => "%$query%"]);
 
@@ -24,9 +24,10 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
     // Envoyer uniquement le JSON
     header('Content-Type: application/json');
     echo json_encode($results);
-    exit; // Terminer immédiatement pour éviter tout ajout HTML
+    exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

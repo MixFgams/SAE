@@ -149,7 +149,7 @@ footer p#droits-footer {
     width: 100%;
     border: 1px solid #ccc;
     background-color: white;
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
     z-index: 1000;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -162,6 +162,7 @@ footer p#droits-footer {
     padding: 8px;
     cursor: pointer;
     gap: 10px; /* Espacement entre l'image et le texte */
+    border-bottom  : solid black 1px;
 }
 
 .suggestion-item:hover {
@@ -170,14 +171,14 @@ footer p#droits-footer {
 
 
 .suggestion-image {
-    width: 40px; /* Largeur de l'image */
-    height: 60px; /* Hauteur de l'image */
+    width: 35%;
     border-radius: 4px; /* Coins arrondis pour l'image */
     object-fit: cover; /* Maintenir le ratio de l'image */
 }
 
 .suggestion-text {
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: bold;
     color: #333;
 }
 

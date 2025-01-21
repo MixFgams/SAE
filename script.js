@@ -1,3 +1,4 @@
+
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
@@ -84,13 +85,15 @@ function initScrollButtons() {
 
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------------------------------------------//
-document.querySelector('#createCollection').addEventListener('click', () => {
-    // Crée un nouvel élément <h1>
-    console.log("click");
-    const form = document.createElement();
-    const collectionContainer = document.querySelector('#ListeCollection');
-    collectionContainer.appendChild(form);
-});
+function creerCollection() {
+    document.querySelector('#createCollection').addEventListener('click', () => {
+        // Crée un nouvel élément <h1>
+        console.log("click");
+        const form = document.createElement();
+        const collectionContainer = document.querySelector('#ListeCollection');
+        collectionContainer.appendChild(form);
+    });
+}
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
 
@@ -144,19 +147,18 @@ icone.forEach(icon => {
 //-----------------------------------------------------------------------------------------------------------------------------------//
 const searchInput = document.getElementById("searchInput");
 const suggestionsBox = document.getElementById("suggestions");
-
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim();
-
     if (query.length > 0) {
         fetch(`pagesOutils/header.php?query=${encodeURIComponent(query)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Erreur réseau");
                 }
-                return response.json();
+                return response.json(); // Lire le corps de la réponse une seule fois
             })
             .then(data => {
+                console.log(data); // Afficher les données JSON
                 suggestionsBox.innerHTML = ""; // Vider les suggestions précédentes
 
                 if (data.length > 0) {
@@ -167,7 +169,7 @@ searchInput.addEventListener("input", () => {
 
                         // Image
                         const img = document.createElement("img");
-                        img.src = 'img/afficheFilm.jpg';
+                        img.src = item.posterURL; // Utiliser l'URL depuis la base de données
                         img.alt = item.name;
                         img.classList.add("suggestion-image");
 
@@ -193,9 +195,9 @@ searchInput.addEventListener("input", () => {
                     suggestionsBox.innerHTML = "<div class='suggestion-item'>Aucun résultat</div>";
                     suggestionsBox.style.display = "none";
                 }
-
             })
             .catch(error => console.error("Erreur lors de la recherche :", error));
+
     } else {
         suggestionsBox.style.display = "none"; // Masquer la boîte si aucune requête
     }
@@ -208,6 +210,17 @@ document.addEventListener("click", (event) => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    if (searchInput && suggestionsBox) {
+        // Place ici tout le code relatif à la barre de recherche
+        console.log("Barre de recherche initialisée");
+    } else {
+        console.log("Barre de recherche non disponible sur cette page");
+    }
+});
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------//

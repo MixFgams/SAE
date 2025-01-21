@@ -3,8 +3,6 @@
     <head>
         <link rel="icon" href="img/obLogo.png   " type="image/x-icon">
         <link rel="stylesheet" href="style.css">
-
-        <script src="script.js"></script>
     </head>
     <?php
     session_start();
@@ -185,5 +183,6 @@
         </main>
     
         <?php include 'pagesOutils/footer.php'?>
+        <script src="script.js"></script>
     </body>
 </html>
