@@ -8,24 +8,12 @@
 <body>
 <?php
 session_start() ;
-// Connexion à la base de données avec PDO
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ob";
+include 'pagesOutils/header.php';
+include 'pagesOutils/connDB.php' ;
 
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
-?>
 
-<?php include 'pagesOutils/header.php'; 
-
-if(isset($_SESSION['userID'])) {
-    $userID = $_SESSION['userID'];
+if(isset($_SESSION['idUser'])) {
+    $userID = $_SESSION['idUser'];
 } else {
     $userID = 1;
 }?>
@@ -97,7 +85,7 @@ if(isset($_SESSION['userID'])) {
                 }
 
                 if (!$hasContent) {
-                    echo '<p>Aucune recommandation trouvée.</p>';
+                    echo '<p>Aucune recommandations trouvées.</p>';
                 }
                 ?>
             </div>

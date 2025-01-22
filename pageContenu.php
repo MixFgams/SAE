@@ -8,7 +8,7 @@
 
 <body>
 <?php include 'pagesOutils/header.php'?>
-<?php include 'pageOutils/connDB.php'?>
+<?php include 'pagesOutils/connDB.php'?>
 
 <main>
     <?php 

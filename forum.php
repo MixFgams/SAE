@@ -1,6 +1,6 @@
 <?php
 session_start();
-include "pageOutils/connDB.php" ;
+include 'pagesOutils/connDB.php' ;
 
 // Vérification de l'ID du forum
 if (!isset($_POST['forumID']) || !is_numeric($_POST['forumID'])) {

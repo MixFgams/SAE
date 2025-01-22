@@ -1,6 +1,6 @@
 <?php 
 session_start() ;
-include "pageOutils/connDB.php" ;
+include 'pagesOutils/connDB.php' ;
 ?>
 
 <!DOCTYPE html>
@@ -16,7 +16,7 @@ include "pageOutils/connDB.php" ;
             $_POST['sort'] = $_SESSION['sort'] ;?>
         <section>
             <form method="GET" action="" id="searchBarCatalogue">
-                <input type="text" name="searchBarCatalogue" placeholder="Rechercher un article">
+                <input type="text" name="searchBarCatalogue" placeholder="Rechercher un contenu">
                 <button type="submit">Rechercher</button>
             </form>
         </section>
