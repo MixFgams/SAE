@@ -86,10 +86,46 @@ if (isset($_POST['creerMonForum']) && isset($_POST['forumName']) && isset($_POST
 ?>
 
 <main>
+    <form method="GET">
+        <label for="barreRecherche">Recherchez un forum : </label>
+        <input id="barreRecherche" name="barreRecherche" type="search">
+        <h1>Liste des articles</h1>
+        <?php
+        if (!empty($_GET['barreRecherche'])) {
+            $_isSearched = true;
+            $sql = "SELECT forumID, forumTitle, description, creationDate
+            FROM forum WHERE forumTitle LIKE :barreRecherche";
+            $recherche = $_GET['barreRecherche'];
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute(['barreRecherche' => "%$recherche%"]);
+
+            echo "<h2>Forums correspondant à : " . htmlspecialchars($_GET['barreRecherche']) . "</h2>";
+            echo '<div class="forum-container">'; // Ajout du conteneur principal
+
+            if ($stmt->rowCount() > 0) {
+                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                    echo '<div class="Forum">'; // Utilisation de la même classe que pour les forums normaux
+                    echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
+                    echo '<p>' . htmlspecialchars($row['description']) . '</p>';
+                    echo '<p>Date de création : ' . htmlspecialchars($row['creationDate']) . '</p>';
+                    echo '<form method="post" action="forum.php">
+                    <input type="hidden" name="forumID" value="' . htmlspecialchars($row['forumID']) . '">
+                    <input type="submit" value="Rejoindre">
+                  </form>';
+                    echo '</div>';
+                }
+            } else {
+                echo '<p>Aucun forum trouvé.</p>';
+            }
+
+            echo '</div>'; // Fermeture du conteneur principal
+        }
+        ?>
+    </form>
     <section id="forum">
         <h2>Forum de Discussion</h2>
         <form method="POST">
-            <input type="submit" name="creerForum" value="creer mon forum">
+            <input type="submit" name="creerForum" value="Créer mon forum">
         </form>
         <!-- Affichage des messages -->
         <div id="discussion">
