@@ -596,8 +596,14 @@ input:focus, textarea:focus {
     width : 100vw ;
 }
 
+.catalogueDisplay h2 {
+    margin : 0 ;
+    margin-top : 1vw ;
+}
+
 #catalogue main {
     display : flex ;
+    min-height : 42.5vw ;
     flex-direction: row;
     max-width : 95vw ;
     margin : 1vw ;
@@ -612,10 +618,12 @@ input:focus, textarea:focus {
 .catalogueContent {
     margin : 2% ;
     max-width : 20% ;
+    text-align: center;
 }
 
 .catalogueContent h3 {
     height : 12% ;  
+    margin : 1vw ;
 }
 
 .catalogueContent img {
