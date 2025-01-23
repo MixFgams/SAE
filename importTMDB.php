@@ -267,7 +267,7 @@ function genreTableUpdate(string $BaseUrl, string|array $token, PDO $pdo): void 
  * @param int $characterID L'identifiant unique du personnage à récupérer depuis l'API.
  * @param PDO $pdo Une instance de connexion à la base de données PDO.
  *
- * @return void Cette fonction ne retourne aucune valeur.
+ * @return string Cette fonction ne retourne aucune valeur.
  *
  * @throws RuntimeException Si une erreur cURL se produit, si le code HTTP de l'API n'est pas 200,
  *                          ou si les données retournées par l'API sont mal formées.

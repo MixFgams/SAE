@@ -14,19 +14,9 @@ session_start();
 <body>
 
 <?php
-
-// Connexion à la base de données avec PDO
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ob";
-
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+// Inclusion du header
+include 'pagesOutils/header.php';
+include 'pagesOutils/connDB.php' ;
 
 // Inclusion du header
 include 'pagesOutils/header.php';

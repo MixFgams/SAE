@@ -123,6 +123,15 @@ parentsAfficheRedirection.forEach(parent => {
     }
 });
 
+const redirectionContenu = document.querySelectorAll('.content-image') ;
+redirectionContenu.forEach(image => {
+    image.addEventListener('click', () => {
+        const lien = 'pageContenu.php?=';
+        console.log(lien);
+        console.log(window.location.href);
+        window.location.href = lien;
+    })
+})
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
 const icone = document.querySelectorAll('.eye-icon');

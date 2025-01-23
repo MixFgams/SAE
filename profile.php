@@ -6,23 +6,12 @@
     </head>
     <?php
     session_start();
-    if(isset($_SESSION['userID'])) {
-        $userID = $_SESSION['userID'];
+    include 'pagesOutils/connDB.php' ;
+
+    if(isset($_SESSION['idUser'])) {
+        $userID = $_SESSION['idUser'];
     } else {
-        $userID = 1;
-    }
-
-    // Connexion à la base de données avec PDO
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ob";
-
-    try {
-        $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-        $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        die("Erreur de connexion : " . $e->getMessage());
+        $userID = 0;
     }
     ?>
 

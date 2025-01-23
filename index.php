@@ -7,29 +7,16 @@
 </head>
 <body>
 <?php
-session_start();
-if(isset($_SESSION['userID'])) {
-    $userID = $_SESSION['userID'];
+session_start() ;
+include 'pagesOutils/header.php';
+include 'pagesOutils/connDB.php' ;
+
+
+if(isset($_SESSION['idUser'])) {
+    $userID = $_SESSION['idUser'];
 } else {
-    $userID = 1;
-}
-
-
-// Connexion à la base de données avec PDO
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ob";
-
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
-?>
-
-<?php include 'pagesOutils/header.php'; ?>
+    $userID = 0;
+}?>
 
 <main>
     <!-- Section Forums Populaires -->
@@ -40,7 +27,7 @@ try {
             $sql = "SELECT forumTitle, description, totalSubjectNumber 
                 FROM forum 
                 ORDER BY totalSubjectNumber DESC 
-                LIMIT 5"; // Ajouter une limite pour éviter un affichage trop long
+                LIMIT 5"; // Ajouter une limite pour éviter un affichage trop long ;
 
             $stmt = $pdo->query($sql);
 
@@ -65,7 +52,9 @@ try {
 
     <!-- Section Collections -->
     <section class="SectionIndex">
-        <h2>Collections</h2>
+        <a href="collection.php">
+            <h2>Collections</h2>
+        </a>
         <div class="scrollable-container">
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div id="ListeCollection" class="scrollable-content">
@@ -84,7 +73,9 @@ try {
             </div>
             <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
         </div>
-        <button id="createCollection">+ Créer une collection</button>
+        <a href="collection.php">
+            <button id="createCollection">+ Créer une collection</button>
+        </a>
     </section>
 
     <!-- Section Recommandations -->
@@ -94,22 +85,13 @@ try {
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div class="recommendations-scrollable scrollable-content">
                 <?php
-                $sql = "SELECT DISTINCT f.contentID, f.name, f.posterUrl
-            FROM film f 
-            LIMIT 7";
-                $stmt = $pdo->query($sql);
-                if ($stmt->rowCount() > 0) {
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        // Utiliser pk_ContentType comme data-id dynamique
-                        echo '<div class="recommendation-card" data-id="' . htmlspecialchars($row['contentID']) . '">';
-                        echo '<img src="' . htmlspecialchars($row['posterUrl']) . '" alt="' . htmlspecialchars($row['name']) . '">';
-                        echo '<div class="eye-icon">';
-                        echo '<img src="img/eye-icon.png" alt="Voir">';
-                        echo '</div>';
-                        echo '</div>';
-                    }
-                } else {
-                    echo '<p>Aucune recommandation trouvée.</p>';
+                $hasContent = false ;
+                if ($userID >= 1) {
+                    $hasContent = showRecommendedContents($pdo, $userID) ;
+                }
+
+                if (!$hasContent) {
+                    echo '<p>Aucune recommandations trouvées.</p>';
                 }
                 ?>
             </div>
@@ -160,3 +142,64 @@ include 'pagesOutils/footer.php';
 
 </body>
 </html>
+
+<?php
+function getFavoriteGenres(PDO $conn, int $userID) {
+    // Requête récupérant le nombre de contenus
+    $sql = "SELECT pk_GenreID, genreName, COUNT(g.pk_ContentID) as nb from genecontentassociation g
+            JOIN (SELECT pk_UserID, f.filmID as contentID, 'film' as contentType FROM filmwatched f
+                UNION
+                SELECT pk_UserID, s.pk_SeriesID as contentID, 'series' as contentType FROM serieswatched s) c 
+        ON c.contentID = g.pk_ContentID AND c.pk_UserID = ? AND g.pk_ContentType = c.contentType
+        JOIN genre ge ON g.pk_GenreID = ge.genreID
+        GROUP BY g.pk_GenreID
+        ORDER BY nb DESC, genreName 
+        LIMIT 5;" ;
+
+    $stmt = $conn->prepare($sql) ;
+    $stmt->bindParam(1, $userID) ;
+    $stmt->execute() ;
+    $genres = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
+    return $genres ;
+}
+
+function showRecommendedContents(PDO $conn, int $userID) {
+    $genres = getFavoriteGenres($conn, $userID) ;
+    $contentInserted = false ;
+    $sql = "SELECT contentID, `name`, posterURL, contentType FROM 
+            (SELECT contentID, `name`, posterURL, contentType from series
+            UNION
+            SELECT contentID, `name`, posterURL, contentType from film) u
+        JOIN genecontentassociation g
+        ON u.contentID = g.pk_ContentID AND u.contentType = g.pk_ContentType 
+        WHERE g.pk_GenreID = ? AND u.contentID NOT IN
+            (SELECT pk_SeriesID as contentID from serieswatched
+            WHERE pk_userID = $userID
+            UNION
+            SELECT filmID as contentID from filmwatched
+            WHERE pk_userID = $userID) 
+        ORDER BY RAND()
+        LIMIT 3;" ;
+    
+    $stmt = $conn->prepare($sql) ;
+    $contentSet = [] ;
+    foreach ($genres as $genre) {
+        $stmt->bindParam(1, $genre['pk_GenreID']) ;
+        $stmt->execute() ;
+        $contents = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
+        foreach ($contents as $content) {
+            if (!$contentSet[$content['name']]) {
+                $contentInserted = true ;
+                $id = htmlspecialchars($content['contentID']) ;
+                $name = htmlspecialchars($content['name']) ;
+                $url = htmlspecialchars($content['posterURL']) ;
+                $type = htmlspecialchars($content['contentType']) ;
+
+                echo "<img src='$url' alt='$name'>" ;
+                $contentSet[$content['name']] = true ;
+            }
+        }
+    }
+
+    return $contentInserted ;
+}

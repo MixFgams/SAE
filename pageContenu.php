@@ -2,70 +2,75 @@
 <html>
 <head>
     <link rel="icon" href="img/obLogo.png" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
+
     <link rel="stylesheet" href="contenu.css">
 </head>
 
 <body>
 <?php include 'pagesOutils/header.php'?>
+<?php include 'pagesOutils/connDB.php'?>
 
 <main>
+    <?php 
+    // Récupérer l'ID et le type depuis l'URL
+    $contentID = isset($_GET['id']) ? intval($_GET['id']) : -1 ;
+    $contentType = isset($_GET['type']) ? $_GET['type'] : "" ;
+    if ($contentID >= 0 and strcmp($contentType, "") != 0) {
+        // Requête pour récupérer le contenu basé sur l'ID
+        $doQuery = true ;
+        if (strcmp($contentType, "film") == 0 or strcmp($contentType, "series") == 0) {
+            // Requête pour récupérer le contenu basé sur l'ID, et joindre les tables pour obtenir la production
+            $sql = "SELECT 
+                c.contentID, c.name, c.description, c.releaseDate, c.runtime, c.posterUrl, c.contentType, c.viewsCount,
+                p.name AS productionName
+            FROM (
+                SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount 
+                FROM film
+                UNION ALL
+                SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount 
+                FROM series
+            ) AS c
+            LEFT JOIN productioncontentassociation pca ON c.contentID = pca.pk_ContentID AND c.contentType = pca.pk_ContentType
+            LEFT JOIN production p ON pca.pk_ProductionID = p.productionID
+            WHERE c.contentID = ?";
+            $doQuery = true ;
+        }
+        
+        if ($doQuery) {
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(1, $contentID) ;
+            $stmt->execute() ;
+        }
+
+        $hasContent = ($doQuery and $stmt->rowCount() > 0) ;
+    } else {
+        $hasContent = false ;
+    }
+
+    if ($hasContent) {
+    ?>
     <section id="cadre-contenu">
         <div id="contenu">
             <div id="info-contenu">
                 <?php
-                // Connexion à la base de données
-                $servername = "localhost";
-                $username = "root";
-                $password = "";
-                $dbname = "ob";
-
-                // Récupérer l'ID depuis l'URL
-                $contentID = isset($_GET['id']) ? $_GET['id'] : 0;
-
-                // Connexion à la base de données
-                $conn = new mysqli($servername, $username, $password, $dbname);
-
-                if ($conn->connect_error) {
-                    die("Erreur de connexion : " . $conn->connect_error);
-                }
-
-                // Requête pour récupérer le contenu basé sur l'ID
-                $sql = "
-                        SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount
-                        FROM (
-                            SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount FROM film
-                            UNION ALL
-                            SELECT contentID, name, description, releaseDate, runtime, posterUrl, contentType, viewsCount FROM series
-                        ) AS catalogue
-                        WHERE contentID = $contentID
-                    ";
-
-                $result = $conn->query($sql);
-
-                if ($result->num_rows > 0) {
-                    $row = $result->fetch_assoc();
-                    // Affichage des données dynamiquement
-                    echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
-                    echo '<p id="titre">' . htmlspecialchars($row['name']) . '</p>';
-                    echo '<h3>Type de Contenu</h3>';
-                    echo '<p id="type-contenu">' . htmlspecialchars($row['contentType']) . '</p>';
-                    echo '<h3>Date de Sortie</h3>';
-                    echo '<p id="date-sortie">' . htmlspecialchars($row['releaseDate']) . '</p>';
-                    echo '<h3>Auteur</h3>';
-                    echo '<p id="auteur">Non spécifié</p>';  // Auteur n'est pas dans la base de données, donc ajout de "Non spécifié"
-                    echo '<h3>Durée</h3>';
-                    echo '<p id="runtime">' . htmlspecialchars($row['runtime']) . ' minutes</p>';
-                    echo '<h3>Nombre de vues</h3>';
-                    echo '<p id="views-count">' . htmlspecialchars($row['viewsCount']) . '</p>';
-                } else {
-                    echo "<p>Aucun contenu trouvé pour cet ID.</p>";
-                }
-
-                $conn->close();
+                $row = $stmt->fetch(PDO::FETCH_ASSOC) ;
+                // Affichage des données dynamiquement
+                echo '<h3>' . htmlspecialchars($row['name']) . '</h3>';
+                echo '<p id="titre">' . htmlspecialchars($row['name']) . '</p>';
+                echo '<h3>Type de Contenu</h3>';
+                echo '<p id="type-contenu">' . htmlspecialchars($row['contentType']) . '</p>';
+                echo '<h3>Date de Sortie</h3>';
+                echo '<p id="date-sortie">' . htmlspecialchars($row['releaseDate']) . '</p>';
+                echo '<h3>Production</h3>';
+                echo '<p id="production">' . htmlspecialchars($row['productionName']) . '</p>'; // Production récupérée ici
+                echo '<h3>Durée</h3>';
+                echo '<p id="runtime">' . htmlspecialchars($row['runtime']) . ' minutes</p>';
+                echo '<h3>Nombre de vues</h3>';
+                echo '<p id="views-count">' . htmlspecialchars($row['viewsCount']) . '</p>';
                 ?>
+
             </div>
-            <img src="<?php echo htmlspecialchars($row['posterUrl']); ?>" alt="Image du contenu" class="image-contenu">
+            <img src=<?php echo htmlspecialchars($row['posterUrl']);?> alt="Image du contenu" class="image-contenu">
         </div>
         <div id="description-grid">
             <div class="blue-box" id="collection">
@@ -130,6 +135,10 @@
     <section id="volumes">
         <h2>Volumes</h2>
     </section>
+    <?php 
+    } else {
+        echo "<h1>Le contenu que vous cherchez n'existe pas</h1>" ;
+    } ?>
 </main>
 
 <script src="script.js"></script>

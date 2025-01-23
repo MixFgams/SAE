@@ -203,3 +203,107 @@ button:hover {
         height: 35px;
     }
 }
+/*-------------------Styles pour Header et Footer-------------------*/
+header, footer {
+    background-color: #BECACF;
+    color: black;
+    padding: 5px;
+    text-align: center;
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+header nav, footer nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3em;
+    font-weight: bold;
+}
+
+header a, footer a {
+    color: black;
+    text-decoration: none;
+    transition: 0.5s;
+}
+
+header a:hover {
+    text-decoration: underline;
+    color: darkblue;
+    font-size: larger;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+header img, footer img {
+    width: 5em;
+    margin-right: 15px;
+}
+
+footer p#droits-footer {
+    margin: 0.5em;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+@media (max-width: 1000px){
+    .header-nav a:not(:last-child) {
+        border-right: 2px solid #ccc; /* Séparateur */
+        padding-right: 10px; /* Espacement avant la bordure */
+    }
+}
+
+.search-container {
+    position: relative;
+    width: 300px;
+}
+
+#searchInput {
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.suggestions-box {
+    display: none;
+    position: absolute; /* Position relative à .search-container */
+    top: calc(100% + 5px); /* Juste en dessous de l'input */
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center; /* Aligner verticalement l'image et le texte */
+    padding: 8px;
+    cursor: pointer;
+    gap: 10px; /* Espacement entre l'image et le texte */
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+
+.suggestion-image {
+    width: 40px; /* Largeur de l'image */
+    height: 60px; /* Hauteur de l'image */
+    border-radius: 4px; /* Coins arrondis pour l'image */
+    object-fit: cover; /* Maintenir le ratio de l'image */
+}
+
+.suggestion-text {
+    font-size: 16px;
+    color: #333;
+}
+
+/*-------------------Fin Styles pour Header et Footer-------------------*/

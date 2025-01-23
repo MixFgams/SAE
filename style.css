@@ -304,6 +304,10 @@ input:focus, textarea:focus {
     margin-right : 5% ;
 }
 
+#info-contenu {
+    margin-left : 1% ;
+}
+
 #contenu {
     display : grid ;
     grid-template-columns: 50% 50% ;
@@ -314,11 +318,16 @@ input:focus, textarea:focus {
     color : #9B1C31 ;
 }
 
+#cadre-contenu p {
+    color : gray ;
+    text-align : right ;
+}
+
 #contenu img {
-    max-height : 100% ;
-    max-width : 100% ;
+    height : fit-content ;
+    max-width:100% ;
     padding : 5px ;
-    object-fit: cover ;
+    object-fit:cover;
 }
 
 
@@ -338,7 +347,12 @@ input:focus, textarea:focus {
     display : block ;
 }
 
-#description-grid, #checkbox-grid, #liste-commentaire, .commentaire-header {
+#description-grid {
+    display : grid ;
+    grid-template-columns: 25% 75%;
+}
+
+#checkbox-grid, #liste-commentaire, .commentaire-header {
     display:flex ;
     flex-wrap: wrap ;
     flex-direction: row ;
@@ -486,11 +500,19 @@ input:focus, textarea:focus {
 }
 
 
+.recommendation-card{
+    width : 600px;
+}
 
-.SectionIndex img, .Collection{
+.recommendations-scrollable img {
+    width: 24%;
+    border-radius: 8px;
+}
+
+.SectionIndex img, .Collection, .catalogueImages {
     transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
-.SectionIndex img:hover, .Collection:hover {
+.SectionIndex img:hover, .Collection:hover, .catalogueImages:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     opacity: 0.8;
@@ -548,12 +570,72 @@ input:focus, textarea:focus {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-#barreIndex {
+/*------------------Catalogue-------------------------*/
+
+#searchBarCatalogue {
+    height : fit-content ;
+}
+
+#searchBarCatalogue > input {
+    width : 80vw ;
+}
+
+#catalogue, .catalogueDisplay, #radio-list {
+    display : flex ;
+    flex-wrap : wrap ;
+    flex-direction: column; 
+}
+
+.catalogueDisplay {
+    width : 100vw ;
+}
+
+.catalogueDisplay h2 {
+    margin : 0 ;
+    margin-top : 1vw ;
+}
+
+#catalogue main {
+    display : flex ;
+    min-height : 42.5vw ;
+    flex-direction: row;
+    max-width : 95vw ;
+    margin : 1vw ;
+}
+
+#sortFilter {
+    max-height: fit-content;
+    width:25vw ;
+    max-width: 200px;
+}
+
+.catalogueContent {
+    margin : 2% ;
+    max-width : 20% ;
     text-align: center;
 }
 
-#barreIndex input {
-    width :500px;
+.catalogueContent h3 {
+    height : 12% ;  
+    margin : 1vw ;
+}
+
+.catalogueContent img {
+    border-radius: 8px ;
+}
+
+.catalogueImages {
+    max-width: 90%;
+    margin : 0 ;
+    padding : 0 ;
+    object-fit: scale-down;
+}
+
+.catalogueSection {
+    display : flex ;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin : 0 ;
 }
 
 @media (max-width: 1000px){
@@ -739,6 +821,7 @@ h2:hover {
 
 
 /*----------------------------------------------------------*/
+
 
 
 

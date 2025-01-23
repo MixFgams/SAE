@@ -100,8 +100,6 @@
             $error = "Erreur : action non reconnue.";
         }
     }
-    
-    
 
 ?>
 
