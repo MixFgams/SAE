@@ -31,7 +31,7 @@ $contentColumn = ($contentType === 'film') ? 'filmID' : 'pk_SeriesID';
 $contentTable = ($contentType === 'film') ? 'film' : 'series';
 
 // Ajouter à la liste "Déjà Vu" et incrémenter les vues
-if ($idUser > 0 && isset($_POST['dejaVu'])) {
+if ($userID > 0 && isset($_POST['dejaVu'])) {
     $stmt = $pdo->prepare("SELECT * FROM $watchedTable WHERE $contentColumn = :contentID AND pk_UserID = :userID");
     $stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
 
@@ -46,7 +46,7 @@ if ($idUser > 0 && isset($_POST['dejaVu'])) {
 }
 
 // Ajouter à une collection
-if ($idUser > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionID'])) {
+if ($userID > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionID'])) {
     $collectionID = intval($_POST['collectionID']);
     $stmt = $pdo->prepare("INSERT INTO contentcollection (contentID, pk_ContentType, pk_collectionID) VALUES (:contentID, :contentType, :collectionID)");
     $stmt->execute([':contentID' => $contentID, ':contentType' => $contentType, ':collectionID' => $collectionID]);

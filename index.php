@@ -86,8 +86,7 @@ if(isset($_SESSION['idUser'])) {
                 if ($stmt->rowCount() > 0) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         $id = $row['collectionID'] ;
-                        $type = $row['contentType'] ;
-                        echo "<div id='id=$id&type=$type' class='Collection'><h3>" . htmlspecialchars($row['name']) . "</h3></div>";
+                        echo "<div id='id=$id' class='Collection'><h3>" . htmlspecialchars($row['name']) . "</h3></div>";
                     }
                 } else {
                     echo '<p>Aucune collection trouvée.</p>';
