@@ -21,11 +21,11 @@ include 'pagesOutils/connDB.php' ;
     } ?>
     <main>
         <?php
-        if (!isset($_GET['collectionID'])) {
+        if (!isset($_GET['id'])) {
             showGeneralPage($pdo, $userID) ;
         }
         else {
-            $collectionID = intval($_GET['collectionID']) ;
+            $collectionID = intval($_GET['id']) ;
             $collectionNameQuery = "SELECT `name` FROM `collection`
                                     WHERE collectionID = ? AND pk_userID = ?" ;
     
@@ -71,7 +71,7 @@ function showGeneralPage(PDO $conn, int $userID) {
         $result = $stmtContent->fetchAll(PDO::FETCH_ASSOC) ;
 
         echo "<section class='SectionIndex'>
-                    <a href='collection.php?collectionID=$collectionID'><h2>$collectionName</h2></a>
+                    <a href='collection.php?id=$collectionID'><h2>$collectionName</h2></a>
                     <div class='scrollable-container'>
                         <button class='scroll-button left' aria-label='Défiler à gauche'>◀</button>
                         <div class='scrollable-content recommendations-scrollable'>" ;

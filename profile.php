@@ -73,7 +73,8 @@
                         <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                         <div id="ListeCollection" class="scrollable-content">
                             <?php
-                                $stmt = $pdo->prepare("SELECT name
+                                $stmt = $pdo->prepare(
+                                    "SELECT collectionID, `name`
                                     FROM collection
                                     WHERE pk_userID = :userID;
                                     ");
@@ -81,7 +82,8 @@
 
                                 if ($stmt->rowCount() > 0) {
                                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                        echo '<div class="Collection"><h3>' . htmlspecialchars($row['name']) . '</h3></div>';
+                                        $id = htmlspecialchars($row['collectionID']) ;
+                                        echo "<div id='id=$id'class='Collection'><h3>" . htmlspecialchars($row['name']) . '</h3></div>';
                                     }
                                 } else {
                                     echo '<p>Aucune collection trouvée.</p>';
@@ -98,23 +100,22 @@
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">
                         <?php
-                        $sql = "
-                                SELECT film.contentID, film.posterUrl 
+                        $sql = "SELECT film.contentID, film.name, film.posterUrl 
                                 FROM film
                                 JOIN filmwatched ON film.contentID = filmwatched.filmID
                                 JOIN user ON user.userID = filmwatched.pk_UserID
                                 WHERE user.userID = :userID
-                                LIMIT 10
-                            ";
+                                LIMIT 10";
                             $stmt = $pdo->prepare($sql);
                             $stmt->execute([':userID' => $userID]);
 
                             if ($stmt->rowCount() > 0) {
-                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                echo '<div class="recommendation-card" data-id="' . htmlspecialchars($row['contentID']) . '">';
-                                echo '<img src="' . htmlspecialchars($row['posterUrl']) . '" alt="' .  '">';
-                                echo '</div>';
-                            }
+                                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                    $id = htmlspecialchars($row['contentID']) ;
+                                    $posterUrl = htmlspecialchars($row['posterUrl']) ;
+                                    $name = htmlspecialchars($row['name']) ;
+                                    echo "<img id='id=$id&type=film' src='$posterUrl' alt='$name'>" ;
+                                }
                             } else {
                             echo '<p>Aucuns films trouvés.</p>';
                             }
@@ -131,40 +132,26 @@
                     <div class="recommendations-scrollable scrollable-content">
                         <?php
 
-                        $stmt = $pdo->prepare("
-                            SELECT series.content, series.releaseDate
+                        $stmt = $pdo->prepare("SELECT series.contentID, series.posterUrl, series.name
                             FROM series
                             JOIN serieswatched ON serieswatched.pk_SeriesID = series.contentID
                             JOIN user ON user.userID = serieswatched.pk_UserID
                             WHERE user.userID = :userID
                             ORDER BY series.releaseDate DESC
-                            LIMIT 20
-                        ");
-
+                            LIMIT 20");
+                        $stmt->execute([':userID' => $userID]) ;
+                        
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                echo '<img src="img/afficheFilm.jpg" alt="' . htmlspecialchars($row['name']) . '">';
+                                $id = htmlspecialchars($row['contentID']) ;
+                                $posterUrl = htmlspecialchars($row['posterUrl']) ;
+                                $name = htmlspecialchars($row['name']) ;
+                                echo "<img id='id=$id&type=series' src='$posterUrl' alt='$name'>" ;
                             }
                         } else {
                             echo '<p>Aucunes séries trouvées.</p>';
                         }
                         ?>
-                    </div>
-                    <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
-                </div>
-            </section>
-
-            <section class="SectionIndex">
-                <h2>Livres</h2>
-                <div class="scrollable-container">
-                    <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
-                    <div class="recommendations-scrollable scrollable-content">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
                     </div>
                     <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
                 </div>
