@@ -47,8 +47,13 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
             <a href="catalogue.php">Catalogue</a>
             <a href="aPropos.php">À propos</a>
 
-            <!--A mettre dans le cas ou l'utilisateur n'est pas connecté-->
-            <a href="connexion.php">Connexion</a>
+            <?php
+            if(isset($_SESSION["idUser"]) == null){
+                echo '<a href="connexion.php">Connexion</a>';
+            }else{
+                echo '<a href="connexion.php">Deconnexion</a>';
+            }
+            ?>
 
             <!--A mettre seulement si l'utilisateur est connecté-->
             <a href="profile.php">Votre Profil</a>
