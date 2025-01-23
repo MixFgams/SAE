@@ -17,6 +17,47 @@
 
     <body>
         <?php include 'pagesOutils/header.php'?>
+
+
+        <?php
+        $uploadDir = __DIR__ . "/uploads/";
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+        if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['uploadPhoto'])) {
+            if (isset($_FILES['profilePicture']) && $_FILES['profilePicture']['error'] == 0) {
+                $fileTmpPath = $_FILES['profilePicture']['tmp_name'];
+                $fileName = $_FILES['profilePicture']['name'];
+                $fileSize = $_FILES['profilePicture']['size'];
+                $fileType = $_FILES['profilePicture']['type'];
+                $fileExt = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
+
+                $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+
+                if (in_array($fileExt, $allowedExtensions)) {
+                    $newFileName = "profile_" . $userID . "." . $fileExt;
+                    $uploadDir = "uploads/";
+                    $destPath = $uploadDir . $newFileName;
+
+                    // Déplace le fichier vers le dossier uploads/
+                    if (move_uploaded_file($fileTmpPath, $destPath)) {
+                        // Mise à jour de la base de données
+                        $stmt = $pdo->prepare("UPDATE user SET profilePicture = :profilePicture WHERE userID = :userID");
+                        $stmt->execute([':profilePicture' => $destPath, ':userID' => $userID]);
+
+                        echo "<p style='color:green;'>Photo de profil mise à jour avec succès !</p>";
+                    } else {
+                        echo "<p style='color:red;'>Erreur lors du déplacement du fichier.</p>";
+                    }
+                } else {
+                    echo "<p style='color:red;'>Seuls les fichiers JPG, JPEG, PNG et GIF sont autorisés.</p>";
+                }
+            } else {
+                echo "<p style='color:red;'>Aucun fichier valide n'a été uploadé.</p>";
+            }
+        }
+        ?>
+
         <main>
             <?php
                 try {
@@ -63,6 +104,11 @@
                         <div id="progress-container">
                             <div id="progress-bar" style="width: <?= $progressPercent ?>%;"></div>
                         </div>
+                        <form method="post" enctype="multipart/form-data">
+                            <input type="file" name="profilePicture" accept="image/*" required>
+                            <input type="submit" name="uploadPhoto" value="Changer la photo">
+                        </form>
+
                     </div>
                 </section>
             </div>
