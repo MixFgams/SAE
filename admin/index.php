@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 //parametres de profondeur
-$_SESSION["profondeurDossier"] = 1;
+$_SESSION["profendeurDossier"] = 1;
 
 // Paramètres de la base de données
 $host = 'localhost';
@@ -751,6 +751,7 @@ for ($idSerie = $debutId; $idSerie <= $finId; $idSerie++) {
 }
 */
 
+/*
 $seriesIDList = [253323,421260,81189,360115,79168,369060,355567,368207];
 $filmIDList = [562,362,1713,1375,6389,349133,1057,3689,1092,105596];
 
@@ -773,10 +774,68 @@ foreach ($filmIDList as $filmID) {
         echo "Échec de l'importation du film avec l'ID $filmID : " . $e->getMessage() . "<br>";
     }
 }
+*/
 
 
 
 
+
+// ----------------------------------------------------------------------------
+// -------------------------------------- GESTION DES SIGNALEMENTS --------------------------------------
+// ----------------------------------------------------------------------------
+
+
+
+function recuperationSignalements($pdo) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM reportticket WHERE statut != :statut");
+        
+        $stmt->execute([
+            "statut" => "terminé"
+        ]);
+        
+        if ($stmt->rowCount() > 0) {
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else {
+            return [];
+        }
+    } catch (PDOException $e) {
+        echo "Erreur de récupération des signalements : " . $e->getMessage();
+        return false;
+    }
+}
+
+function modificationStatusSignalement($pdo, $reportID, $nvStatut) {
+    try {
+        $stmt = $pdo->prepare("UPDATE reportticket SET statut = :statut WHERE reportID = :reportID");
+        
+        $stmt->execute([
+            ":statut" => $nvStatut,
+            ":reportID" => $reportID
+        ]);
+        
+        if ($stmt->rowCount() > 0) {
+            echo "Le statut du signalement a été mis à jour avec succès.";
+        } else {
+            echo "Aucun signalement trouvé avec l'ID donné ou le statut était déjà à jour.";
+        }
+    } catch (PDOException $e) {
+        echo "Erreur de mise à jour du statut du signalement : " . $e->getMessage();
+    }
+}
+
+// Vérification si l'ID du signalement et le nouveau statut sont envoyés par POST
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $reportID = $_POST['reportID'];
+    $nvStatut = $_POST['statut'];
+
+    // Appel de la fonction pour mettre à jour le statut du signalement
+    modificationStatusSignalement($pdo, $reportID, nvStatut: $nvStatut);
+}
+
+
+
+// -------------------------------------- fin de gestion de signalements --------------------------------------
 ?>
 
 <!DOCTYPE html>
@@ -786,35 +845,78 @@ foreach ($filmIDList as $filmID) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Importation TVDB</title>
     <link rel="stylesheet" href="style.css">
+</head>
 <body>
-<header>
+    <header>
         <nav class="header-nav">
-            <a href="index.php"><img src="img/obLogo.png" alt="Logo OB"></a>
+            <a href="index.php"><img src="../img/obLogo.png" alt="Logo OB"></a>
             <a href="index.php">Quittez le mode administrateur</a>
         </nav>
     </header>
 
     <main>
-        <section class="tvdb-import">
-            <h1>Importation de Films et Séries depuis TVDB</h1>
+        <section>
+            <!-- Section des notifications des signalements -->
+            <section class="notifications">
+                <h2>Signalements</h2>
+                <?php
+                    $signalements = recuperationSignalements($pdo);
+                    if (empty($signalements)) {
+                        echo "<p>Aucun signalement trouvé.</p>";
+                    } else {
+                        foreach($signalements as $signalement) {
+                            echo '
+                            <div class="signalement">
+                                <p>Identifiant du signalement : '. $signalement["reportID"] .'</p>
+                                <p>Element signalé : ' . $signalement["contentType"] .'</p>
+                                <p>Statut : ' . $signalement["statut"] .'</p>
+                                
+                                <form method="POST" action="index.php">
+                                    <label for="statut">Modifier le statut :</label>
+                                    <select name="statut" id="statut">
+                                        <option value="en cours" '.($signalement["statut"] == "en_cours" ? "selected" : "").'>En cours</option>
+                                        <option value="terminé" '.($signalement["statut"] == "terminé" ? "selected" : "").'>Terminé</option>
+                                        <option value="en attente" '.($signalement["statut"] == "en_attente" ? "selected" : "").'>En attente</option>
+                                    </select>
+                                    <input type="hidden" name="reportID" value="'.$signalement["reportID"].'">
+                                    <button type="submit">Mettre à jour</button>
+                                </form>
+                            </div>';
+                        }
+                    }
+                ?>
 
-            <!-- Barre de recherche -->
-            <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Recherchez un film ou une série..." />
-                <button id="searchButton">Rechercher</button>
-            </div>
+            </section>
 
-            <!-- Liste des contenus affichés -->
-            <form id="importForm" action="importHandler.php" method="POST">
-                <div class="content-list">
-                    <!-- Les films et séries seront affichés ici dynamiquement -->
+            <!-- Section Gestion des utilisateurs -->
+            <section>
+                <h2>Gestion des utilisateurs</h2>
+                <a href="user-management.php">Accédez à la gestion des utilisateurs</a>
+            </section>
+
+            <!-- Section Gestion des forums -->
+            <section class="forum-management">
+                <h2>Gestion des forums</h2>
+                <div class="search-bar">
+                    <input type="text" placeholder="Recherchez un forum..." />
+                    <button onclick="window.location.href='forum-management.php'">Rechercher</button>
                 </div>
-                <button type="submit" class="import-button">Importer les éléments sélectionnés</button>
-            </form>
+                <p><a href="forum-management.php">Accédez à la gestion des forums</a></p>
+            </section>
+
+            <!-- Section Ajouter des films et séries -->
+            <section class="tvdb-import">
+                <h2>Ajouter des films et séries</h2>
+                <div class="search-bar">
+                    <input type="text" placeholder="Recherchez un film ou une série..." />
+                    <button onclick="window.location.href='tvdb-import.php'">Rechercher</button>
+                </div>
+                <p><a href="tvdb-import.php">Accédez à l'ajout de films et séries</a></p>
+            </section>
         </section>
     </main>
 
-    <?php include "pagesOutils/footer.php"?>
-
+    <?php include "../pagesOutils/footer.php"?>
 </body>
 </html>
+
