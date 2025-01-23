@@ -18,9 +18,6 @@ session_start();
 include 'pagesOutils/header.php';
 include 'pagesOutils/connDB.php' ;
 
-// Inclusion du header
-include 'pagesOutils/header.php';
-
 // Gestion des messages envoyés via le formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
     $message = htmlspecialchars($_POST['message']);
