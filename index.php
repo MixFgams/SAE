@@ -24,10 +24,27 @@ if(isset($_SESSION['idUser'])) {
         <h2>Forums populaires</h2>
         <div class="forums-container">
             <?php
-            $sql = "SELECT forumTitle, description, totalSubjectNumber 
-                FROM forum 
-                ORDER BY totalSubjectNumber DESC 
-                LIMIT 5"; // Ajouter une limite pour éviter un affichage trop long ;
+            $sql = "SELECT *
+                    FROM
+                    (
+                        (SELECT forumTitle, `description`, nbComment
+                        FROM forum f
+                        JOIN (SELECT contentID as forumID, COUNT(commentID) as nbComment 
+                            FROM comment 
+                            WHERE pk_ContentType = 'forum'
+                            GROUP BY contentID) c
+                        ON f.forumID = c.forumID 
+                        ORDER BY nbComment DESC)
+                        UNION
+                        (SELECT forumTitle, `description`, 0 as nbComment
+                        FROM forum f
+                        WHERE forumID 
+                        NOT IN (SELECT contentID as nbComment 
+                            FROM comment 
+                            WHERE pk_ContentType = 'forum'
+                            GROUP BY contentID))
+                    ) as res
+                    LIMIT 5;" ; // Ajouter une limite pour éviter un affichage trop long ;
 
             $stmt = $pdo->query($sql);
 
@@ -37,7 +54,7 @@ if(isset($_SESSION['idUser'])) {
                     echo '<img src="img/afficheFilm.jpg" alt="Image du forum">'; // Ajouter une image par défaut
                     echo '<div class="forum-description">';
                     echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
-                    echo '<p>Nombre de sujets : ' . htmlspecialchars($row['totalSubjectNumber']) . '</p>'; // Ajouter les sujets
+                    echo '<p>Nombre de commentaires : ' . htmlspecialchars($row['nbComment']) . '</p>'; // Ajouter les sujets
                     echo '<p>Description : ' . htmlspecialchars($row['description']) . '</p>'; // Description (optionnel si présent)
                     echo '</div>';
                     echo '</div>';
