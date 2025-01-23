@@ -65,22 +65,22 @@ include 'pagesOutils/connDB.php' ;
             $_SESSION['sort'] = $_POST['sort'] ;
         }?>
         <?php include 'pagesOutils/footer.php'?>
-        <script src="script.js"></script>
+        <script src="catalogue.js"></script>
     </body>
 </html>
 
 <?php
     function getAllContents(PDO $conn) {
-        $sql = "SELECT * FROM film" ;
+        $res = [] ;
+        $sql = "SELECT contentID, `name`, posterUrl, contentType FROM film" ;
 
         $stmt = $conn->prepare($sql) ;
         $stmt->execute() ;
-        $res = [] ;
         
         if ($stmt->rowCount() > 0)
             $res['film'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $sql = "SELECT * FROM series" ; 
+        $sql = "SELECT contentID, `name`, posterUrl, contentType FROM series" ; 
         $stmt = $conn->prepare($sql) ;
         $stmt->execute() ;
         
@@ -91,46 +91,37 @@ include 'pagesOutils/connDB.php' ;
     }
 
     function getAllContentsSorted(PDO $conn) {
-        $sql = "SELECT * FROM film
-                ORDER BY `name` ASC" ;
+        $sql = "SELECT * FROM
+            (
+            SELECT contentID, `name`, posterUrl, contentType FROM film
+            UNION
+            SELECT contentID, `name`, posterUrl, contentType FROM series
+            ) as res
+        ORDER BY `name` ASC ;" ;
 
         $stmt = $conn->prepare($sql) ;
         $stmt->execute() ;
-        $res = [] ;
-        
-        if ($stmt->rowCount() > 0)
-            $res['film'] = $stmt->fetchAll(PDO::FETCH_BOTH);
 
-        $sql = "SELECT * FROM series
-                ORDER BY `name` ASC" ;
-        
-        $stmt = $conn->prepare($sql) ;
-        $stmt->execute() ;
-        
-        if ($stmt->rowCount() > 0)
-            $res['series'] = $stmt->fetchAll(PDO::FETCH_BOTH) ;
-
-        return $res ;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ;
     }
 
     function getContentsLike(PDO $conn, string $name) {
         if ($name == "")
             return getAllContents($conn) ;
 
-        $sql = "SELECT * FROM film 
-                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')" ;
+        $sql = "SELECT contentID, `name`, posterUrl, contentType film
+                ORDER BY `name` ASC" ;
+
         $stmt = $conn->prepare($sql) ;
-        $stmt->bindParam(1, $name) ;
         $stmt->execute() ;
-        $res = [] ;
         
         if ($stmt->rowCount() > 0)
             $res['film'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $sql = "SELECT * FROM series 
-                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')" ;
+        $sql = "SELECT contentID, `name`, posterUrl, contentType series
+                ORDER BY `name` ASC" ; 
+                
         $stmt = $conn->prepare($sql) ;
-        $stmt->bindParam(1, $name) ;
         $stmt->execute() ;
         
         if ($stmt->rowCount() > 0)
@@ -143,28 +134,20 @@ include 'pagesOutils/connDB.php' ;
         if ($name == "")
             return getAllContentsSorted($conn) ;
 
-        $sql = "SELECT * FROM film 
-                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')
-                ORDER BY `name` ASC" ;
+        $sql = "SELECT * FROM
+            (
+            SELECT contentID, `name`, posterUrl, contentType FROM film
+            UNION
+            SELECT contentID, `name`, posterUrl, contentType FROM series
+            ) as res
+        WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')
+        ORDER BY `name` ASC ;" ;
+
         $stmt = $conn->prepare($sql) ;
         $stmt->bindParam(1, $name) ;
         $stmt->execute() ;
-        $res = [] ;
-        
-        if ($stmt->rowCount() > 0)
-            $res['film'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $sql = "SELECT * FROM series 
-                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')
-                ORDER BY `name` ASC" ;
-        $stmt = $conn->prepare($sql) ;
-        $stmt->bindParam(1, $name) ;
-        $stmt->execute() ;
-        
-        if ($stmt->rowCount() > 0)
-            $res['series'] = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
-
-        return $res ;
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ;
     }
 
     function showContentsByType(PDO $conn) {
@@ -183,12 +166,16 @@ include 'pagesOutils/connDB.php' ;
             $hasContent = True ;
             echo "<h2>Films</h2>" ;
             echo "<div class='catalogueSection'>" ;
+            $contentCount = 0 ;
             foreach($contents['film'] as $row) {
                 $id = $row['contentID'];
                 $contentName = $row['name'] ;
                 $imgURL = $row['posterUrl'] ;
-                showContentDiv($id, $contentName, $imgURL, $row['contentType']) ;
+                $contentCount += 1 ;
+                showContentDiv($id, $contentName, $imgURL, $row['contentType'], "film", $contentCount, 8) ;
             }
+            if ($contentCount > 8)
+                echo "<button param='film' class='viewMoreCatalogue'>Voir Tout</button>" ;
             echo "</div>" ;
         } 
 
@@ -197,13 +184,17 @@ include 'pagesOutils/connDB.php' ;
             $hasContent = True ;
             echo "<h2>Séries</h2>" ;
             echo "<div class='catalogueSection'>" ;
+            $contentCount = 0 ;
             foreach($contents['series'] as $row) {
                 $id = $row['contentID'];
                 $contentName = $row['name'] ;
                 $imgURL = $row['posterUrl'] ;
-                showContentDiv($id, $contentName, $imgURL, $row['contentType']) ;
+                $contentCount += 1 ;
+                showContentDiv($id, $contentName, $imgURL, $row['contentType'], "series", $contentCount, 8) ;
 
             }
+            if ($contentCount > 8)
+                echo "<button param='series' class='viewMoreCatalogue'>Voir Tout</button>" ;
             echo "</div>" ;
         } 
         
@@ -223,50 +214,47 @@ include 'pagesOutils/connDB.php' ;
         }
 
         $contents = getContentsSortedLike($conn, $searchQuery) ;
-        $i = 0 ; $j = 0 ;
+        $i = 0 ;
         $previousLetter = null ;
         $currentLetter = null ;
 
-        $filmCount = isset($contents['film']) ? sizeof($contents['film']) : 0 ;
-        $seriesCount = isset($contents['series']) ? sizeof($contents['series']) : 0 ;
-
-        if ($filmCount == 0 and $seriesCount == 0) 
+        if (!$contents) 
             echo "<p class='no-results'>Aucun résultat trouvé pour : $searchQuery. Essayez une autre recherche.</p>";
 
-        while ($i <  $filmCount or $j < $seriesCount) {
-            if ($i < $filmCount)
-                $film = $contents['film'][$i] ;
-            if ($j < $seriesCount)
-                $serie = $contents['series'][$j] ;
+        else {
+            $contentCount = 0 ;
+            foreach ($contents as $content) {
+                
+                $currentLetter = strtoupper(mb_substr($content['name'], 0, 1));
+    
+                if ($currentLetter != $previousLetter) {
+                    if ($contentCount > 4) {
+                        echo "<button param=$currentLetter class='viewMoreCatalogue'>Voir Tout</button>" ;
+                    }
 
-            if ($j >= $seriesCount or ($i < $filmCount and 
-                    strcmp(strtolower($film['name']), strtolower($serie['name'])) <= 0)) {
-                $content = $film ;
-                $i += 1 ;
-            } 
-            else {
-                $content = $serie ;
-                $j += 1 ;
-            }
-            $currentLetter = mb_substr($content['name'], 0, 1);
-
-            if ($currentLetter != $previousLetter) {
-                if ($previousLetter != null) {
-                    echo "</div>" ;
+                    if ($previousLetter != null) {
+                        echo "</div>" ;
+                    }
+                    
+                    $contentCount = 0 ;
+                    echo "<div>" ;
+                    echo "<h2>" . strtoupper($currentLetter) . "</h2>" ;
+                    echo "<div class='catalogueSection'>" ;
                 }
-                echo "<div>" ;
-                echo "<h2>" . strtoupper($currentLetter) . "</h2>" ;
-                echo "<div class='catalogueSection'>" ;
+                
+                $contentCount += 1 ;
+                $previousLetter = $currentLetter ;
+                $id = $content['contentID'];
+                $contentName = $content['name'] ;
+                $imgURL = $content['posterUrl'] ;
+                showContentDiv($id, $contentName, $imgURL, $content['contentType'], $currentLetter, $contentCount, 4) ;
+    
             }
 
-            $previousLetter = $currentLetter ;
-            $id = $content['contentID'];
-            $contentName = $content['name'] ;
-            $imgURL = $content['posterUrl'] ;
-            showContentDiv($id, $contentName, $imgURL, $content['contentType']) ;
-
+            if ($contentCount > 4)
+                echo "<button param=$currentLetter class='viewMoreCatalogue'>Voir Tout</button>" ;
+            echo "</div></div>" ;
         }
-        echo "</div></div>" ;
     }
 
     function showContentByGenre(PDO $conn) {
@@ -295,36 +283,50 @@ include 'pagesOutils/connDB.php' ;
             $previousGenre = null ;
             $currentGenre = null ;
 
+            $contentCount = 0 ;
             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                 $type = $row['pk_ContentType'] ;
                 $id = $row['pk_ContentID'] ;
                 
-                $content = getContentIfMatchesName($conn, $id, $searchQuery, $type) ;
+                $content = getContentByID($conn, $id, $type) ;
                 if ($content) {
                     $hasContent = true ;
                     $genreId = $row['pk_GenreID'] ;
                     $genreStmt->bindParam(1, $genreId) ;
                     $genreStmt->execute() ;
+
                     $currentGenre = $genreStmt->fetch(PDO::FETCH_ASSOC)['genreName'] ;
                     if ($currentGenre != $previousGenre) {
+                        if ($contentCount > 4) {
+                            echo "<button param=$currentGenre class='viewMoreCatalogue'>Voir Tout</button>" ;
+                        }
+                        
                         if ($previousGenre != null) {
                             echo "</div>" ;
                         }
+
+                        $contentCount = 0 ;
                         echo "<div>" ;
                         echo "<h2>$currentGenre</h2>" ;
                         echo "<div class='catalogueSection'>" ;
                     }
-        
+                    
+                    $contentCount += 1 ;
                     $previousGenre = $currentGenre ;
                     $contentName = $content['name'] ;
                     $imgURL = $content['posterUrl'] ;
-                    showContentDiv($id, $contentName, $imgURL, $content['contentType']) ;
+                    showContentDiv($id, $contentName, $imgURL, $content['contentType'], $currentGenre, $contentCount, 4) ;
                 }
             }
         }
 
         if (!$hasContent)
             echo "<p class='no-results'>Aucun résultat trouvé pour : $searchQuery. Essayez une autre recherche.</p>";
+        else {
+            if ($contentCount > 4)
+                echo "<button param=$currentGenre class='viewMoreCatalogue'>Voir Tout</button>" ;
+            echo "</div>" ;
+        }
     }
 
     function getContentByID(PDO $conn, int $id, string $type) {
@@ -340,29 +342,16 @@ include 'pagesOutils/connDB.php' ;
         return $stmt->fetch(PDO::FETCH_ASSOC) ;
     }
 
-    function getContentIfMatchesName(PDO $conn, int $id, string $name, string $type) {
-        if (strcmp($name, "") == 0)
-            return getContentByID($conn, $id, $type) ;
+    function showContentDiv(int $id, string $contentName, string $imgURL, string $type, string $divClass, int $contentCount, int $contentLimit) {
+        if ($contentCount <= $contentLimit)
+            echo "<div class=catalogueContent>" ;
+        else
+            echo "<div class='catalogueContent $divClass invisible'>" ;
 
-        if (strcmp($type, "film") == 0)
-            $query = "SELECT * FROM film WHERE contentID = ? AND `name` LIKE CONCAT('%', LOWER(?), '%')" ;
-        else if (strcmp($type, "series") == 0)
-            $query = "SELECT * FROM series WHERE contentID = ? AND `name` LIKE CONCAT('%', LOWER(?), '%')" ;
-        $stmt = $conn->prepare($query) ;
-        $stmt->bindParam(1, $id) ;
-        $stmt->bindParam(2, $name) ;
-        $stmt->execute() ;
-
-        return $stmt->fetch(PDO::FETCH_ASSOC) ;
-    }
-
-    function showContentDiv(int $id, string $contentName, string $imgURL, string $type) {
-        echo "<div class=catalogueContent>
-                            <a href=pageContenu.php?id=$id&type=$type>
-                                <h3>$contentName</h3>
-                                <img src=$imgURL class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
-                            </a>
-                        </div>
-                    " ;
+        echo "<a href=pageContenu.php?id=$id&type=$type>" ;
+        echo "<h3>$contentName</h3>" ;
+        echo "<img src=$imgURL class=\"catalogueImages content-image\" alt=\"Image Catalogue\">" ;
+        echo "</a>" ;
+        echo "</div>" ;
     }
 ?>
