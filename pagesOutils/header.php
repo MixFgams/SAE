@@ -1,21 +1,11 @@
 <?php
 // Connexion à la base de données
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ob";
-
-try {
-    $pdo = new PDO("mysql:host=$servername;dbname=$dbname;charset=utf8", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Erreur de connexion : " . $e->getMessage());
-}
+include "connDB.php" ;
 
 // Vérifier si une recherche est effectuée
 if (isset($_GET['query']) && !empty($_GET['query'])) {
     $query = htmlspecialchars($_GET['query']);
-    $sql = "SELECT ContentID, name FROM film WHERE name LIKE :query LIMIT 10";
+    $sql = "SELECT ContentID, name, posterURL FROM film WHERE name LIKE :query LIMIT 10";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['query' => "%$query%"]);
 
@@ -24,9 +14,10 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
     // Envoyer uniquement le JSON
     header('Content-Type: application/json');
     echo json_encode($results);
-    exit; // Terminer immédiatement pour éviter tout ajout HTML
+    exit;
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="fr">

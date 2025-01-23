@@ -1,3 +1,4 @@
+
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------------------------------------------//
 document.addEventListener("DOMContentLoaded", function () {
@@ -84,13 +85,15 @@ function initScrollButtons() {
 
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------------------------------------------------------//
-document.querySelector('#createCollection').addEventListener('click', () => {
-    // Crée un nouvel élément <h1>
-    console.log("click");
-    const form = document.createElement();
-    const collectionContainer = document.querySelector('#ListeCollection');
-    collectionContainer.appendChild(form);
-});
+function creerCollection() {
+    document.querySelector('#createCollection').addEventListener('click', () => {
+        // Crée un nouvel élément <h1>
+        console.log("click");
+        const form = document.createElement();
+        const collectionContainer = document.querySelector('#ListeCollection');
+        collectionContainer.appendChild(form);
+    });
+}
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
 
@@ -101,6 +104,7 @@ const parentsAfficheRedirection = document.querySelectorAll('.recommendations-sc
 parentsAfficheRedirection.forEach(parent => {
     const enfants = parent.children;
     for (let enfant of enfants) {
+        // Gestion du clic sur la carte pour redirection
         enfant.addEventListener('click', () => {
             // Redirection vers la page cible
             const lien = 'pageContenu.php';
@@ -108,30 +112,62 @@ parentsAfficheRedirection.forEach(parent => {
             console.log(window.location.href);
             window.location.href = lien;
         });
+        // Empêcher la redirection lorsqu'on clique sur l'icône
+        const eyeIcon = enfant.querySelector('.eye-icon');
+        if (eyeIcon) {
+            eyeIcon.addEventListener('click', (event) => {
+                event.stopPropagation(); // Bloque la propagation du clic vers l'élément parent
+                console.log('Clic sur l\'icône, pas de redirection');
+            });
+        }
     }
 });
+
+const redirectionContenu = document.querySelectorAll('.content-image') ;
+redirectionContenu.forEach(image => {
+    image.addEventListener('click', () => {
+        const lien = 'pageContenu.php?=';
+        console.log(lien);
+        console.log(window.location.href);
+        window.location.href = lien;
+    })
+})
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
+const icone = document.querySelectorAll('.eye-icon');
+icone.forEach(icon => {
+    icon.addEventListener('click', (event) => {
+        // Empêcher l'action par défaut (évite le rafraîchissement ou la redirection automatique)
+        event.preventDefault();
 
+        // Récupérer l'ID du film à partir de l'attribut data-id
+        const filmId = icon.closest('.recommendation-card').getAttribute('data-id');
+
+        // Créer un lien avec le filmId dans l'URL
+        const url = `index.php?filmId=${filmId}`;
+
+        // Rediriger vers la page sans rafraîchir
+        window.location.href = url;  // Cela met à jour l'URL et charge le contenu sans un rechargement complet de la page
+    });
+});
 
 //-----------------------------------------------------------------------------------------------------------------------------------//
 //-------------------- Méthode pour afficher dynamiquement la barre de recherche              ---------------------------------------//
 //-----------------------------------------------------------------------------------------------------------------------------------//
 const searchInput = document.getElementById("searchInput");
 const suggestionsBox = document.getElementById("suggestions");
-
 searchInput.addEventListener("input", () => {
     const query = searchInput.value.trim();
-
     if (query.length > 0) {
         fetch(`pagesOutils/header.php?query=${encodeURIComponent(query)}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error("Erreur réseau");
                 }
-                return response.json();
+                return response.json(); // Lire le corps de la réponse une seule fois
             })
             .then(data => {
+                console.log(data); // Afficher les données JSON
                 suggestionsBox.innerHTML = ""; // Vider les suggestions précédentes
 
                 if (data.length > 0) {
@@ -142,7 +178,7 @@ searchInput.addEventListener("input", () => {
 
                         // Image
                         const img = document.createElement("img");
-                        img.src = 'img/afficheFilm.jpg';
+                        img.src = item.posterURL; // Utiliser l'URL depuis la base de données
                         img.alt = item.name;
                         img.classList.add("suggestion-image");
 
@@ -168,9 +204,9 @@ searchInput.addEventListener("input", () => {
                     suggestionsBox.innerHTML = "<div class='suggestion-item'>Aucun résultat</div>";
                     suggestionsBox.style.display = "none";
                 }
-
             })
             .catch(error => console.error("Erreur lors de la recherche :", error));
+
     } else {
         suggestionsBox.style.display = "none"; // Masquer la boîte si aucune requête
     }
@@ -183,6 +219,17 @@ document.addEventListener("click", (event) => {
     }
 });
 
+document.addEventListener("DOMContentLoaded", () => {
+    const searchInput = document.getElementById("searchInput");
+    const suggestionsBox = document.getElementById("suggestions");
+
+    if (searchInput && suggestionsBox) {
+        // Place ici tout le code relatif à la barre de recherche
+        console.log("Barre de recherche initialisée");
+    } else {
+        console.log("Barre de recherche non disponible sur cette page");
+    }
+});
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------//

@@ -149,7 +149,7 @@ footer p#droits-footer {
     width: 100%;
     border: 1px solid #ccc;
     background-color: white;
-    max-height: 200px;
+    max-height: 400px;
     overflow-y: auto;
     z-index: 1000;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -162,6 +162,7 @@ footer p#droits-footer {
     padding: 8px;
     cursor: pointer;
     gap: 10px; /* Espacement entre l'image et le texte */
+    border-bottom  : solid black 1px;
 }
 
 .suggestion-item:hover {
@@ -170,14 +171,14 @@ footer p#droits-footer {
 
 
 .suggestion-image {
-    width: 40px; /* Largeur de l'image */
-    height: 60px; /* Hauteur de l'image */
+    width: 35%;
     border-radius: 4px; /* Coins arrondis pour l'image */
     object-fit: cover; /* Maintenir le ratio de l'image */
 }
 
 .suggestion-text {
-    font-size: 16px;
+    font-size: 18px;
+    font-weight: bold;
     color: #333;
 }
 
@@ -303,6 +304,10 @@ input:focus, textarea:focus {
     margin-right : 5% ;
 }
 
+#info-contenu {
+    margin-left : 1% ;
+}
+
 #contenu {
     display : grid ;
     grid-template-columns: 50% 50% ;
@@ -313,11 +318,16 @@ input:focus, textarea:focus {
     color : #9B1C31 ;
 }
 
+#cadre-contenu p {
+    color : gray ;
+    text-align : right ;
+}
+
 #contenu img {
-    max-height : 100% ;
-    max-width : 100% ;
+    height : fit-content ;
+    max-width:100% ;
     padding : 5px ;
-    object-fit: cover ;
+    object-fit:cover;
 }
 
 
@@ -337,7 +347,12 @@ input:focus, textarea:focus {
     display : block ;
 }
 
-#description-grid, #checkbox-grid, #liste-commentaire, .commentaire-header {
+#description-grid {
+    display : grid ;
+    grid-template-columns: 25% 75%;
+}
+
+#checkbox-grid, #liste-commentaire, .commentaire-header {
     display:flex ;
     flex-wrap: wrap ;
     flex-direction: row ;
@@ -484,27 +499,20 @@ input:focus, textarea:focus {
     overflow: hidden;
 }
 
-.recommendations-scrollable {
-    display: flex;
-    overflow-x: scroll;
-    scroll-behavior: smooth;
-    gap: 15px;
-    padding: 10px;
-}
 
 .recommendation-card{
     width : 600px;
 }
 
-.recommendations-scrollable img{
+.recommendations-scrollable img {
     width: 24%;
     border-radius: 8px;
 }
 
-.SectionIndex img, .Collection{
+.SectionIndex img, .Collection, .catalogueImages {
     transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
 }
-.SectionIndex img:hover, .Collection:hover {
+.SectionIndex img:hover, .Collection:hover, .catalogueImages:hover {
     transform: scale(1.05);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     opacity: 0.8;
@@ -562,12 +570,72 @@ input:focus, textarea:focus {
     box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-#barreIndex {
+/*------------------Catalogue-------------------------*/
+
+#searchBarCatalogue {
+    height : fit-content ;
+}
+
+#searchBarCatalogue > input {
+    width : 80vw ;
+}
+
+#catalogue, .catalogueDisplay, #radio-list {
+    display : flex ;
+    flex-wrap : wrap ;
+    flex-direction: column; 
+}
+
+.catalogueDisplay {
+    width : 100vw ;
+}
+
+.catalogueDisplay h2 {
+    margin : 0 ;
+    margin-top : 1vw ;
+}
+
+#catalogue main {
+    display : flex ;
+    min-height : 42.5vw ;
+    flex-direction: row;
+    max-width : 95vw ;
+    margin : 1vw ;
+}
+
+#sortFilter {
+    max-height: fit-content;
+    width:25vw ;
+    max-width: 200px;
+}
+
+.catalogueContent {
+    margin : 2% ;
+    max-width : 20% ;
     text-align: center;
 }
 
-#barreIndex input {
-    width :500px;
+.catalogueContent h3 {
+    height : 12% ;  
+    margin : 1vw ;
+}
+
+.catalogueContent img {
+    border-radius: 8px ;
+}
+
+.catalogueImages {
+    max-width: 90%;
+    margin : 0 ;
+    padding : 0 ;
+    object-fit: scale-down;
+}
+
+.catalogueSection {
+    display : flex ;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin : 0 ;
 }
 
 @media (max-width: 1000px){
@@ -577,6 +645,59 @@ input:focus, textarea:focus {
         gap: 20px;
     }
 }
+
+.recommendations-scrollable {
+    display: flex;
+    overflow-x: scroll;
+    scroll-behavior: smooth;
+    gap: 15px;
+    padding: 10px;
+    position: relative; /* Important pour les enfants en absolu */
+}
+
+.recommendation-card {
+    position: relative; /* Définit une référence pour l'icône d'œil */
+    display: inline-block;
+    margin: 5px;
+}
+
+.recommendation-card img {
+    width: 200px; /* Largeur de l'image */
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Icône d'œil */
+.eye-icon {
+    position: absolute;
+    top: 10px; /* Aligner en bas à droite de l'image */
+    right: 10px;
+    background-color: rgba(0, 0, 0, 0.6); /* Fond semi-transparent */
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    z-index: 10; /* Assurez-vous qu'elle apparaît par-dessus l'image */
+}
+
+.eye-icon img {
+    width: 20px; /* Taille de l'icône */
+    height: 20px;
+    filter: invert(1); /* Si l'icône est noire, cela la rend blanche */
+}
+
+/* Animation au survol */
+.recommendation-card:hover .eye-icon {
+    transform: scale(1.1); /* L'icône grossit légèrement au survol */
+}
+
+
+
+
 
 /*------------------Profil-------------------------*/
 
@@ -700,6 +821,7 @@ h2:hover {
 
 
 /*----------------------------------------------------------*/
+
 
 
 
