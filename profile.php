@@ -176,20 +176,22 @@
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">
                         <?php
-
                         $stmt = $pdo->prepare("
-                            SELECT series.content, series.releaseDate
-                            FROM series
-                            JOIN serieswatched ON serieswatched.pk_SeriesID = series.contentID
-                            JOIN user ON user.userID = serieswatched.pk_UserID
-                            WHERE user.userID = :userID
-                            ORDER BY series.releaseDate DESC
-                            LIMIT 20
-                        ");
+                SELECT series.contentID, series.posterUrl 
+                FROM series
+                JOIN serieswatched ON serieswatched.pk_SeriesID = series.contentID
+                JOIN user ON user.userID = serieswatched.pk_UserID
+                WHERE user.userID = :userID
+                ORDER BY series.releaseDate DESC
+                LIMIT 20
+            ");
+                        $stmt->execute([':userID' => $userID]);
 
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                echo '<img src="img/afficheFilm.jpg" alt="' . htmlspecialchars($row['name']) . '">';
+                                echo '<div class="recommendation-card" data-id="' . htmlspecialchars($row['contentID']) . '">';
+                                echo '<img src="' . htmlspecialchars($row['posterUrl']) . '" alt="Série regardée">';
+                                echo '</div>';
                             }
                         } else {
                             echo '<p>Aucunes séries trouvées.</p>';
@@ -199,6 +201,7 @@
                     <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
                 </div>
             </section>
+
 
             <section class="SectionIndex">
                 <h2>Livres</h2>
