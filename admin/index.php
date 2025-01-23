@@ -3,6 +3,9 @@
 // -------------------------------------- DEFENITION DES PARAMETRES NECESSAIRES --------------------------------------
 // ----------------------------------------------------------------------------
 
+//parametres de profondeur
+$_SESSION["profondeurDossier"] = 1;
+
 // Paramètres de la base de données
 $host = 'localhost';
 $dbname = 'ob';
