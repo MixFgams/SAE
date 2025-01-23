@@ -211,7 +211,7 @@ function showRecommendedContents(PDO $conn, int $userID) {
         $stmt->execute() ;
         $contents = $stmt->fetchAll(PDO::FETCH_ASSOC) ;
         foreach ($contents as $content) {
-            if (!$contentSet[$content['name']]) {
+            if (!isset($contentSet[$content['name']]) or !$contentSet[$content['name']]) {
                 $contentInserted = true ;
                 $id = htmlspecialchars($content['contentID']) ;
                 $name = htmlspecialchars($content['name']) ;

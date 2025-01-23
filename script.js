@@ -240,4 +240,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
+//---------------------------------Boutons Voir Tout Catalogue---------------------------------------------------------------------------------//
 
+document.querySelectorAll(".viewMoreCatalogue").forEach((button) => {
+    let removerClass = button.getAttribute("param") ;
+    button.addEventListener("click", function(evt) {
+        if (removerClass !== null) {
+            document.querySelectorAll('.'+removerClass).forEach((image) => {
+                image.classList.toggle('invisible') ;
+            }) ;
+            button.classList.toggle('invisible') ;
+        }
+    })
+}) ;

@@ -22,9 +22,6 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
 <!DOCTYPE html>
 <html lang="fr">
     <head>
-        <title>header</title>
-
-
     </head>
     <header>
         <nav class="header-nav">
