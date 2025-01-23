@@ -66,6 +66,7 @@ include 'pagesOutils/connDB.php' ;
         }?>
         <?php include 'pagesOutils/footer.php'?>
         <script src="catalogue.js"></script>
+        <script src="script.js"></script>
     </body>
 </html>
 

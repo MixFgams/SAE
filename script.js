@@ -107,7 +107,7 @@ parentsAfficheRedirection.forEach(parent => {
         // Gestion du clic sur la carte pour redirection
         enfant.addEventListener('click', () => {
             // Redirection vers la page cible
-            const lien = 'pageContenu.php';
+            const lien = "pageContenu.php?" + enfant.id;
             console.log(lien);
             console.log(window.location.href);
             window.location.href = lien;
@@ -122,6 +122,12 @@ parentsAfficheRedirection.forEach(parent => {
         }
     }
 });
+
+document.querySelectorAll(".Collection").forEach(collection => {
+    collection.addEventListener("click", function() {
+        window.location.href = "collection.php?" + collection.id ;
+    })
+}) ;
 
 const redirectionContenu = document.querySelectorAll('.content-image') ;
 redirectionContenu.forEach(image => {
@@ -189,7 +195,7 @@ searchInput.addEventListener("input", () => {
 
                         // Ajout d'un événement de clic
                         suggestion.addEventListener("click", () => {
-                            window.location.href = `catalogue.php?id=${item.ContentID}`;
+                            window.location.href = `pageContenu.php?id=${item.contentID}&type=${item.contentType}`;
                         });
 
                         // Ajout de l'image et du texte au conteneur

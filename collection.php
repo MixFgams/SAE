@@ -36,11 +36,12 @@ include 'pagesOutils/connDB.php' ;
 
             $collectionName = $stmtName->fetch(PDO::FETCH_COLUMN) ;
             if ($collectionName) {
-                showCollection($pdo, $userID, $collectionID, $collectionName) ;
+                showCollection($pdo, $collectionID, $collectionName) ;
             }
         }
         ?>
     </main>
+    <script src="script.js"></script>
 </body>
 </html>
 
@@ -76,9 +77,11 @@ function showGeneralPage(PDO $conn, int $userID) {
                         <div class='scrollable-content recommendations-scrollable'>" ;
                         
         foreach ($result as $content) {
+            $id = $content['contentID'] ;
             $posterUrl = $content['posterUrl'] ;
             $contentName = $content['name'] ;
-            echo "<img src='$posterUrl' alt='$contentName'>" ;
+            $type = $content['contentType'] ;
+            echo "<img id='id=$id&type=$type' src='$posterUrl' alt='$contentName'>" ;
         }
 
         echo "</div>
@@ -89,7 +92,7 @@ function showGeneralPage(PDO $conn, int $userID) {
     echo "<button id='createCollection'>+ Créer une collection</button>" ;
 }
 
-function showCollection(PDO $conn, int $userID, int $collectionID, string $collectionName) {
+function showCollection(PDO $conn, int $collectionID, string $collectionName) {
     echo "<section><h2>$collectionName</h2>" ;
     echo "<div class='catalogueSection'>" ;
 
@@ -112,7 +115,7 @@ function showCollection(PDO $conn, int $userID, int $collectionID, string $colle
         echo "<div class=catalogueContent>
                         <a href=pageContenu.php?id=$id&type=$type>
                             <h3>$contentName</h3>
-                            <img src=$imgURL class=\"catalogueImages content-image\" alt=\"Image Catalogue\">
+                            <img src=$imgURL class=\"catalogueImages content-image\" alt=\"$contentName\">
                         </a>
                     </div>
                 " ;

@@ -46,7 +46,8 @@ if(isset($_SESSION['idUser'])) {
                     ) as res
                     LIMIT 5;" ; // Ajouter une limite pour éviter un affichage trop long ;
 
-            $stmt = $pdo->query($sql);
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute() ;
 
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
@@ -76,12 +77,17 @@ if(isset($_SESSION['idUser'])) {
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div id="ListeCollection" class="scrollable-content">
                 <?php
-                $sql = "SELECT name FROM collection ORDER BY collectionID ASC";
-                $stmt = $pdo->query($sql);
+                $sql = "SELECT collectionID, `name` FROM collection
+                        WHERE pk_userID = $userID
+                        ORDER BY collectionID ASC";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute() ;
 
                 if ($stmt->rowCount() > 0) {
                     while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        echo '<div class="Collection"><h3>' . htmlspecialchars($row['name']) . '</h3></div>';
+                        $id = $row['collectionID'] ;
+                        $type = $row['contentType'] ;
+                        echo "<div id='id=$id&type=$type' class='Collection'><h3>" . htmlspecialchars($row['name']) . "</h3></div>";
                     }
                 } else {
                     echo '<p>Aucune collection trouvée.</p>';
@@ -212,7 +218,7 @@ function showRecommendedContents(PDO $conn, int $userID) {
                 $url = htmlspecialchars($content['posterURL']) ;
                 $type = htmlspecialchars($content['contentType']) ;
 
-                echo "<img src='$url' alt='$name'>" ;
+                echo "<img id='id=$id&type=$type' src='$url' alt='$name'>" ;
                 $contentSet[$content['name']] = true ;
             }
         }

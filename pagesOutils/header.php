@@ -5,7 +5,7 @@ include "connDB.php" ;
 // Vérifier si une recherche est effectuée
 if (isset($_GET['query']) && !empty($_GET['query'])) {
     $query = htmlspecialchars($_GET['query']);
-    $sql = "SELECT ContentID, name, posterURL FROM film WHERE name LIKE :query LIMIT 10";
+    $sql = "SELECT contentID, name, posterURL, contentType FROM film WHERE name LIKE :query LIMIT 10";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['query' => "%$query%"]);
 
