@@ -37,8 +37,9 @@ try {
         <h2>Forums populaires</h2>
         <div class="forums-container">
             <?php
-            $sql = "SELECT forumTitle, description, totalSubjectNumber 
+            $sql = "SELECT forumTitle, forum.description, totalSubjectNumber, posterUrl
                 FROM forum 
+                join film on film.contentID = forum.pk_ContentID
                 ORDER BY totalSubjectNumber DESC 
                 LIMIT 5"; // Ajouter une limite pour éviter un affichage trop long
 
@@ -47,7 +48,7 @@ try {
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     echo '<div class="forum-item">';
-                    echo '<img src="img/afficheFilm.jpg" alt="Image du forum">'; // Ajouter une image par défaut
+                    echo '<img src="' . htmlspecialchars($row['posterUrl']) .'">';
                     echo '<div class="forum-description">';
                     echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
                     echo '<p>Nombre de sujets : ' . htmlspecialchars($row['totalSubjectNumber']) . '</p>'; // Ajouter les sujets

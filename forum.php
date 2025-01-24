@@ -1,5 +1,7 @@
 <?php
 session_start();
+var_dump($_SESSION['idForum']);
+
 // Vérification si la variable de session 'idForum' existe
 if (isset($_SESSION['idForum'])) {
     $forumID = $_SESSION['idForum'];
@@ -29,16 +31,19 @@ try {
 
 // Récupération des informations du forum
 function getForumInfo($pdo, $forumID) {
-    $stmt = $pdo->prepare("SELECT title, subject.description,forumTitle FROM subject join 
-                            forum on subject.pk_ForumID = forum.forumID WHERE pk_ForumID = :forumID");
+    $stmt = $pdo->prepare("SELECT title, subject.description, forumTitle 
+                           FROM subject 
+                           JOIN forum 
+                           ON subject.pk_ForumID = forum.forumID 
+                           WHERE pk_ForumID = :forumID");
     $stmt->execute([':forumID' => $forumID]);
-    return $stmt->fetch();
+    $forum = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    return $forum;
 }
 
+
 $forum = getForumInfo($pdo, $forumID);
-if (!$forum) {
-    die("Forum introuvable.");
-}
 
 // Ajout d'un nouveau message
 function addMessage($pdo, $forumID, $userID, $message) {
@@ -117,8 +122,9 @@ if (isset($_POST['like']) || isset($_POST['dislike'])) {
 // Récupération des messages
 function getMessages($pdo, $subjectID) {
     $stmt = $pdo->prepare("
-        SELECT commentID, pk_userID, commetContent, likeCount, dislikeCount 
+        SELECT commentID, pk_userID, commetContent, likeCount, dislikeCount, username
         FROM comment 
+        join user on comment.pk_UserID = user.userID
         WHERE contentID = :subjectID AND pk_ContentType = 'subject'
     ");
     $stmt->execute([':subjectID' => $subjectID]);
@@ -192,7 +198,11 @@ if (isset($_POST['publish'])) {
 <?php include 'pagesOutils/header.php'; ?>
 
 <main>
-    <h1><?php echo htmlspecialchars($forum['forumTitle']); ?></h1>
+
+    <h1><?php
+        if(!empty($forum)){
+            echo htmlspecialchars($forum['forumTitle']);
+    } ?>      </h1>
         <!-- Notifications -->
         <?php if (isset($messageConfirmation)) echo "<p class='success'>$messageConfirmation</p>"; ?>
 
@@ -247,7 +257,7 @@ if (isset($_POST['publish'])) {
                             if ($messages):
                                 foreach ($messages as $message): ?>
                                     <div class="message">
-                                        <strong>Utilisateur <?php echo htmlspecialchars($message['pk_userID']); ?></strong> :
+                                        <strong>Utilisateur <?php echo htmlspecialchars($message['username']); ?></strong> :
                                         <p><?php echo htmlspecialchars($message['commetContent']); ?></p>
                                         <form method="post">
                                             <input type="hidden" name="messageID" value="<?php echo $message['commentID']; ?>">
