@@ -202,6 +202,10 @@ footer {
     margin-top: 40px;
 }
 
+#subject {
+    border: solid black;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     main {
@@ -224,3 +228,107 @@ footer {
         width: 100%;
     }
 }
+form {
+    max-width: 100%;
+    width: auto;
+    padding: 20px;
+    padding-right: 30px;
+    border-radius: 8px;
+}
+
+form label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #333;
+}
+
+form input[type="text"],
+form textarea,
+form select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+}
+
+form input[type="text"]:focus,
+form textarea:focus,
+form select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+form button {
+    width: 50%;
+}
+
+#subject {
+    margin: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#subject h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.subject{
+    border-bottom: solid #d9641d;
+}
+
+#subject h3 {
+    font-size: 150%;
+}
+
+#subject button{
+    margin-left: auto;
+    margin-bottom: -20px;
+    margin-top: -20px;
+    width: 200px;
+}
+
+.like-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.like-button:hover {
+    background-color: #45a049;
+}
+
+.dislike-button {
+    background-color: #f44336;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.dislike-button:hover {
+    background-color: #e53935;
+}
+
+
+
+
+
+

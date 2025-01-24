@@ -141,7 +141,7 @@ footer p#droits-footer {
     border-radius: 4px;
 }
 
-.suggestions-box {
+.suggestions-box{
     display: none;
     position: absolute; /* Position relative à .search-container */
     top: calc(100% + 5px); /* Juste en dessous de l'input */
@@ -150,6 +150,21 @@ footer p#droits-footer {
     border: 1px solid #ccc;
     background-color: white;
     max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.suggestions-box-com{
+    display: none;
+    position: absolute; /* Position relative à .search-container */
+    top: calc(100% + 5px); /* Juste en dessous de l'input */
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 200px;
     overflow-y: auto;
     z-index: 1000;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
@@ -568,15 +583,22 @@ input:focus, textarea:focus {
     display: flex;
     overflow-x: scroll;
     scroll-behavior: smooth;
+    min-height: 200px;
     gap: 15px;
     padding: 10px;
     position: relative; /* Important pour les enfants en absolu */
+    align-items: center; /* Centre verticalement le texte */
 }
 
 .recommendation-card {
     position: relative; /* Définit une référence pour l'icône d'œil */
     display: inline-block;
     margin: 5px;
+}
+
+.recommendations-scrollable p{
+    margin-left: 5%;
+    text-align: center;
 }
 
 .recommendation-card img {
@@ -612,7 +634,6 @@ input:focus, textarea:focus {
 .recommendation-card:hover .eye-icon {
     transform: scale(1.1); /* L'icône grossit légèrement au survol */
 }
-
 
 
 

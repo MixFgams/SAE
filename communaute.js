@@ -12,4 +12,7 @@ document.querySelectorAll('img').forEach(img=>{
     img.addEventListener('click',()=>{
         window.location.href='profile.php';
     })
-})
+});
+
+
+

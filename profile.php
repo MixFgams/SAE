@@ -104,7 +104,7 @@
             </section>
 
             <section class="SectionIndex">
-                <h2>Film regardés</h2>
+                <h2>Films regardés</h2>
                 <div class="scrollable-container">
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">
@@ -136,7 +136,7 @@
             </section>
 
             <section class="SectionIndex">
-                <h2>Série regardées</h2>
+                <h2>Séries regardées</h2>
                 <div class="scrollable-container">
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">
@@ -160,22 +160,6 @@
                             echo '<p>Aucunes séries trouvées.</p>';
                         }
                         ?>
-                    </div>
-                    <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
-                </div>
-            </section>
-
-            <section class="SectionIndex">
-                <h2>Livres</h2>
-                <div class="scrollable-container">
-                    <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
-                    <div class="recommendations-scrollable scrollable-content">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
-                        <img src="img/naruto.jpg" alt="Image de la recommandation">
                     </div>
                     <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
                 </div>
