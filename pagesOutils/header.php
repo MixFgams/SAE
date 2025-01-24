@@ -16,31 +16,40 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
     echo json_encode($results);
     exit;
 }
+
+
+//gestion de la profondeur pour des liens correctes dans d'autre dossiers
+$profendeur = 0;
+
+if (isset($GLOBALS["profendeurDossier"])) {
+    $profendeur = $GLOBALS["profendeurDossier"];
+}
+
 ?>
+<header>
+    <nav class="header-nav">
+        <a href="<?php echo str_repeat('../', $profendeur); ?>index.php">
+            <img src="<?php echo str_repeat('../', $profendeur); ?>img/obLogo.png" alt="Logo OB">
+        </a>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Rechercher un film...">
+            <div id="suggestions" class="suggestions-box"></div>
+        </div>
+        <a href="<?php echo str_repeat('../', $profendeur); ?>index.php">Accueil</a>
+        <a href="<?php echo str_repeat('../', $profendeur); ?>communaute.php">Communauté</a>
+        <a href="<?php echo str_repeat('../', $profendeur); ?>catalogue.php">Catalogue</a>
+        <a href="<?php echo str_repeat('../', $profendeur); ?>aPropos.php">À propos</a>
 
+        <?php
+        if (isset($_SESSION["idUser"]) && $_SESSION["idUser"] != null) {
+            echo '<a href="' . str_repeat('../', $profendeur) . 'connexion.php">Deconnexion</a>';
+            // Lien vers le profil uniquement si l'utilisateur est connecté
+            echo '<a href="' . str_repeat('../', $profendeur) . 'profile.php">Votre Profil</a>';
+        } else {
+            echo '<a href="' . str_repeat('../', $profendeur) . 'connexion.php">Connexion</a>';
+        }
+        ?>
+    </nav>
+</header>
 
-<!DOCTYPE html>
-<html lang="fr">
-    <head>
-    </head>
-    <header>
-        <nav class="header-nav">
-            <a href="index.php"><img src="img/obLogo.png" alt="Logo OB"></a>
-            <div class="search-container">
-                <input type="text" id="searchInput" placeholder="Rechercher un film...">
-                <div id="suggestions" class="suggestions-box"></div>
-            </div>
-            <a href="index.php">Accueil</a>
-            <a href="communaute.php">Communauté</a>
-            <a href="catalogue.php">Catalogue</a>
-            <a href="aPropos.php">À propos</a>
-
-            <!--A mettre dans le cas ou l'utilisateur n'est pas connecté-->
-            <a href="connexion.php">Connexion</a>
-
-            <!--A mettre seulement si l'utilisateur est connecté-->
-            <a href="profile.php">Votre Profil</a>
-        </nav>
-    </header>
-</html>
 

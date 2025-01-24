@@ -1,0 +1,382 @@
+/*------------------- Styles pour le Body et les Sections -------------------*/
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #F9F9F9;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    padding: 2em;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 2em;
+}
+
+section {
+    margin-bottom: 2em;
+}
+
+/*------------------- Styles pour les Notifications -------------------*/
+.notifications {
+    background-color: #f1f1f1;
+    padding: 1em;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.notifications h2 {
+    color: #333;
+}
+
+#reportNotifications {
+    list-style-type: none;
+    padding: 0;
+}
+
+#reportNotifications li {
+    padding: 0.5em;
+    background-color: #e1e1e1;
+    margin-bottom: 0.5em;
+    border-radius: 5px;
+}
+
+/*------------------- Styles pour les Sections d'Action -------------------*/
+section h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 1em;
+}
+
+section a {
+    font-size: 1.1em;
+    color: #0066cc;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+section a:hover {
+    color: darkblue;
+}
+
+/*------------------- Styles pour les Barres de Recherche -------------------*/
+.search-bar {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    margin-bottom: 1em;
+}
+
+.search-bar input {
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 60%;
+}
+
+.search-bar button {
+    padding: 0.5em 1em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.search-bar button:hover {
+    background-color: #45a049;
+}
+
+/*-------------------Styles pour Header et Footer-------------------*/
+header, footer {
+    background-color: #BECACF;
+    color: black;
+    padding: 5px;
+    text-align: center;
+    border-radius: 10px;
+    font-family: inherit;
+}
+
+header nav, footer nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3em;
+    font-weight: bold;
+}
+
+header a, footer a {
+    color: black;
+    text-decoration: none;
+    transition: 0.5s;
+}
+
+header a:hover {
+    text-decoration: underline;
+    color: darkblue;
+    font-size: larger;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+header img, footer img {
+    width: 5em;
+    margin-right: 15px;
+}
+
+footer p#droits-footer {
+    margin: 0.5em;
+    font-style: italic;
+    font-size: 0.8em;
+}
+
+/* CSS Global (style.css) */
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 97vh;
+    margin: 0.70em;
+    font-family: 'Century Gothic', sans-serif;
+}
+
+main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    max-width: 1000px;
+    width: 100%;
+    font-family: "Century Gothic";
+}
+
+
+.signalement {
+    background-color: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 10px 0;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.signalement h3 {
+    font-size: 1.1em;
+    color: #007BFF;
+    margin-bottom: 10px;
+}
+
+.signalement p {
+    margin: 5px 0;
+}
+
+
+/* Style pour la dropbox (menu déroulant) */
+#statut {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    background-color: #f9f9f9;
+    cursor: pointer;
+    transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+#statut:hover {
+    border-color: #007BFF;
+    background-color: #e9f7fe;
+}
+
+#statut:focus {
+    outline: none;
+    border-color: #007BFF;
+    background-color: #e9f7fe;
+}
+
+button {
+    padding: 0.5em 1em;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+button:focus {
+    outline: none;
+    background-color: #45a049;
+}
+
+button[type="submit"] {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.5em 1em;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button[type="submit"]:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+button[type="submit"]:focus {
+    outline: none;
+    background-color: #45a049;
+}
+
+
+/* Table styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+td {
+    background-color: #f9f9f9;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+tr:hover {
+    background-color: #ddd;
+}
+
+td {
+    word-wrap: break-word;
+}
+
+td[colspan="4"] {
+    text-align: center;
+    font-style: italic;
+    color: #888;
+}
+
+table {
+    border-radius: 8px;
+    overflow: hidden;
+}/* Style de base pour les formulaires */
+.formulaire {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px 0;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.formulaire input[type="text"],
+.formulaire input[type="email"],
+.formulaire input[type="password"],
+.formulaire input[type="number"],
+.formulaire textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.formulaire textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+.formulaire button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.formulaire button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.formulaire button:hover {
+    background-color: #0056b3;
+}
+
+.formulaire button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+.formulaire label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+}
+
+.formulaire br {
+    margin-bottom: 10px;
+}
+
+/* Style pour le bouton de retour en haut */
+#backToTop {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: green;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;       
+    justify-content: center; 
+    align-items: center;      
+    transition-duration: 0.5s;
+}
+
+#backToTop:hover {
+    transition-duration: 0.5s;
+    background-color: darkgreen;
+}
+html {
+    scroll-behavior: smooth;
+}

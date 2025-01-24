@@ -1,3 +1,8 @@
+<?php
+    session_start();
+    include 'pagesOutils/connDB.php' ;
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -5,9 +10,6 @@
         <link rel="stylesheet" href="style.css">
     </head>
     <?php
-    session_start();
-    include 'pagesOutils/connDB.php' ;
-
     if(isset($_SESSION['idUser'])) {
         $userID = $_SESSION['idUser'];
     } else {
