@@ -13,7 +13,10 @@ include 'pagesOutils/connDB.php' ;
     <body id="catalogue">
         <?php include 'pagesOutils/header.php'?>
         <?php if (!isset($_POST['sort']) and isset($_SESSION['sort']))
-            $_POST['sort'] = $_SESSION['sort'] ;?>
+                $_POST['sort'] = $_SESSION['sort'] ;
+            else if (!isset($_SESSION['sort'])) {
+                $_POST['sort'] = "type" ;
+            } ?>  
         <section>
             <form method="GET" action="" id="searchBarCatalogue">
                 <input type="text" name="searchBarCatalogue" placeholder="Rechercher un contenu">
@@ -46,19 +49,23 @@ include 'pagesOutils/connDB.php' ;
             </section>
             <section class="catalogueDisplay">
                 <?php 
-                switch($_POST['sort']) {
-                    case "type":
-                        showContentsByType($pdo) ; 
-                        break ;
-                    case "alphabet":
-                        showContentsByCharacter($pdo) ;
-                        break ;
-                    case "genre":
-                        showContentByGenre($pdo) ;
-                        break ;
-                    default:
-                        showContentsByType($pdo) ; 
-                    }?>
+                if (isset($_POST['sort'])) {
+                    switch($_POST['sort']) {
+                        case "type":
+                            showContentsByType($pdo) ; 
+                            break ;
+                        case "alphabet":
+                            showContentsByCharacter($pdo) ;
+                            break ;
+                        case "genre":
+                            showContentByGenre($pdo) ;
+                            break ;
+                    }
+                } 
+
+                else {
+                    showContentsByType($pdo) ; 
+                }?>
             </section>
         </main>
         <?php if (isset($_POST['sort'])) {
@@ -107,22 +114,27 @@ include 'pagesOutils/connDB.php' ;
     }
 
     function getContentsLike(PDO $conn, string $name) {
-        if ($name == "")
+        if ($name === "")
             return getAllContents($conn) ;
 
-        $sql = "SELECT contentID, `name`, posterUrl, contentType film
+        $res = [] ;
+        $sql = "SELECT contentID, `name`, posterUrl, contentType FROM film
+                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')
                 ORDER BY `name` ASC" ;
 
         $stmt = $conn->prepare($sql) ;
+        $stmt->bindParam(1, $name) ;
         $stmt->execute() ;
         
         if ($stmt->rowCount() > 0)
             $res['film'] = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-        $sql = "SELECT contentID, `name`, posterUrl, contentType series
+        $sql = "SELECT contentID, `name`, posterUrl, contentType FROM series
+                WHERE LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')
                 ORDER BY `name` ASC" ; 
-                
+               
         $stmt = $conn->prepare($sql) ;
+        $stmt->bindParam(1, $name) ;
         $stmt->execute() ;
         
         if ($stmt->rowCount() > 0)
@@ -289,7 +301,7 @@ include 'pagesOutils/connDB.php' ;
                 $type = $row['pk_ContentType'] ;
                 $id = $row['pk_ContentID'] ;
                 
-                $content = getContentByID($conn, $id, $type) ;
+                $content = getContentByIDIfNameMatches($conn, $id, $type, $searchQuery) ;
                 if ($content) {
                     $hasContent = true ;
                     $genreId = $row['pk_GenreID'] ;
@@ -339,6 +351,21 @@ include 'pagesOutils/connDB.php' ;
 
         $stmt = $conn->prepare($query) ;
         $stmt->bindParam(1, $id) ;
+        $stmt->execute() ;
+        return $stmt->fetch(PDO::FETCH_ASSOC) ;
+    }
+
+    function getContentByIDIfNameMatches(PDO $conn, int $id, string $type, string $name) {
+        if ($name === "")
+            return getContentByID($conn, $id, $type) ;
+        if (strcmp($type, "film") == 0)
+            $query = "SELECT * FROM film WHERE contentID = ? AND LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')" ;
+        else if (strcmp($type, "series") == 0)
+            $query = "SELECT * FROM series WHERE contentID = ? AND LOWER(`name`) LIKE CONCAT('%', LOWER(?), '%')" ;
+
+        $stmt = $conn->prepare($query) ;
+        $stmt->bindParam(1, $id) ;
+        $stmt->bindParam(2, $name) ;
         $stmt->execute() ;
         return $stmt->fetch(PDO::FETCH_ASSOC) ;
     }

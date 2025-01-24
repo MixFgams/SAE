@@ -11,7 +11,6 @@
 </head>
 <body>
 <?php
-session_start() ;
 include 'pagesOutils/header.php';
 include 'pagesOutils/connDB.php' ;
 
