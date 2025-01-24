@@ -52,7 +52,7 @@ if (isset($GLOBALS["profendeurDossier"])) {
 
         <?php
         if (isset($_SESSION["idUser"]) && $_SESSION["idUser"] != null) {
-            echo '<a href="' . str_repeat('../', $profendeur) . 'deconnexion.php">Deconnexion</a>';
+            echo '<a href="' . str_repeat('../', $profendeur) . 'connexion.php">Deconnexion</a>';
             // Lien vers le profil uniquement si l'utilisateur est connecté
             echo '<a href="' . str_repeat('../', $profendeur) . 'profile.php">Votre Profil</a>';
         } else {

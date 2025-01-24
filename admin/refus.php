@@ -1,7 +1,8 @@
-<?php
 
+<?php
+session_start();
 //parametres de profondeur
-$_SESSION["profendeurDossier"] = 1;
+$GLOBALS["profendeurDossier"] = 1;
 
 ?>
 

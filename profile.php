@@ -1,3 +1,7 @@
+<?php
+    session_start();
+?>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -7,9 +11,8 @@
         <script src="script.js"></script>
     </head>
     <?php
-    session_start();
-    if(isset($_SESSION['userID'])) {
-        $userID = $_SESSION['userID'];
+    if(isset($_SESSION['idUser'])) {
+        $userID = $_SESSION['idUser'];
     } else {
         $userID = 1;
     }

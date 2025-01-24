@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Autorisation des admins
-if(!isset($_SESSION["idUser"]) || $_SESSION["idUser"] != "admin"){
+if(!isset($_SESSION["idUser"]) || $_SESSION["userType"] != "admin"){
     header('Location: refus.php');
     exit;
 }

@@ -2,8 +2,8 @@
 // Gestion de la profondeur pour des liens corrects dans d'autres dossiers
 $profendeur = 0;
 
-if (isset($_SESSION["profendeurDossier"])) {
-    $profendeur = $_SESSION["profendeurDossier"];
+if (isset($GLOBALS["profendeurDossier"])) {
+    $profendeur = $GLOBALS["profendeurDossier"];
 }
 ?>
 
@@ -18,7 +18,7 @@ if (isset($_SESSION["profendeurDossier"])) {
         
         <?php
         if (isset($_SESSION["idUser"]) && $_SESSION["idUser"] != null) {
-            echo '<a href="' . str_repeat("../", $profendeur) . 'deconnexion.php">Deconnexion</a>';
+            echo '<a href="' . str_repeat("../", $profendeur) . 'connexion.php">Deconnexion</a>';
         } else {
             echo '<a href="' . str_repeat("../", $profendeur) . 'connexion.php">Connexion</a>';
         }
