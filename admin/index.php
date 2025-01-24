@@ -1,4 +1,13 @@
 <?php
+session_start();
+// Autorisation des admins
+if(!isset($_SESSION["idUser"]) || $_SESSION["idUser"] != "admin"){
+    header('Location: refus.php');
+    exit;
+}
+
+
+
 // ----------------------------------------------------------------------------
 // -------------------------------------- DEFENITION DES PARAMETRES NECESSAIRES --------------------------------------
 // ----------------------------------------------------------------------------
@@ -7,7 +16,7 @@
 $GLOBALS['console'] = "";
 
 //parametres de profondeur
-$_SESSION["profendeurDossier"] = 1;
+$GLOBALS["profendeurDossier"] = 1;
 
 // Paramètres de la base de données
 $host = 'localhost';

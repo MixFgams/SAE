@@ -31,8 +31,8 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
 //gestion de la profondeur pour des liens correctes dans d'autre dossiers
 $profendeur = 0;
 
-if (isset($_SESSION["profendeurDossier"])) {
-    $profendeur = $_SESSION["profendeurDossier"];
+if (isset($GLOBALS["profendeurDossier"])) {
+    $profendeur = $GLOBALS["profendeurDossier"];
 }
 
 ?>
