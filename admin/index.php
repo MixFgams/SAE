@@ -455,38 +455,47 @@ function returnIDByName($pdo, string $table, string $column, string $name): ?int
  */
 function importFilm(string $BaseUrl, array|string $token, $pdo, int $movieID): bool {
     try {
-        // cURL pour récupérer les informations du film demandé -----
+        // cURL pour récupérer les informations du film demandé
         $movieInfoUrl = $BaseUrl . "movies/" . $movieID . "/extended";
         $movieInformations = fetchDataFromApi($movieInfoUrl, $token);
 
         $lang1 = "fra"; // traduction des infos du film
         $lang2 = "eng"; // sinon en anglais
 
-        // récupérations des informations du film
-        $runtime = $movieInformations["data"]["runtime"];
-        $releaseDate = $movieInformations["data"]["first_release"]["date"];
-        $posterUrl = $movieInformations["data"]["image"];
+        // Vérification si les informations du film sont présentes
+        if (isset($movieInformations["data"])) {
+            $runtime = isset($movieInformations["data"]["runtime"]) ? $movieInformations["data"]["runtime"] : null;
+            $releaseDate = isset($movieInformations["data"]["first_release"]["date"]) ? $movieInformations["data"]["first_release"]["date"] : null;
+            $posterUrl = isset($movieInformations["data"]["image"]) ? $movieInformations["data"]["image"] : null;
+        } else {
+            $GLOBALS['console'] .= "Aucune donnée disponible pour le film ID $movieID.\n";
+            return false;
+        }
 
-        if (in_array($lang1, $movieInformations["data"]["nameTranslations"])) {
+        // Vérification des traductions disponibles
+        if (isset($movieInformations["data"]["nameTranslations"])) {
+            if (in_array($lang1, $movieInformations["data"]["nameTranslations"])) {
+                // cURL pour récupérer les informations traduites du film demandé
+                $movieTransUrl = $BaseUrl . "movies/" . $movieID . "/translations" . "/" . $lang1;
+                $movieTranslate = fetchDataFromApi($movieTransUrl, $token);
 
-            // cURL pour récupérer les informations traduites du film demandé -----
-            $movieTransUrl = $BaseUrl . "movies/" . $movieID . "/translations" . "/" . $lang1;
-            $movieTranslate = fetchDataFromApi($movieTransUrl, $token);
+                $name = isset($movieTranslate["data"]["name"]) ? $movieTranslate["data"]["name"] : "Nom non disponible";
+                $description = isset($movieTranslate["data"]["overview"]) ? $movieTranslate["data"]["overview"] : "Description non disponible";
 
-            $name = $movieTranslate["data"]["name"];
-            $description = $movieTranslate["data"]["overview"];
+            } elseif (in_array($lang2, $movieInformations["data"]["nameTranslations"])) {
+                // cURL pour récupérer les informations traduites du film demandé
+                $movieTransUrl = $BaseUrl . "movies/" . $movieID . "/translations" . "/" . $lang2;
+                $movieTranslate = fetchDataFromApi($movieTransUrl, $token);
 
-        } elseif (in_array($lang2, $movieInformations["data"]["nameTranslations"])) {
-            // ----- cURL pour récupérer les informations traduites du film demandé -----
-            $movieTransUrl = $BaseUrl . "movies/" . $movieID . "/translations" . "/" . $lang2;
-            $movieTranslate = fetchDataFromApi($movieTransUrl, $token);
-
-            $name = $movieInformations["data"]["name"];
-            $description = $movieTranslate["data"]["overview"];
-
-        } else { // attribution du nom et description si la traduction française et anglaise ne sont pas disponibles
-            $name = $movieInformations["data"]["name"];
-            $description = "description non disponible";
+                $name = isset($movieInformations["data"]["name"]) ? $movieInformations["data"]["name"] : "Nom non disponible";
+                $description = isset($movieTranslate["data"]["overview"]) ? $movieTranslate["data"]["overview"] : "Description non disponible";
+            } else {
+                $name = isset($movieInformations["data"]["name"]) ? $movieInformations["data"]["name"] : "Nom non disponible";
+                $description = "Description non disponible";
+            }
+        } else {
+            $name = isset($movieInformations["data"]["name"]) ? $movieInformations["data"]["name"] : "Nom non disponible";
+            $description = "Description non disponible";
         }
 
         // Vérification si le film existe déjà dans la base de données
@@ -496,6 +505,7 @@ function importFilm(string $BaseUrl, array|string $token, $pdo, int $movieID): b
 
         if ($exists > 0) {
             // Si le film existe déjà, on ne fait pas l'insertion
+            $GLOBALS['console'] .= "Le film '$name' existe déjà dans la base de données.\n";
             return false;
         }
 
@@ -514,133 +524,143 @@ function importFilm(string $BaseUrl, array|string $token, $pdo, int $movieID): b
         $movieIDdb = $pdo->lastInsertId();
 
         // Insertion des productions
-        foreach ($movieInformations["data"]["companies"]["production"] as $prodCompany) {
-            if (is_null($prodCompany["name"])) {
-                continue; // Si la production est null, passer à la valeur suivante
-            }
+        if (isset($movieInformations["data"]["companies"]["production"])) {
+            foreach ($movieInformations["data"]["companies"]["production"] as $prodCompany) {
+                if (isset($prodCompany["name"]) && !is_null($prodCompany["name"])) {
+                    productionInDB($BaseUrl, $token, $pdo, $prodCompany["id"]);
 
-            productionInDB($BaseUrl, $token, $pdo, $prodCompany["id"]);
+                    // Vérification si l'association existe déjà
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM productioncontentassociation WHERE pk_ContentID = :contentID AND pk_ProductionID = :productionID");
+                    $stmt->execute([
+                        ":contentID" => $movieIDdb,
+                        ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"])
+                    ]);
+                    $exists = $stmt->fetchColumn();
 
-            // Vérification si l'association existe déjà
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM productioncontentassociation WHERE pk_ContentID = :contentID AND pk_ProductionID = :productionID");
-            $stmt->execute([
-                ":contentID" => $movieIDdb,
-                ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"])
-            ]);
-            $exists = $stmt->fetchColumn();
-
-            if ($exists == 0) {
-                // Si l'association n'existe pas, on insère
-                $stmt = $pdo->prepare("INSERT INTO productioncontentassociation (pk_ContentID, pk_ContentType, pk_ProductionID) VALUES (:contentID, :ContentType, :productionID)");
-                $stmt->execute([
-                    ":contentID" => $movieIDdb,
-                    ":ContentType" => "film",
-                    ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"])
-                ]);
+                    if ($exists == 0) {
+                        // Si l'association n'existe pas, on insère
+                        $stmt = $pdo->prepare("INSERT INTO productioncontentassociation (pk_ContentID, pk_ContentType, pk_ProductionID) VALUES (:contentID, :ContentType, :productionID)");
+                        $stmt->execute([
+                            ":contentID" => $movieIDdb,
+                            ":ContentType" => "film",
+                            ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"])
+                        ]);
+                    }
+                }
             }
         }
 
         // Insertion des genres
-        foreach ($movieInformations["data"]["genres"] as $genre) {
-            if (is_null($genre["name"])) {
-                continue; // Si le genre est null, passer à la valeur suivante
-            }
+        if (isset($movieInformations["data"]["genres"])) {
+            foreach ($movieInformations["data"]["genres"] as $genre) {
+                if (isset($genre["name"]) && !is_null($genre["name"])) {
+                    // Vérification si l'association existe déjà
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM genecontentassociation WHERE pk_ContentID = :contentID AND pk_GenreID = :genreID AND pk_ContentType = :contentType");
+                    $stmt->execute([
+                        ":contentID" => $movieIDdb,
+                        ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
+                        ":contentType" => "film"
+                    ]);
+                    $exists = $stmt->fetchColumn();
 
-            // Vérification si l'association existe déjà
-            $stmt = $pdo->prepare("SELECT COUNT(*) FROM genecontentassociation WHERE pk_ContentID = :contentID AND pk_GenreID = :genreID AND pk_ContentType = :contentType");
-            $stmt->execute([
-                ":contentID" => $movieIDdb,
-                ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
-                ":contentType" => "film"
-            ]);
-            $exists = $stmt->fetchColumn();
-
-            if ($exists == 0) {
-                // Si l'association n'existe pas, on insère
-                $stmt = $pdo->prepare("INSERT INTO genecontentassociation (pk_ContentID, pk_GenreID, pk_ContentType) VALUES (:contentID, :genreID, :contentType)");
-                $stmt->execute([
-                    ":contentID" => $movieIDdb,
-                    ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
-                    ":contentType" => "film"
-                ]);
+                    if ($exists == 0) {
+                        // Si l'association n'existe pas, on insère
+                        $stmt = $pdo->prepare("INSERT INTO genecontentassociation (pk_ContentID, pk_GenreID, pk_ContentType) VALUES (:contentID, :genreID, :contentType)");
+                        $stmt->execute([
+                            ":contentID" => $movieIDdb,
+                            ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
+                            ":contentType" => "film"
+                        ]);
+                    }
+                }
             }
         }
 
         // Insertion des personnages
-        foreach ($movieInformations["data"]["characters"] as $character) {
-            $characterName = characterInDB($BaseUrl, $token, $pdo, $character["peopleId"]);
-            // Si l'association n'existe pas, on insère
-            $stmt = $pdo->prepare("INSERT INTO charactercontentassociation (pk_CharacterID, pk_ContentID, characterType, pk_ContentType) VALUES (:characterID, :contentID, :characterType, :ContentType)");
-            $stmt->execute([
-                ":characterID" => returnIDByName($pdo, "characterdb", "name", $characterName),
-                ":contentID" => $movieIDdb,
-                ":characterType" => $character["peopleType"],
-                ":ContentType" => "film"
-            ]);
+        if (isset($movieInformations["data"]["characters"])) {
+            foreach ($movieInformations["data"]["characters"] as $character) {
+                if (isset($character["peopleId"])) {
+                    $characterName = characterInDB($BaseUrl, $token, $pdo, $character["peopleId"]);
+                    // Si l'association n'existe pas, on insère
+                    $stmt = $pdo->prepare("INSERT INTO charactercontentassociation (pk_CharacterID, pk_ContentID, characterType, pk_ContentType) VALUES (:characterID, :contentID, :characterType, :ContentType)");
+                    $stmt->execute([
+                        ":characterID" => returnIDByName($pdo, "characterdb", "name", $characterName),
+                        ":contentID" => $movieIDdb,
+                        ":characterType" => $character["peopleType"],
+                        ":ContentType" => "film"
+                    ]);
+                }
+            }
         }
+
+        // Success message
+        $GLOBALS['console'] .= "Film '$name' importé avec succès.\n";
 
         return true;
 
     } catch (RuntimeException $e) {
-        $GLOBALS['console'].= "Erreur lors de l'importation du film : " . $e->getMessage();
+        $GLOBALS['console'] .= "Erreur lors de l'importation du film : " . $e->getMessage() . "\n";
         return false;
     }
 }
 
 
-function importSeries(string $BaseUrl, array|string $token, $pdo, int $seriesID){
-    try{
-        // cURL pour récupérer les informations du film demandé -----
+
+
+function importSeries(string $BaseUrl, array|string $token, $pdo, int $seriesID) {
+    try {
+        // cURL pour récupérer les informations de la série demandée
         $seriesInfoUrl = $BaseUrl . "series/" . $seriesID . "/extended";
         $seriesInformations = fetchDataFromApi($seriesInfoUrl, $token);
 
-        if($seriesInformations["status"] == "failure"){
+        if (isset($seriesInformations["status"]) && $seriesInformations["status"] == "failure") {
+            $GLOBALS['console'] .= "Erreur : La série n'a pas pu être récupérée. Statut: échec.\n";
             return false;
         }
-        $lang1 = "fra"; // traduction des infos du film
+
+        $lang1 = "fra"; // traduction des infos de la série
         $lang2 = "eng"; // sinon en anglais
 
-        // récupérations des informations du film
-        $year = $seriesInformations["data"]["year"];
-        $status = $seriesInformations["status"];
-        $releaseDate = DateTime::createFromFormat('Y-m-d', datetime: (int)$year . '-01-01');
-        $releaseDateString = $releaseDate->format('Y-m-d');
-        $posterUrl = $seriesInformations["data"]["image"];
+        // récupérations des informations de la série
+        $year = isset($seriesInformations["data"]["year"]) ? $seriesInformations["data"]["year"] : null;
+        $status = isset($seriesInformations["status"]) ? $seriesInformations["status"] : null;
+        $releaseDate = $year ? DateTime::createFromFormat('Y-m-d', (int)$year . '-01-01') : null;
+        $releaseDateString = $releaseDate ? $releaseDate->format('Y-m-d') : null;
+        $posterUrl = isset($seriesInformations["data"]["image"]) ? $seriesInformations["data"]["image"] : null;
 
-        if (in_array($lang1, $seriesInformations["data"]["nameTranslations"])) {
-
-            // cURL pour récupérer les informations traduites du series demandé -----
+        // Vérification des traductions disponibles
+        if (isset($seriesInformations["data"]["nameTranslations"]) && in_array($lang1, $seriesInformations["data"]["nameTranslations"])) {
+            // cURL pour récupérer les informations traduites de la série
             $seriesTransUrl = $BaseUrl . "series/" . $seriesID . "/translations" . "/" . $lang1;
             $seriesTranslate = fetchDataFromApi($seriesTransUrl, $token);
 
-            $name = $seriesTranslate["data"]["name"];
-            $description = $seriesTranslate["data"]["overview"];
-
-        } elseif (in_array($lang2, $seriesInformations["data"]["nameTranslations"])) {
-            // ----- cURL pour récupérer les informations traduites du series demandé -----
+            $name = isset($seriesTranslate["data"]["name"]) ? $seriesTranslate["data"]["name"] : "Nom non disponible";
+            $description = isset($seriesTranslate["data"]["overview"]) ? $seriesTranslate["data"]["overview"] : "Description non disponible";
+        } elseif (isset($seriesInformations["data"]["nameTranslations"]) && in_array($lang2, $seriesInformations["data"]["nameTranslations"])) {
+            // cURL pour récupérer les informations traduites de la série
             $seriesTransUrl = $BaseUrl . "series/" . $seriesID . "/translations" . "/" . $lang2;
             $seriesTranslate = fetchDataFromApi($seriesTransUrl, $token);
 
-            $name = $seriesInformations["data"]["name"];
-            $description = $seriesTranslate["data"]["overview"];
-
-        } else { // attribution du nom et description si la traduction française et anglaise ne sont pas disponibles
-            $name = $seriesInformations["data"]["name"];
-            $description = "description non disponible";
+            $name = isset($seriesInformations["data"]["name"]) ? $seriesInformations["data"]["name"] : "Nom non disponible";
+            $description = isset($seriesTranslate["data"]["overview"]) ? $seriesTranslate["data"]["overview"] : "Description non disponible";
+        } else {
+            $name = isset($seriesInformations["data"]["name"]) ? $seriesInformations["data"]["name"] : "Nom non disponible";
+            $description = "Description non disponible";
         }
 
-        // Vérification si la series existe déjà dans la base de données
+        // Vérification si la série existe déjà dans la base de données
         $stmt = $pdo->prepare("SELECT COUNT(*) FROM series WHERE name = :name");
         $stmt->execute([":name" => $name]);
         $exists = $stmt->fetchColumn();
 
         if ($exists > 0) {
-            // Si la series existe déjà, on ne fait pas l'insertion
+            // Si la série existe déjà, on ne fait pas l'insertion
+            $GLOBALS['console'] .= "La série '$name' existe déjà dans la base de données.\n";
             return false;
         }
 
-        // Insertion de la series
-        $stmt = $pdo->prepare("INSERT INTO series(name, description, releaseDate, posterUrl,status) 
+        // Insertion de la série
+        $stmt = $pdo->prepare("INSERT INTO series(name, description, releaseDate, posterUrl, status) 
             VALUES (:name, :description, :releaseDate, :posterUrl, :status)");
 
         $stmt->execute([
@@ -652,86 +672,94 @@ function importSeries(string $BaseUrl, array|string $token, $pdo, int $seriesID)
         ]);
 
         $seriesIDdb = $pdo->lastInsertId();
+        $GLOBALS['console'] .= "Série '$name' insérée avec succès.\n";
 
         // Insertion des productions
-        foreach ($seriesInformations["data"]["companies"] as $prodCompany) {
-            if($prodCompany["companyType"]["companyTypeName"] == "Production Company"){
-                if (is_null($prodCompany["name"])) {
-                    continue; // Si la production est null, passer à la valeur suivante
-                }
+        if (isset($seriesInformations["data"]["companies"])) {
+            foreach ($seriesInformations["data"]["companies"] as $prodCompany) {
+                if (isset($prodCompany["companyType"]["companyTypeName"]) && $prodCompany["companyType"]["companyTypeName"] == "Production Company") {
+                    if (isset($prodCompany["name"]) && !is_null($prodCompany["name"])) {
+                        productionInDB($BaseUrl, $token, $pdo, $prodCompany["id"]);
 
-                productionInDB($BaseUrl, $token, $pdo, $prodCompany["id"]);
+                        // Vérification si l'association existe déjà
+                        $stmt = $pdo->prepare("SELECT COUNT(*) FROM productioncontentassociation WHERE pk_ContentID = :contentID AND pk_ProductionID = :productionID AND pk_ContentType = :contentType");
+                        $stmt->execute([
+                            ":contentID" => $seriesIDdb,
+                            ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"]),
+                            ":contentType" => "series"
+                        ]);
+                        $exists = $stmt->fetchColumn();
 
-                // Vérification si l'association existe déjà
-                $stmt = $pdo->prepare("SELECT COUNT(*) FROM productioncontentassociation WHERE pk_ContentID = :contentID AND pk_ProductionID = :productionID AND pk_ContentType = :contentType");
-                $stmt->execute([
-                    ":contentID" => $seriesIDdb,
-                    ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"]),
-                    ":contentType" => "series"
-                ]);
-                $exists = $stmt->fetchColumn();
-
-                if ($exists == 0) {
-                    // Si l'association n'existe pas, on insère
-                    $stmt = $pdo->prepare("INSERT INTO productioncontentassociation (pk_ContentID, pk_ContentType, pk_ProductionID) VALUES (:contentID, :ContentType, :productionID)");
-                    $stmt->execute([
-                        ":contentID" => $seriesIDdb,
-                        ":ContentType" => "series",
-                        ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"])
-                    ]);
+                        if ($exists == 0) {
+                            // Si l'association n'existe pas, on insère
+                            $stmt = $pdo->prepare("INSERT INTO productioncontentassociation (pk_ContentID, pk_ContentType, pk_ProductionID) VALUES (:contentID, :ContentType, :productionID)");
+                            $stmt->execute([
+                                ":contentID" => $seriesIDdb,
+                                ":ContentType" => "series",
+                                ":productionID" => returnIDByName($pdo, "production", "name", $prodCompany["name"])
+                            ]);
+                            $GLOBALS['console'] .= "Production '$prodCompany[name]' associée à la série '$name'.\n";
+                        }
+                    }
                 }
             }
+        }
 
-            // Insertion des genres
+        // Insertion des genres
+        if (isset($seriesInformations["data"]["genres"])) {
             foreach ($seriesInformations["data"]["genres"] as $genre) {
-                if (is_null($genre["name"])) {
-                    continue; // Si le genre est null, passer à la valeur suivante
-                }
-
-                // Vérification si l'association existe déjà
-                $stmt = $pdo->prepare("SELECT COUNT(*) FROM genecontentassociation WHERE pk_ContentID = :contentID AND pk_GenreID = :genreID AND pk_ContentType = :contentType");
-                $stmt->execute([
-                    ":contentID" => $seriesIDdb,
-                    ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
-                    ":contentType" => "series"
-                ]);
-                $exists = $stmt->fetchColumn();
-
-                if ($exists == 0) {
-                    // Si l'association n'existe pas, on insère
-                    $stmt = $pdo->prepare("INSERT INTO genecontentassociation (pk_ContentID, pk_GenreID, pk_ContentType) VALUES (:contentID, :genreID, :contentType)");
+                if (isset($genre["name"]) && !is_null($genre["name"])) {
+                    // Vérification si l'association existe déjà
+                    $stmt = $pdo->prepare("SELECT COUNT(*) FROM genecontentassociation WHERE pk_ContentID = :contentID AND pk_GenreID = :genreID AND pk_ContentType = :contentType");
                     $stmt->execute([
                         ":contentID" => $seriesIDdb,
                         ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
                         ":contentType" => "series"
                     ]);
+                    $exists = $stmt->fetchColumn();
+
+                    if ($exists == 0) {
+                        // Si l'association n'existe pas, on insère
+                        $stmt = $pdo->prepare("INSERT INTO genecontentassociation (pk_ContentID, pk_GenreID, pk_ContentType) VALUES (:contentID, :genreID, :contentType)");
+                        $stmt->execute([
+                            ":contentID" => $seriesIDdb,
+                            ":genreID" => returnIDByName($pdo, "genre", "genreName", $genre["name"]),
+                            ":contentType" => "series"
+                        ]);
+                        $GLOBALS['console'] .= "Genre '$genre[name]' associé à la série '$name'.\n";
+                    }
                 }
             }
-
-            // Insertion des personnages
-            foreach ($seriesInformations["data"]["characters"] as $character) {
-                $characterName = characterInDB($BaseUrl, $token, $pdo, $character["peopleId"]);
-
-                // Si l'association n'existe pas, on insère
-                $stmt = $pdo->prepare("INSERT INTO charactercontentassociation (pk_CharacterID, pk_ContentID, characterType, pk_ContentType) VALUES (:characterID, :contentID, :characterType, :ContentType)");
-                $stmt->execute([
-                    ":characterID" => returnIDByName($pdo, "characterdb", "name", $characterName),
-                    ":contentID" => $seriesIDdb,
-                    ":characterType" => $character["peopleType"],
-                    ":ContentType" => "series"
-                ]);
-            }
-
-
-
         }
 
+        // Insertion des personnages
+        if (isset($seriesInformations["data"]["characters"])) {
+            foreach ($seriesInformations["data"]["characters"] as $character) {
+                if (isset($character["peopleId"])) {
+                    $characterName = characterInDB($BaseUrl, $token, $pdo, $character["peopleId"]);
 
-    }catch (RuntimeException $e) {
-        $GLOBALS['console'].= "Erreur lors de l'importation de la series : " . $e->getMessage();
+                    // Si l'association n'existe pas, on insère
+                    $stmt = $pdo->prepare("INSERT INTO charactercontentassociation (pk_CharacterID, pk_ContentID, characterType, pk_ContentType) VALUES (:characterID, :contentID, :characterType, :ContentType)");
+                    $stmt->execute([
+                        ":characterID" => returnIDByName($pdo, "characterdb", "name", $characterName),
+                        ":contentID" => $seriesIDdb,
+                        ":characterType" => isset($character["peopleType"]) ? $character["peopleType"] : null,
+                        ":ContentType" => "series"
+                    ]);
+                    $GLOBALS['console'] .= "Personnage '$characterName' associé à la série '$name'.\n";
+                }
+            }
+        }
+
+        return true;
+
+    } catch (RuntimeException $e) {
+        $GLOBALS['console'] .= "Erreur lors de l'importation de la série : " . $e->getMessage() . "\n";
         return false;
     }
 }
+
+
 
 // -------------------------------------- fin d insertion de table et films et series --------------------------------------
 
@@ -1129,7 +1157,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <a href="#GUtilisateurs">Gestion des utilisateurs</a>
             <a href="#GForums">Gestion des forums</a>
             <a href="#ajoutFS">Importation des films et séries</a>
-            <a href="index.php">Quittez le mode administrateur</a>
+            <a href="../index.php">Quittez le mode administrateur</a>
         </nav>
     </header>
 
@@ -1327,7 +1355,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <section id="ajoutFS">
                 <H2>Ajout de film ou/et série</H2>
                 <form method="POST" class="formulaire">
-                    <input type="text" name="idContent" placeholder="Entrez l'id du contenu voulu" required>
+                    <input type="number" name="idContent" placeholder="Entrez l'id du contenu voulu" required>
                     
                     <!-- Drop-down pour choisir entre Film ou Série -->
                     <select name="contentType" id="statut" required>

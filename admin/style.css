@@ -302,6 +302,7 @@ table {
 .formulaire input[type="text"],
 .formulaire input[type="email"],
 .formulaire input[type="password"],
+.formulaire input[type="number"],
 .formulaire textarea {
     width: calc(100% - 20px);
     padding: 10px;
