@@ -4,7 +4,7 @@
 // ----------------------------------------------------------------------------
 
 // Initialiser la variable console pour stocker les messages
-$console = "";
+$GLOBALS['console'] = "";
 
 //parametres de profondeur
 $_SESSION["profendeurDossier"] = 1;
@@ -72,7 +72,7 @@ function generateToken(string $BaseUrl, string $ApiKey): array|string{
     $response = curl_exec($curl);
 
     if (curl_errno($curl)) {
-        echo "Erreur cURL : " . curl_error($curl);
+        $GLOBALS['console'] .= "Erreur cURL : " . curl_error($curl);
         return $token;
     }
 
@@ -84,11 +84,11 @@ function generateToken(string $BaseUrl, string $ApiKey): array|string{
             "token" => $decodedResponse['data']['token'],
             "date" => date("Y-m-d H:i:s")
         ];
-        echo "Token : " . $token["token"] . "\n";
-        echo "Date de création : " . $token["date"] . "\n";
+        $GLOBALS['console'].= "Token : " . $token["token"] . "\n";
+        $GLOBALS['console'].= "Date de création : " . $token["date"] . "\n";
         return $token;
     } else {
-        echo "Erreur : Impossible de générer le token. Réponse API : " . $response;
+        $GLOBALS['console'].= "Erreur : Impossible de générer le token. Réponse API : " . $response;
         return null;
     }
 }
@@ -582,7 +582,7 @@ function importFilm(string $BaseUrl, array|string $token, $pdo, int $movieID): b
         return true;
 
     } catch (RuntimeException $e) {
-        echo "Erreur lors de l'importation du film : " . $e->getMessage();
+        $GLOBALS['console'].= "Erreur lors de l'importation du film : " . $e->getMessage();
         return false;
     }
 }
@@ -728,14 +728,14 @@ function importSeries(string $BaseUrl, array|string $token, $pdo, int $seriesID)
 
 
     }catch (RuntimeException $e) {
-        echo "Erreur lors de l'importation de la series : " . $e->getMessage();
+        $GLOBALS['console'].= "Erreur lors de l'importation de la series : " . $e->getMessage();
         return false;
     }
 }
 
 // -------------------------------------- fin d insertion de table et films et series --------------------------------------
 
-/* Définir la plage des identifiants des séries à importer  -- tentatif echoue
+/* Définir la plage des identifiants des séries à importer  -- tentatif $GLOBALS['console'].=ue
 $debutId = 1;
 $finId = 50;
 
@@ -762,9 +762,9 @@ $filmIDList = [562,362,1713,1375,6389,349133,1057,3689,1092,105596];
 foreach ($seriesIDList as $seriesID) {
     try {
         importSeries($tvdbBaseUrl, $token, $pdo, $seriesID);
-        $console .= "Série avec l'ID $seriesID importée avec succès." . "\n";
+        $GLOBALS['console'] .= "Série avec l'ID $seriesID importée avec succès." . "\n";
     } catch (Exception $e) {
-        $console .= "Échec de l'importation de la série avec l'ID $seriesID : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Échec de l'importation de la série avec l'ID $seriesID : " . $e->getMessage() . "\n";
     }
 }
 
@@ -772,9 +772,9 @@ foreach ($seriesIDList as $seriesID) {
 foreach ($filmIDList as $filmID) {
     try {
         importFilm($tvdbBaseUrl, $token, $pdo, $filmID);
-        $console .= "Film avec l'ID $filmID importé avec succès." . "\n";
+        $GLOBALS['console'] .= "Film avec l'ID $filmID importé avec succès." . "\n";
     } catch (Exception $e) {
-        $console .= "Échec de l'importation du film avec l'ID $filmID : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Échec de l'importation du film avec l'ID $filmID : " . $e->getMessage() . "\n";
     }
 }
 */
@@ -785,7 +785,7 @@ foreach ($filmIDList as $filmID) {
 
 
 
-function recuperationSignalements($pdo, &$console) {
+function recuperationSignalements($pdo) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM reportticket WHERE statut != :statut");
         
@@ -794,19 +794,19 @@ function recuperationSignalements($pdo, &$console) {
         ]);
         
         if ($stmt->rowCount() > 0) {
-            $console .= "Signalements récupérés avec succès.\n";
+            $GLOBALS['console'] .= "Signalements récupérés avec succès.\n";
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
-            $console .= "Aucun signalement trouvé.\n";
+            $GLOBALS['console'] .= "Aucun signalement trouvé.\n";
             return [];
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de récupération des signalements : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de récupération des signalements : " . $e->getMessage() . "\n";
         return false;
     }
 }
 
-function modificationStatusSignalement($pdo, $reportID, $nvStatut, &$console) {
+function modificationStatusSignalement($pdo, $reportID, $nvStatut) {
     try {
         $stmt = $pdo->prepare("UPDATE reportticket SET statut = :statut WHERE reportID = :reportID");
         
@@ -816,12 +816,12 @@ function modificationStatusSignalement($pdo, $reportID, $nvStatut, &$console) {
         ]);
         
         if ($stmt->rowCount() > 0) {
-            $console .= "Le statut du signalement a été mis à jour avec succès.\n";
+            $GLOBALS['console'] .= "Le statut du signalement a été mis à jour avec succès.\n";
         } else {
-            $console .= "Aucun signalement trouvé avec l'ID donné ou le statut était déjà à jour.\n";
+            $GLOBALS['console'] .= "Aucun signalement trouvé avec l'ID donné ou le statut était déjà à jour.\n";
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de mise à jour du statut du signalement : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de mise à jour du statut du signalement : " . $e->getMessage() . "\n";
     }
 }
 
@@ -836,7 +836,7 @@ function modificationStatusSignalement($pdo, $reportID, $nvStatut, &$console) {
 // -------------------------------------- GESTION DES UTILISATEURS --------------------------------------
 // ----------------------------------------------------------------------------
 
-function recuperationUtilisateurs($pdo, &$console) {
+function recuperationUtilisateurs($pdo) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM user WHERE userType != :userType");
         
@@ -846,19 +846,19 @@ function recuperationUtilisateurs($pdo, &$console) {
         
         if ($stmt->rowCount() > 0) {
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $console .= "Utilisateurs récupérés avec succès.\n";
+            $GLOBALS['console'] .= "Utilisateurs récupérés avec succès.\n";
             return $users;
         } else {
-            $console .= "Aucun utilisateur trouvé.\n";
+            $GLOBALS['console'] .= "Aucun utilisateur trouvé.\n";
             return [];
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de récupération des utilisateurs : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de récupération des utilisateurs : " . $e->getMessage() . "\n";
         return false;
     }
 }
 
-function modificationInfosUtilisateur($pdo, $userID, $username, $email, $password, &$console) {
+function modificationInfosUtilisateur($pdo, $userID, $username, $email, $password) {
     try {
         $hashPassword = password_hash($password, PASSWORD_DEFAULT);
         
@@ -872,16 +872,16 @@ function modificationInfosUtilisateur($pdo, $userID, $username, $email, $passwor
         ]);
 
         if ($stmt->rowCount() > 0) {
-            $console .= "Les informations de l'utilisateur ont été mises à jour avec succès.\n";
+            $GLOBALS['console'] .= "Les informations de l'utilisateur ont été mises à jour avec succès.\n";
         } else {
-            $console .= "Aucune modification effectuée (l'utilisateur n'a peut-être pas été trouvé ou les données sont identiques).\n";
+            $GLOBALS['console'] .= "Aucune modification effectuée (l'utilisateur n'a peut-être pas été trouvé ou les données sont identiques).\n";
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de mise à jour des informations de l'utilisateur : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de mise à jour des informations de l'utilisateur : " . $e->getMessage() . "\n";
     }
 }
 
-function supprimerUtilisateur($pdo, $userID, &$console) {
+function supprimerUtilisateur($pdo, $userID) {
     try {
         $stmt = $pdo->prepare("DELETE FROM user WHERE userID = :userID");
         
@@ -890,12 +890,12 @@ function supprimerUtilisateur($pdo, $userID, &$console) {
         ]);
         
         if ($stmt->rowCount() > 0) {
-            $console .= "L'utilisateur a été supprimé avec succès.\n";
+            $GLOBALS['console'] .= "L'utilisateur a été supprimé avec succès.\n";
         } else {
-            $console .= "Aucun utilisateur trouvé avec cet ID.\n";
+            $GLOBALS['console'] .= "Aucun utilisateur trouvé avec cet ID.\n";
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de suppression de l'utilisateur : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de suppression de l'utilisateur : " . $e->getMessage() . "\n";
     }
 }
 
@@ -906,7 +906,7 @@ function supprimerUtilisateur($pdo, $userID, &$console) {
 // -------------------------------------- GESTION DES FORUMS --------------------------------------
 // ----------------------------------------------------------------------------
 
-function recuperationForums($pdo, &$console) {
+function recuperationForums($pdo) {
     try {
         $stmt = $pdo->prepare("SELECT forumID, forumTitle, description, totalSubjectNumber FROM forum");
         
@@ -914,19 +914,19 @@ function recuperationForums($pdo, &$console) {
         
         if ($stmt->rowCount() > 0) {
             $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $console .= "Forums récupérés avec succès.\n";
+            $GLOBALS['console'] .= "Forums récupérés avec succès.\n";
             return $users;
         } else {
-            $console .= "Aucun forum trouvé.\n";
+            $GLOBALS['console'] .= "Aucun forum trouvé.\n";
             return [];
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de récupération des forums : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de récupération des forums : " . $e->getMessage() . "\n";
         return false;
     }
 }
 
-function modificationInfosForum($pdo,$forumID ,$forumTitle, $description,&$console) {
+function modificationInfosForum($pdo,$forumID ,$forumTitle, $description) {
     try{ 
         $stmt = $pdo->prepare("UPDATE forum SET forumTitle = :forumTitle, description = :description WHERE forumID = :forumID");
         
@@ -937,16 +937,16 @@ function modificationInfosForum($pdo,$forumID ,$forumTitle, $description,&$conso
         ]);
 
         if ($stmt->rowCount() > 0) {
-            $console .= "Les informations du forum ont été mises à jour avec succès.\n";
+            $GLOBALS['console'] .= "Les informations du forum ont été mises à jour avec succès.\n";
         } else {
-            $console .= "Aucune modification effectuée (le foruum n'a peut-être pas été trouvé ou les données sont identiques).\n";
+            $GLOBALS['console'] .= "Aucune modification effectuée (le foruum n'a peut-être pas été trouvé ou les données sont identiques).\n";
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de mise à jour des informations de l'utilisateur : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de mise à jour des informations de l'utilisateur : " . $e->getMessage() . "\n";
     }
 }
 
-function supprimerForum($pdo, $forumID, &$console) {
+function supprimerForum($pdo, $forumID) {
     try {
         $stmt = $pdo->prepare("DELETE FROM forum WHERE forumID = :forumID");
         
@@ -955,12 +955,12 @@ function supprimerForum($pdo, $forumID, &$console) {
         ]);
         
         if ($stmt->rowCount() > 0) {
-            $console .= "Le forum a été supprimé avec succès.\n";
+            $GLOBALS['console'] .= "Le forum a été supprimé avec succès.\n";
         } else {
-            $console .= "Aucun Forum trouvé avec cet ID.\n";
+            $GLOBALS['console'] .= "Aucun Forum trouvé avec cet ID.\n";
         }
     } catch (PDOException $e) {
-        $console .= "Erreur de suppression du Forum : " . $e->getMessage() . "\n";
+        $GLOBALS['console'] .= "Erreur de suppression du Forum : " . $e->getMessage() . "\n";
     }
 }
 
@@ -972,7 +972,7 @@ function supprimerForum($pdo, $forumID, &$console) {
 // ----------------------------------------------------------------------------
 
 // Fonction pour rechercher sur l'API TVDB || UPDATE : API RESTREINTE et n'est pas completement debloqué, il faut payer ;(
-function searchTVDB($tvdbApiKey, $query, &$console) {
+function searchTVDB($tvdbApiKey, $query) {
     $url = "https://api.thetvdb.com/search?query=" . urlencode($query); // Paramètre query ajouté à l'URL
 
     $ch = curl_init($url);
@@ -992,7 +992,7 @@ function searchTVDB($tvdbApiKey, $query, &$console) {
     if (curl_errno($ch)) {
         $errorMessage = curl_error($ch);
         curl_close($ch);
-        $console .= "Erreur cURL: $errorMessage\n"; // Ajout de l'erreur cURL dans $console
+        $GLOBALS['console'] .= "Erreur cURL: $errorMessage\n"; // Ajout de l'erreur cURL dans $GLOBALS['console']
         return ['error' => "Erreur cURL: $errorMessage"];
     }
 
@@ -1002,17 +1002,17 @@ function searchTVDB($tvdbApiKey, $query, &$console) {
         $data = json_decode($response, true);
 
         // Affichage de la réponse brute dans la console
-        $console .= "Réponse brute : " . print_r($data, true) . "\n";
+        $GLOBALS['console'] .= "Réponse brute : " . print_r($data, true) . "\n";
 
         // Vérification de la présence des données dans la réponse
         if (isset($data['data'])) {
             return $data['data'];
         } else {
-            $console .= "Aucune donnée disponible dans la réponse de l'API.\n";
+            $GLOBALS['console'] .= "Aucune donnée disponible dans la réponse de l'API.\n";
             return ['error' => 'Aucune donnée disponible dans la réponse de l\'API.'];
         }
     } else {
-        $console .= "Aucune réponse reçue de l'API.\n";
+        $GLOBALS['console'] .= "Aucune réponse reçue de l'API.\n";
         return ['error' => 'Aucune réponse reçue de l\'API.'];
     }
 }
@@ -1030,7 +1030,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'supprimer' && isset($_POST['userID'])) {
         $userID = $_POST['userID']; 
 
-        supprimerUtilisateur($pdo, $userID, $console);
+        supprimerUtilisateur($pdo, $userID);
     }
 
     // Mise à jour du statut d'un signalement
@@ -1038,7 +1038,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $reportID = $_POST['reportID'];
         $nvStatut = $_POST['statut'];
 
-        modificationStatusSignalement($pdo, $reportID, $nvStatut, $console);
+        modificationStatusSignalement($pdo, $reportID, $nvStatut);
     }
 
     // Mise à jour des informations d'un utilisateur
@@ -1048,14 +1048,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $email = $_POST['email'];
         $password = isset($_POST['password']) ? $_POST['password'] : ''; // Si le mot de passe est vide, ne pas le mettre à jour
 
-        modificationInfosUtilisateur($pdo, $userID, $username, $email, $password, $console);
+        modificationInfosUtilisateur($pdo, $userID, $username, $email, $password);
     }
 
     // Suppression d'un forum
     if (isset($_POST['action']) && $_POST['action'] === 'supprimerForum' && isset($_POST['forumID'])) {
         $forumID = $_POST['forumID'];
 
-        supprimerForum($pdo, $forumID, $console);
+        supprimerForum($pdo, $forumID);
     }
 
     // Mise à jour des informations d'un forum
@@ -1064,7 +1064,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $forumTitle = $_POST['forumTitle'];
         $description = $_POST['description'];
 
-        modificationInfosForum($pdo, $forumID, $forumTitle, $description, $console);
+        modificationInfosForum($pdo, $forumID, $forumTitle, $description);
     }
 
     if (isset($_POST['action']) && $_POST['action'] === 'importationManuelle') {
@@ -1088,10 +1088,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action']) && $_POST['action'] === 'searchQuery') {
         $query = htmlspecialchars($_POST['searchQuery']);
         
-        $searchResults = searchTVDB($tvdbApiKey, $query,$console);
+        $searchResults = searchTVDB($tvdbApiKey, $query,$GLOBALS['console']);
     
         if (isset($searchResults['error'])) {
-            $console.= 'Error: ' . htmlspecialchars($searchResults['error']);
+            $GLOBALS['console'].= 'Error: ' . htmlspecialchars($searchResults['error']);
         } else {
             if (is_array($searchResults)) {
                 $filteredResults = array_filter($searchResults, function($result) {
@@ -1100,7 +1100,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
                 $filteredResults = array_values($filteredResults);  // Ré-indexer si nécessaire
             } else {
-                $console .= 'Erreur: Les résultats de la recherche ne sont pas valides.';
+                $GLOBALS['console'] .= 'Erreur: Les résultats de la recherche ne sont pas valides.';
             }
         }
     }
@@ -1124,10 +1124,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <header>
         <nav class="header-nav">
-            <a href="index.php"><img src="../img/obLogo.png" alt="Logo OB"></a>
+            <a href="../index.php"><img src="../img/obLogo.png" alt="Logo OB"></a>
             <a href="#Signalements">Signalements</a>
             <a href="#GUtilisateurs">Gestion des utilisateurs</a>
             <a href="#GForums">Gestion des forums</a>
+            <a href="#ajoutFS">Importation des films et séries</a>
             <a href="index.php">Quittez le mode administrateur</a>
         </nav>
     </header>
@@ -1139,8 +1140,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <section class="console">
                 <h2>Console</h2>
                 <?php
-                    if (isset($console)) {
-                        echo nl2br(htmlspecialchars($console)); //nl2br() pour conserver les entrers
+                    if (isset($GLOBALS['console'])) {
+                        echo nl2br(htmlspecialchars($GLOBALS['console'])); //nl2br() pour conserver les entrers
                     }
                 ?>
             </section>
@@ -1150,7 +1151,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <section class="notifications" id="Signalements">
                 <h2>Signalements</h2>
                 <?php
-                    $signalements = recuperationSignalements($pdo, $console);
+                    $signalements = recuperationSignalements($pdo);
                     if (empty($signalements)) {
                         echo "<p>Aucun signalement trouvé.</p>";
                     } else {
@@ -1195,7 +1196,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <tbody>
                         <?php
                             
-                            $users = recuperationUtilisateurs($pdo,$console);
+                            $users = recuperationUtilisateurs($pdo);
 
                             // Exemple de table avec des utilisateurs
                             foreach ($users as $user) {
@@ -1241,13 +1242,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </table>
             </section>
 
-
-            
-
-
-
-
-
             <section id="GForums">
                 <h2>Gestion des forums</h2>
                 
@@ -1262,7 +1256,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     </thead>
                     <tbody>
                         <?php
-                            $forums = recuperationForums($pdo, $console); // Fonction pour récupérer les forums
+                            $forums = recuperationForums($pdo,); // Fonction pour récupérer les forums
                             
                             // Boucle sur les forums
                             foreach ($forums as $forum) {
@@ -1330,22 +1324,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </section>
                     -->
             
-                    <section id="ajoutFS">
-                        <form method="POST" class="formulaire">
-                            <input type="text" name="idContent" placeholder="Entrez l'id du contenu voulu" required>
-                            
-                            <!-- Drop-down pour choisir entre Film ou Série -->
-                            <select name="contentType" id="statut" required>
-                                <option value="series">Série</option>
-                                <option value="movie">Film</option>
-                            </select>
+            <section id="ajoutFS">
+                <H2>Ajout de film ou/et série</H2>
+                <form method="POST" class="formulaire">
+                    <input type="text" name="idContent" placeholder="Entrez l'id du contenu voulu" required>
+                    
+                    <!-- Drop-down pour choisir entre Film ou Série -->
+                    <select name="contentType" id="statut" required>
+                        <option value="series">Série</option>
+                        <option value="movie">Film</option>
+                    </select>
 
-                            <button type="submit" name="action" value="importationManuelle">Importer</button>
-                        </form>
-                        <a href="https://www.thetvdb.com/home">Regardez l'id ici (TheTVDB.com Movie ID)</a>
-                    </section>
-            
-
+                    <button type="submit" name="action" value="importationManuelle">Importer</button>
+                </form>
+                <a href="https://www.thetvdb.com/home">Regardez l'id ici (TheTVDB.com Movie ID)</a>
+            </section>
         </section>
     </main>
 
