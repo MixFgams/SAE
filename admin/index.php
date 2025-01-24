@@ -901,18 +901,85 @@ function supprimerUtilisateur($pdo, $userID, &$console) {
 }
 
 
-// -------------------------------------- fin de gestion de utilisateurs --------------------------------------
+// -------------------------------------- fin de gestion des utilisateurs --------------------------------------
+
+// ----------------------------------------------------------------------------
+// -------------------------------------- GESTION DES FORUMS --------------------------------------
+// ----------------------------------------------------------------------------
+
+function recuperationForums($pdo, &$console) {
+    try {
+        $stmt = $pdo->prepare("SELECT forumID, forumTitle, description, totalSubjectNumber FROM forum");
+        
+        $stmt->execute();
+        
+        if ($stmt->rowCount() > 0) {
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $console .= "Forums récupérés avec succès.\n";
+            return $users;
+        } else {
+            $console .= "Aucun forum trouvé.\n";
+            return [];
+        }
+    } catch (PDOException $e) {
+        $console .= "Erreur de récupération des forums : " . $e->getMessage() . "\n";
+        return false;
+    }
+}
+
+function modificationInfosForum($pdo,$forumID ,$forumTitle, $description,&$console) {
+    try{ 
+        $stmt = $pdo->prepare("UPDATE forum SET forumTitle = :forumTitle, description = :description WHERE forumID = :forumID");
+        
+        $stmt->execute([
+            ":forumTitle" => $forumTitle,
+            ":description" => $description,
+            ":forumID" => $forumID
+        ]);
+
+        if ($stmt->rowCount() > 0) {
+            $console .= "Les informations du forum ont été mises à jour avec succès.\n";
+        } else {
+            $console .= "Aucune modification effectuée (le foruum n'a peut-être pas été trouvé ou les données sont identiques).\n";
+        }
+    } catch (PDOException $e) {
+        $console .= "Erreur de mise à jour des informations de l'utilisateur : " . $e->getMessage() . "\n";
+    }
+}
+
+function supprimerForum($pdo, $forumID, &$console) {
+    try {
+        $stmt = $pdo->prepare("DELETE FROM forum WHERE forumID = :forumID");
+        
+        $stmt->execute([
+            ":forumID" => $forumID
+        ]);
+        
+        if ($stmt->rowCount() > 0) {
+            $console .= "Le forum a été supprimé avec succès.\n";
+        } else {
+            $console .= "Aucun Forum trouvé avec cet ID.\n";
+        }
+    } catch (PDOException $e) {
+        $console .= "Erreur de suppression du Forum : " . $e->getMessage() . "\n";
+    }
+}
+
+
+// -------------------------------------- fin de gestion des forums --------------------------------------
 
 // Initialiser la variable console pour stocker les messages
 $console = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    // Suppression d'un utilisateur
     if (isset($_POST['action']) && $_POST['action'] === 'supprimer' && isset($_POST['userID'])) {
         $userID = $_POST['userID']; 
 
         supprimerUtilisateur($pdo, $userID, $console);
     }
 
+    // Mise à jour du statut d'un signalement
     if (isset($_POST['action']) && $_POST['action'] === 'updateStatus' && isset($_POST['reportID']) && isset($_POST['statut'])) {
         $reportID = $_POST['reportID'];
         $nvStatut = $_POST['statut'];
@@ -920,6 +987,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         modificationStatusSignalement($pdo, $reportID, $nvStatut, $console);
     }
 
+    // Mise à jour des informations d'un utilisateur
     if (isset($_POST['action']) && $_POST['action'] === 'updateUtilisateur' && isset($_POST['userID']) && isset($_POST['username']) && isset($_POST['email'])) {
         $userID = $_POST['userID'];
         $username = $_POST['username'];
@@ -928,7 +996,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         modificationInfosUtilisateur($pdo, $userID, $username, $email, $password, $console);
     }
+
+    // Suppression d'un forum
+    if (isset($_POST['action']) && $_POST['action'] === 'supprimerForum' && isset($_POST['forumID'])) {
+        $forumID = $_POST['forumID'];
+
+        supprimerForum($pdo, $forumID, $console);
+    }
+
+    // Mise à jour des informations d'un forum
+    if (isset($_POST['action']) && $_POST['action'] === 'updateForum' && isset($_POST['forumID']) && isset($_POST['forumTitle']) && isset($_POST['description'])) {
+        $forumID = $_POST['forumID'];
+        $forumTitle = $_POST['forumTitle'];
+        $description = $_POST['description'];
+
+        modificationInfosForum($pdo, $forumID, $forumTitle, $description, $console);
+    }
 }
+
 
 
 
@@ -1035,7 +1120,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 // Formulaire de modification caché
                                 echo "<tr id='edit-form-" . $user['userID'] . "' style='display:none;'>
                                         <td colspan='5'>
-                                            <form class='formulaireUtilisateur' action='index.php' method='post'>
+                                            <form class='formulaire' action='index.php' method='post'>
                                                 <input type='hidden' name='userID' value='" . $user['userID'] . "' />
                                                 <label for='edit-username-" . $user['userID'] . "'>Nom d'utilisateur :</label>
                                                 <input type='text' id='edit-username-" . $user['userID'] . "' name='username' value='" . htmlspecialchars($user['username']) . "' /><br />
@@ -1057,21 +1142,86 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </table>
                 <div id="pagination"></div> <!-- Pagination area -->
             </section>
+            <script>
+                function showEditForm(userID) {
+                    // Masquer tous les autres formulaires de modification
+                    const allForms = document.querySelectorAll('.edit-form');
+                    allForms.forEach(form => form.style.display = 'none');
+
+                    // Afficher le formulaire de modification de cet utilisateur
+                    const form = document.getElementById('edit-form-' + userID);
+                    form.style.display = 'table-row'; // Affiche le formulaire comme une ligne de tableau
+                }
+
+                function hideEditForm(userID) {
+                    // Cacher le formulaire de modification de cet utilisateur
+                    const form = document.getElementById('edit-form-' + userID);
+                    form.style.display = 'none';
+                }
+                
             </script>
 
 
 
 
 
-            <!-- Section Gestion des forums -->
-            <section class="forum-management">
+            <section>
                 <h2>Gestion des forums</h2>
-                <div class="search-bar">
-                    <input type="text" placeholder="Recherchez un forum..." />
-                    <button onclick="window.location.href='forum-management.php'">Rechercher</button>
-                </div>
-                <p><a href="forum-management.php">Accédez à la gestion des forums</a></p>
+                
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ForumID</th>
+                            <th>Titre</th>
+                            <th>Description</th>
+                            <th>Actions</th> <!-- Colonne pour les boutons -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            $forums = recuperationForums($pdo, $console); // Fonction pour récupérer les forums
+                            
+                            // Boucle sur les forums
+                            foreach ($forums as $forum) {
+                                echo "<tr>
+                                        <td>" . htmlspecialchars($forum['forumID']) . "</td>
+                                        <td>" . htmlspecialchars($forum['forumTitle']) . "</td>
+                                        <td>" . htmlspecialchars($forum['description']) . "</td>
+                                        <td>
+                                            <!-- Bouton Modifier -->
+                                            <button type='button' onclick='showEditForm(" . $forum['forumID'] . ")'>Modifier</button>
+                                            
+                                            <!-- Formulaire Supprimer -->
+                                            <form action='index.php' method='post' style='display:inline-block;'>
+                                                <input type='hidden' name='forumID' value='" . $forum['forumID'] . "' />
+                                                <button type='submit' name='action' value='supprimerForum' class='btn-supprimer' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer ce forum ?\");'>Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>";
+
+                                // Formulaire de modification caché
+                                echo "<tr id='edit-form-" . $forum['forumID'] . "' style='display:none;'>
+                                        <td colspan='4'>
+                                            <form class='formulaire' action='index.php' method='post'>
+                                                <input type='hidden' name='forumID' value='" . $forum['forumID'] . "' />
+                                                
+                                                <label for='edit-title-" . $forum['forumID'] . "'>Titre :</label>
+                                                <input type='text' id='edit-title-" . $forum['forumID'] . "' name='forumTitle' value='" . htmlspecialchars($forum['forumTitle']) . "' /><br />
+                                                
+                                                <label for='edit-description-" . $forum['forumID'] . "'>Description :</label>
+                                                <textarea id='edit-description-" . $forum['forumID'] . "' name='description'>" . htmlspecialchars($forum['description']) . "</textarea><br />
+                                                
+                                                <button type='submit' name='action' value='updateForum'>Mettre à jour</button>
+                                                <button type='button' onclick='hideEditForm(" . $forum['forumID'] . ")'>Annuler</button>
+                                            </form>
+                                        </td>
+                                    </tr>";
+                            }
+                        ?>
+                    </tbody>
+                </table>
             </section>
+
 
             <!-- Section Ajouter des films et séries -->
             <section class="tvdb-import">

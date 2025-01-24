@@ -288,71 +288,66 @@ td[colspan="4"] {
 table {
     border-radius: 8px;
     overflow: hidden;
-}
-
-/* Style pour le formulaire de modification d'utilisateur */
-.formulaireUtilisateur {
+}/* Style de base pour les formulaires */
+.formulaire {
     background-color: #f9f9f9;
-    padding: 20px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    margin-top: 10px;
-    width: 100%;
+    padding: 20px;
+    margin: 10px 0;
+    font-family: Arial, sans-serif;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.formulaireUtilisateur form {
-    display: flex;
-    flex-direction: column;
+.formulaire input[type="text"],
+.formulaire input[type="email"],
+.formulaire input[type="password"],
+.formulaire textarea {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
 }
 
-.formulaireUtilisateur label {
-    font-weight: bold;
+.formulaire textarea {
+    resize: vertical;
+    height: 100px;
+}
+
+.formulaire button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    margin: 10px 5px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.formulaire button[type="button"] {
+    background-color: #6c757d;
+    color: white;
+}
+
+.formulaire button:hover {
+    background-color: #0056b3;
+}
+
+.formulaire button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+.formulaire label {
+    display: block;
     margin-bottom: 5px;
+    font-weight: bold;
     font-size: 14px;
     color: #333;
 }
 
-.formulaireUtilisateur input[type="text"],
-.formulaireUtilisateur input[type="email"],
-.formulaireUtilisateur input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 14px;
-    box-sizing: border-box;
-}
-
-.formulaireUtilisateur input[type="text"]:focus,
-.formulaireUtilisateur input[type="email"]:focus,
-.formulaireUtilisateur input[type="password"]:focus {
-    border-color: #007BFF;
-    outline: none;
-}
-
-.formulaireUtilisateur button {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px;
-    font-size: 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 10px;
-}
-
-.formulaireUtilisateur button:hover {
-    background-color: #0056b3;
-}
-
-/* Style pour le bouton "Annuler" */
-.formulaireUtilisateur button[type="button"] {
-    background-color: #f44336;
-    margin-top: 5px;
-}
-
-.formulaireUtilisateur button[type="button"]:hover {
-    background-color: #e53935;
+.formulaire br {
+    margin-bottom: 10px;
 }
