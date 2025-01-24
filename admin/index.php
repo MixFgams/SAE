@@ -3,6 +3,9 @@
 // -------------------------------------- DEFENITION DES PARAMETRES NECESSAIRES --------------------------------------
 // ----------------------------------------------------------------------------
 
+// Initialiser la variable console pour stocker les messages
+$console = "";
+
 //parametres de profondeur
 $_SESSION["profendeurDossier"] = 1;
 
@@ -759,9 +762,9 @@ $filmIDList = [562,362,1713,1375,6389,349133,1057,3689,1092,105596];
 foreach ($seriesIDList as $seriesID) {
     try {
         importSeries($tvdbBaseUrl, $token, $pdo, $seriesID);
-        echo "Série avec l'ID $seriesID importée avec succès.<br>";
+        $console .= "Série avec l'ID $seriesID importée avec succès." . "\n";
     } catch (Exception $e) {
-        echo "Échec de l'importation de la série avec l'ID $seriesID : " . $e->getMessage() . "<br>";
+        $console .= "Échec de l'importation de la série avec l'ID $seriesID : " . $e->getMessage() . "\n";
     }
 }
 
@@ -769,16 +772,12 @@ foreach ($seriesIDList as $seriesID) {
 foreach ($filmIDList as $filmID) {
     try {
         importFilm($tvdbBaseUrl, $token, $pdo, $filmID);
-        echo "Film avec l'ID $filmID importé avec succès.<br>";
+        $console .= "Film avec l'ID $filmID importé avec succès." . "\n";
     } catch (Exception $e) {
-        echo "Échec de l'importation du film avec l'ID $filmID : " . $e->getMessage() . "<br>";
+        $console .= "Échec de l'importation du film avec l'ID $filmID : " . $e->getMessage() . "\n";
     }
 }
 */
-
-
-
-
 
 // ----------------------------------------------------------------------------
 // -------------------------------------- GESTION DES SIGNALEMENTS --------------------------------------
@@ -969,12 +968,12 @@ function supprimerForum($pdo, $forumID, &$console) {
 // -------------------------------------- fin de gestion des forums --------------------------------------
 
 // ----------------------------------------------------------------------------
-// -------------------------------------- GESTION DE RECHERCHE DANS L'API TVDB--------------------------------------
+// -------------------------------------- GESTION DE RECHERCHE DANS L'API TVDB --------------------------------------
 // ----------------------------------------------------------------------------
 
-// Fonction pour rechercher sur l'API TVDB
+// Fonction pour rechercher sur l'API TVDB || UPDATE : API RESTREINTE et n'est pas completement debloqué, il faut payer ;(
 function searchTVDB($tvdbApiKey, $query, &$console) {
-    $url = "https://api.thetvdb.com/search?query=" . urlencode($query);
+    $url = "https://api.thetvdb.com/search?query=" . urlencode($query); // Paramètre query ajouté à l'URL
 
     $ch = curl_init($url);
 
@@ -989,10 +988,11 @@ function searchTVDB($tvdbApiKey, $query, &$console) {
 
     $response = curl_exec($ch);
 
+    // Vérification des erreurs cURL
     if (curl_errno($ch)) {
         $errorMessage = curl_error($ch);
         curl_close($ch);
-        $console .= "Erreur cURL: $errorMessage\n";
+        $console .= "Erreur cURL: $errorMessage\n"; // Ajout de l'erreur cURL dans $console
         return ['error' => "Erreur cURL: $errorMessage"];
     }
 
@@ -1001,12 +1001,12 @@ function searchTVDB($tvdbApiKey, $query, &$console) {
     if ($response) {
         $data = json_decode($response, true);
 
-        // Afficher ce que contient $data pour déboguer
-        $console .= "Réponse brute de l'API : " . print_r($data, true) . "\n";
+        // Affichage de la réponse brute dans la console
+        $console .= "Réponse brute : " . print_r($data, true) . "\n";
 
-        if (is_array($data) && isset($data['data'])) {
-            $console .= "Recherche réussie\n";
-            return $data['data']; 
+        // Vérification de la présence des données dans la réponse
+        if (isset($data['data'])) {
+            return $data['data'];
         } else {
             $console .= "Aucune donnée disponible dans la réponse de l'API.\n";
             return ['error' => 'Aucune donnée disponible dans la réponse de l\'API.'];
@@ -1019,11 +1019,11 @@ function searchTVDB($tvdbApiKey, $query, &$console) {
 
 
 
+
 // -------------------------------------- fin de gestion de recherche dans l'api tvdb --------------------------------------
 
 
-// Initialiser la variable console pour stocker les messages
-$console = "";
+
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Suppression d'un utilisateur
@@ -1067,6 +1067,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         modificationInfosForum($pdo, $forumID, $forumTitle, $description, $console);
     }
 
+    if (isset($_POST['action']) && $_POST['action'] === 'importationManuelle') {
+        // Récupérer les données du formulaire
+        $idContent = $_POST['idContent'];
+        $contentType = $_POST['contentType'];
+    
+        // Vérifier si c'est une série ou un film et appeler la fonction correspondante
+        if ($contentType === 'series') {
+            importSeries($tvdbBaseUrl, $token, $pdo, $idContent);
+        } elseif ($contentType === 'movie') {
+            importFilm($tvdbBaseUrl, $token, $pdo, $idContent);
+        }
+    }
+
+
+    /* //API RESTREINTE, il faut payer ;(
     // Traitement de la recherche
     $searchResults = [];
 
@@ -1089,7 +1104,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
-    
+    */
     
 
 }
@@ -1227,29 +1242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </section>
 
 
-            <script>
-                function showEditForm(userID) {
-                    // Masquer tous les autres formulaires de modification
-                    const allForms = document.querySelectorAll('.edit-form');
-                    allForms.forEach(form => form.style.display = 'none');
-
-                    // Afficher le formulaire de modification de cet utilisateur
-                    const form = document.getElementById('edit-form-' + userID);
-                    form.style.display = 'table-row'; // Affiche le formulaire comme une ligne de tableau
-                }
-
-                function hideEditForm(userID) {
-                    // Cacher le formulaire de modification de cet utilisateur
-                    const form = document.getElementById('edit-form-' + userID);
-                    form.style.display = 'none';
-                }
-
-                // Fonction pour faire défiler la page vers le haut
-                function scrollToTop() {
-                    window.scrollTo({ top: 0});
-                }
-
-            </script>
+            
 
 
 
@@ -1312,6 +1305,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </table>
             </section>
 
+            <!---- API RESTREINTE, il faut payer ;(
 
             <section class="search-section">
                 <h2>Rechercher un film ou une série</h2>
@@ -1321,27 +1315,64 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 </form>
 
                 <div id="results">
-                    <?php if (isset($searchResults) && !empty($searchResults)) : ?>
+                    <php if (isset($searchResults) && !empty($searchResults)) : ?>
                         <ul>
-                            <?php foreach ($searchResults as $result) : ?>
+                            <php foreach ($searchResults as $result) : ?>
                                 <li>
-                                    <strong><?php echo htmlspecialchars($result['title']); ?></strong><br>
-                                    <?php echo isset($result['overview']) ? htmlspecialchars($result['overview']) : 'Aucune description disponible.'; ?>
-                                    <br><br>
-                                    <a href="ajouter.php?id=<?php echo urlencode($result['id']); ?>">Ajouter à la base de données</a>
+                                    
                                 </li>
-                            <?php endforeach; ?>
+                            <php endforeach; ?>
                         </ul>
-                    <?php elseif (isset($_POST['searchQuery']) && empty($searchResults)) : ?>
-                        <p>Aucun résultat trouvé pour "<?php echo htmlspecialchars($_POST['searchQuery']); ?>"</p>
-                    <?php endif; ?>
+                    <php elseif (isset($_POST['searchQuery']) && empty($searchResults)) : ?>
+                        <p>Aucun résultat trouvé pour "<php echo htmlspecialchars($_POST['searchQuery']); ?>"</p>
+                    <php endif; ?>
                 </div>
             </section>
+                    -->
+            
+                    <section id="ajoutFS">
+                        <form method="POST" class="formulaire">
+                            <input type="text" name="idContent" placeholder="Entrez l'id du contenu voulu" required>
+                            
+                            <!-- Drop-down pour choisir entre Film ou Série -->
+                            <select name="contentType" id="statut" required>
+                                <option value="series">Série</option>
+                                <option value="movie">Film</option>
+                            </select>
 
+                            <button type="submit" name="action" value="importationManuelle">Importer</button>
+                        </form>
+                        <a href="https://www.thetvdb.com/home">Regardez l'id ici (TheTVDB.com Movie ID)</a>
+                    </section>
+            
 
         </section>
     </main>
 
+
+    <script>
+        function showEditForm(userID) {
+            // Masquer tous les autres formulaires de modification
+            const allForms = document.querySelectorAll('.edit-form');
+            allForms.forEach(form => form.style.display = 'none');
+
+            // Afficher le formulaire de modification de cet utilisateur
+            const form = document.getElementById('edit-form-' + userID);
+            form.style.display = 'table-row'; // Affiche le formulaire comme une ligne de tableau
+        }
+
+        function hideEditForm(userID) {
+            // Cacher le formulaire de modification de cet utilisateur
+            const form = document.getElementById('edit-form-' + userID);
+            form.style.display = 'none';
+        }
+
+        // Fonction pour faire défiler la page vers le haut
+        function scrollToTop() {
+            window.scrollTo({ top: 0});
+        }
+
+    </script>
     <?php include "../pagesOutils/footer.php"?>
 </body>
 </html>
