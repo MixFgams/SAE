@@ -968,6 +968,60 @@ function supprimerForum($pdo, $forumID, &$console) {
 
 // -------------------------------------- fin de gestion des forums --------------------------------------
 
+// ----------------------------------------------------------------------------
+// -------------------------------------- GESTION DE RECHERCHE DANS L'API TVDB--------------------------------------
+// ----------------------------------------------------------------------------
+
+// Fonction pour rechercher sur l'API TVDB
+function searchTVDB($tvdbApiKey, $query, &$console) {
+    $url = "https://api.thetvdb.com/search?query=" . urlencode($query);
+
+    $ch = curl_init($url);
+
+    curl_setopt_array($ch, [
+        CURLOPT_SSL_VERIFYPEER => false,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_HTTPHEADER => [
+            "Authorization: Bearer $tvdbApiKey",
+            "Accept: application/json"
+        ]
+    ]);
+
+    $response = curl_exec($ch);
+
+    if (curl_errno($ch)) {
+        $errorMessage = curl_error($ch);
+        curl_close($ch);
+        $console .= "Erreur cURL: $errorMessage\n";
+        return ['error' => "Erreur cURL: $errorMessage"];
+    }
+
+    curl_close($ch);
+
+    if ($response) {
+        $data = json_decode($response, true);
+
+        // Afficher ce que contient $data pour déboguer
+        $console .= "Réponse brute de l'API : " . print_r($data, true) . "\n";
+
+        if (is_array($data) && isset($data['data'])) {
+            $console .= "Recherche réussie\n";
+            return $data['data']; 
+        } else {
+            $console .= "Aucune donnée disponible dans la réponse de l'API.\n";
+            return ['error' => 'Aucune donnée disponible dans la réponse de l\'API.'];
+        }
+    } else {
+        $console .= "Aucune réponse reçue de l'API.\n";
+        return ['error' => 'Aucune réponse reçue de l\'API.'];
+    }
+}
+
+
+
+// -------------------------------------- fin de gestion de recherche dans l'api tvdb --------------------------------------
+
+
 // Initialiser la variable console pour stocker les messages
 $console = "";
 
@@ -1012,8 +1066,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         modificationInfosForum($pdo, $forumID, $forumTitle, $description, $console);
     }
-}
 
+    // Traitement de la recherche
+    $searchResults = [];
+
+    if (isset($_POST['action']) && $_POST['action'] === 'searchQuery') {
+        $query = htmlspecialchars($_POST['searchQuery']);
+        
+        $searchResults = searchTVDB($tvdbApiKey, $query,$console);
+    
+        if (isset($searchResults['error'])) {
+            $console.= 'Error: ' . htmlspecialchars($searchResults['error']);
+        } else {
+            if (is_array($searchResults)) {
+                $filteredResults = array_filter($searchResults, function($result) {
+                    return isset($result['type']) && in_array($result['type'], ['movie', 'series']);
+                });
+    
+                $filteredResults = array_values($filteredResults);  // Ré-indexer si nécessaire
+            } else {
+                $console .= 'Erreur: Les résultats de la recherche ne sont pas valides.';
+            }
+        }
+    }
+    
+    
+
+}
 
 
 
@@ -1164,7 +1243,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     const form = document.getElementById('edit-form-' + userID);
                     form.style.display = 'none';
                 }
-                
+
                 // Fonction pour faire défiler la page vers le haut
                 function scrollToTop() {
                     window.scrollTo({ top: 0});
@@ -1234,15 +1313,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </section>
 
 
-            <!-- Section Ajouter des films et séries -->
-            <section id="GFS">
-                <h2>Ajouter des films et séries</h2>
-                <div class="search-bar">
-                    <input type="text" placeholder="Recherchez un film ou une série..." />
-                    <button onclick="window.location.href='tvdb-import.php'">Rechercher</button>
+            <section class="search-section">
+                <h2>Rechercher un film ou une série</h2>
+                <form method="POST" action="" class="formulaire">
+                    <input type="text" name="searchQuery" id="searchQuery" placeholder="Recherchez un film, une série..." required>
+                    <button type="submit" name="action" value="searchQuery">Rechercher</button>
+                </form>
+
+                <div id="results">
+                    <?php if (isset($searchResults) && !empty($searchResults)) : ?>
+                        <ul>
+                            <?php foreach ($searchResults as $result) : ?>
+                                <li>
+                                    <strong><?php echo htmlspecialchars($result['title']); ?></strong><br>
+                                    <?php echo isset($result['overview']) ? htmlspecialchars($result['overview']) : 'Aucune description disponible.'; ?>
+                                    <br><br>
+                                    <a href="ajouter.php?id=<?php echo urlencode($result['id']); ?>">Ajouter à la base de données</a>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php elseif (isset($_POST['searchQuery']) && empty($searchResults)) : ?>
+                        <p>Aucun résultat trouvé pour "<?php echo htmlspecialchars($_POST['searchQuery']); ?>"</p>
+                    <?php endif; ?>
                 </div>
-                <p><a href="tvdb-import.php">Accédez à l'ajout de films et séries</a></p>
             </section>
+
+
         </section>
     </main>
 
