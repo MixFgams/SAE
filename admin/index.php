@@ -1031,11 +1031,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <header>
         <nav class="header-nav">
             <a href="index.php"><img src="../img/obLogo.png" alt="Logo OB"></a>
+            <a href="#Signalements">Signalements</a>
+            <a href="#GUtilisateurs">Gestion des utilisateurs</a>
+            <a href="#GForums">Gestion des forums</a>
             <a href="index.php">Quittez le mode administrateur</a>
         </nav>
     </header>
 
     <main>
+        <button id="backToTop" onclick="scrollToTop()"><img src="../img/arrow.png" height="35px"></button>
+
         <section>
             <section class="console">
                 <h2>Console</h2>
@@ -1048,7 +1053,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
             <!-- Section des notifications des signalements -->
-            <section class="notifications">
+            <section class="notifications" id="Signalements">
                 <h2>Signalements</h2>
                 <?php
                     $signalements = recuperationSignalements($pdo, $console);
@@ -1080,7 +1085,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             </section>
 
             <!-- Section Gestion des utilisateurs -->
-            <section>
+            <section id="GUtilisateurs">
                 <h2>Gestion des utilisateurs</h2>
 
                 <table>
@@ -1140,8 +1145,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         ?>
                     </tbody>
                 </table>
-                <div id="pagination"></div> <!-- Pagination area -->
             </section>
+
+
             <script>
                 function showEditForm(userID) {
                     // Masquer tous les autres formulaires de modification
@@ -1159,13 +1165,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     form.style.display = 'none';
                 }
                 
+                // Fonction pour faire défiler la page vers le haut
+                function scrollToTop() {
+                    window.scrollTo({ top: 0});
+                }
+
             </script>
 
 
 
 
 
-            <section>
+            <section id="GForums">
                 <h2>Gestion des forums</h2>
                 
                 <table>
@@ -1224,7 +1235,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 
             <!-- Section Ajouter des films et séries -->
-            <section class="tvdb-import">
+            <section id="GFS">
                 <h2>Ajouter des films et séries</h2>
                 <div class="search-bar">
                     <input type="text" placeholder="Recherchez un film ou une série..." />
