@@ -18,24 +18,44 @@ if ($contentID < 0 || empty($contentType)) {
     exit;
 }
 
-// Définir les noms de table dynamiquement
+// Définition des tables selon le type de contenu
 $watchedTable = ($contentType === 'film') ? 'filmwatched' : 'serieswatched';
 $contentColumn = ($contentType === 'film') ? 'filmID' : 'pk_SeriesID';
 $contentTable = ($contentType === 'film') ? 'film' : 'series';
 
-// Ajouter à la liste "Déjà Vu" et incrémenter les vues
-if (isset($_POST['dejaVu'])) {
-    $stmt = $pdo->prepare("SELECT * FROM $watchedTable WHERE $contentColumn = :contentID AND pk_UserID = :userID");
-    $stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
+// Vérifier si le contenu est déjà vu par l'utilisateur
+$stmt = $pdo->prepare("SELECT * FROM $watchedTable WHERE $contentColumn = :contentID AND pk_UserID = :userID");
+$stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
+$isWatched = ($stmt->rowCount() > 0);
 
-    if ($stmt->rowCount() == 0) {
+// **Gestion du marquage "Déjà Vu"**
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['toggleVu'])) {
+    if ($isWatched) {
+        // Retirer le contenu de la liste "Déjà Vu"
+        $stmt = $pdo->prepare("DELETE FROM $watchedTable WHERE $contentColumn = :contentID AND pk_UserID = :userID");
+        $stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
+
+        if ($stmt->rowCount() > 0) {
+            $stmt = $pdo->prepare("UPDATE $contentTable SET viewsCount = GREATEST(viewsCount - 1, 0) WHERE contentID = :contentID");
+            $stmt->execute([':contentID' => $contentID]);
+        }
+    } else {
+        // Ajouter à la liste "Déjà Vu"
         $stmt = $pdo->prepare("INSERT INTO $watchedTable ($contentColumn, pk_UserID) VALUES (:contentID, :userID)");
         $stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
 
-        // Incrémenter le nombre de vues
         $stmt = $pdo->prepare("UPDATE $contentTable SET viewsCount = viewsCount + 1 WHERE contentID = :contentID");
         $stmt->execute([':contentID' => $contentID]);
     }
+
+    // Recharger l'état de la case après modification
+    $stmt = $pdo->prepare("SELECT * FROM $watchedTable WHERE $contentColumn = :contentID AND pk_UserID = :userID");
+    $stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
+    $isWatched = ($stmt->rowCount() > 0);
+
+    // Redirection pour éviter la double soumission du formulaire
+    header("Location: pageContenu.php?id=$contentID&type=$contentType");
+    exit;
 }
 
 // Ajouter à une collection
@@ -50,7 +70,7 @@ $stmt = $pdo->prepare("SELECT collectionID, name FROM collection WHERE pk_userID
 $stmt->execute([':userID' => $userID]);
 $collections = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Récupérer les infos du contenu en fonction du type
+// Récupérer les infos du contenu
 $stmt = $pdo->prepare("SELECT c.contentID, c.name, c.description, c.releaseDate, c.runtime, c.posterUrl, c.contentType, c.viewsCount, p.name AS productionName 
                         FROM $contentTable c
                         LEFT JOIN productioncontentassociation pca ON c.contentID = pca.pk_ContentID AND pca.pk_ContentType = :contentType
@@ -88,7 +108,7 @@ $content = $stmt->fetch(PDO::FETCH_ASSOC);
         <div id="description-grid">
             <form method="post">
                 <label>
-                    <input type="checkbox" name="dejaVu" onchange="this.form.submit()"> Déjà Vu
+                    <input type="checkbox" name="toggleVu" onchange="this.form.submit()" <?= $isWatched ? 'checked' : '' ?>> Déjà Vu
                 </label>
             </form>
             <form method="post">

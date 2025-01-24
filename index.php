@@ -59,7 +59,7 @@ if(isset($_SESSION['idUser'])) {
             <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
             <div id="ListeCollection" class="scrollable-content">
                 <?php
-                $sql = "SELECT name FROM collection ORDER BY collectionID ASC";
+                $sql = "SELECT name FROM collection where pk_userID= $userID ORDER BY collectionID ASC";
                 $stmt = $pdo->query($sql);
 
                 if ($stmt->rowCount() > 0) {
