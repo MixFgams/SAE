@@ -786,7 +786,7 @@ foreach ($filmIDList as $filmID) {
 
 
 
-function recuperationSignalements($pdo) {
+function recuperationSignalements($pdo, &$console) {
     try {
         $stmt = $pdo->prepare("SELECT * FROM reportticket WHERE statut != :statut");
         
@@ -795,17 +795,19 @@ function recuperationSignalements($pdo) {
         ]);
         
         if ($stmt->rowCount() > 0) {
+            $console .= "Signalements récupérés avec succès.\n";
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } else {
+            $console .= "Aucun signalement trouvé.\n";
             return [];
         }
     } catch (PDOException $e) {
-        echo "Erreur de récupération des signalements : " . $e->getMessage();
+        $console .= "Erreur de récupération des signalements : " . $e->getMessage() . "\n";
         return false;
     }
 }
 
-function modificationStatusSignalement($pdo, $reportID, $nvStatut) {
+function modificationStatusSignalement($pdo, $reportID, $nvStatut, &$console) {
     try {
         $stmt = $pdo->prepare("UPDATE reportticket SET statut = :statut WHERE reportID = :reportID");
         
@@ -815,27 +817,121 @@ function modificationStatusSignalement($pdo, $reportID, $nvStatut) {
         ]);
         
         if ($stmt->rowCount() > 0) {
-            echo "Le statut du signalement a été mis à jour avec succès.";
+            $console .= "Le statut du signalement a été mis à jour avec succès.\n";
         } else {
-            echo "Aucun signalement trouvé avec l'ID donné ou le statut était déjà à jour.";
+            $console .= "Aucun signalement trouvé avec l'ID donné ou le statut était déjà à jour.\n";
         }
     } catch (PDOException $e) {
-        echo "Erreur de mise à jour du statut du signalement : " . $e->getMessage();
+        $console .= "Erreur de mise à jour du statut du signalement : " . $e->getMessage() . "\n";
     }
 }
 
-// Vérification si l'ID du signalement et le nouveau statut sont envoyés par POST
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $reportID = $_POST['reportID'];
-    $nvStatut = $_POST['statut'];
 
-    // Appel de la fonction pour mettre à jour le statut du signalement
-    modificationStatusSignalement($pdo, $reportID, nvStatut: $nvStatut);
-}
 
 
 
 // -------------------------------------- fin de gestion de signalements --------------------------------------
+
+
+// ----------------------------------------------------------------------------
+// -------------------------------------- GESTION DES UTILISATEURS --------------------------------------
+// ----------------------------------------------------------------------------
+
+function recuperationUtilisateurs($pdo, &$console) {
+    try {
+        $stmt = $pdo->prepare("SELECT * FROM user WHERE userType != :userType");
+        
+        $stmt->execute([
+            "userType" => "admin"
+        ]);
+        
+        if ($stmt->rowCount() > 0) {
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $console .= "Utilisateurs récupérés avec succès.\n";
+            return $users;
+        } else {
+            $console .= "Aucun utilisateur trouvé.\n";
+            return [];
+        }
+    } catch (PDOException $e) {
+        $console .= "Erreur de récupération des utilisateurs : " . $e->getMessage() . "\n";
+        return false;
+    }
+}
+
+function modificationInfosUtilisateur($pdo, $userID, $username, $email, $password, &$console) {
+    try {
+        $hashPassword = password_hash($password, PASSWORD_DEFAULT);
+        
+        $stmt = $pdo->prepare("UPDATE user SET username = :username, email = :email, password = :password WHERE userID = :userID");
+        
+        $stmt->execute([
+            ":username" => $username,
+            ":email" => $email,
+            ":password" => $hashPassword,
+            ":userID" => $userID
+        ]);
+
+        if ($stmt->rowCount() > 0) {
+            $console .= "Les informations de l'utilisateur ont été mises à jour avec succès.\n";
+        } else {
+            $console .= "Aucune modification effectuée (l'utilisateur n'a peut-être pas été trouvé ou les données sont identiques).\n";
+        }
+    } catch (PDOException $e) {
+        $console .= "Erreur de mise à jour des informations de l'utilisateur : " . $e->getMessage() . "\n";
+    }
+}
+
+function supprimerUtilisateur($pdo, $userID, &$console) {
+    try {
+        $stmt = $pdo->prepare("DELETE FROM user WHERE userID = :userID");
+        
+        $stmt->execute([
+            ":userID" => $userID
+        ]);
+        
+        if ($stmt->rowCount() > 0) {
+            $console .= "L'utilisateur a été supprimé avec succès.\n";
+        } else {
+            $console .= "Aucun utilisateur trouvé avec cet ID.\n";
+        }
+    } catch (PDOException $e) {
+        $console .= "Erreur de suppression de l'utilisateur : " . $e->getMessage() . "\n";
+    }
+}
+
+
+// -------------------------------------- fin de gestion de utilisateurs --------------------------------------
+
+// Initialiser la variable console pour stocker les messages
+$console = "";
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    if (isset($_POST['action']) && $_POST['action'] === 'supprimer' && isset($_POST['userID'])) {
+        $userID = $_POST['userID']; 
+
+        supprimerUtilisateur($pdo, $userID, $console);
+    }
+
+    if (isset($_POST['action']) && $_POST['action'] === 'updateStatus' && isset($_POST['reportID']) && isset($_POST['statut'])) {
+        $reportID = $_POST['reportID'];
+        $nvStatut = $_POST['statut'];
+
+        modificationStatusSignalement($pdo, $reportID, $nvStatut, $console);
+    }
+
+    if (isset($_POST['action']) && $_POST['action'] === 'updateUtilisateur' && isset($_POST['userID']) && isset($_POST['username']) && isset($_POST['email'])) {
+        $userID = $_POST['userID'];
+        $username = $_POST['username'];
+        $email = $_POST['email'];
+        $password = isset($_POST['password']) ? $_POST['password'] : ''; // Si le mot de passe est vide, ne pas le mettre à jour
+
+        modificationInfosUtilisateur($pdo, $userID, $username, $email, $password, $console);
+    }
+}
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -856,11 +952,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <main>
         <section>
+            <section class="console">
+                <h2>Console</h2>
+                <?php
+                    if (isset($console)) {
+                        echo nl2br(htmlspecialchars($console)); //nl2br() pour conserver les entrers
+                    }
+                ?>
+            </section>
+
+
             <!-- Section des notifications des signalements -->
             <section class="notifications">
                 <h2>Signalements</h2>
                 <?php
-                    $signalements = recuperationSignalements($pdo);
+                    $signalements = recuperationSignalements($pdo, $console);
                     if (empty($signalements)) {
                         echo "<p>Aucun signalement trouvé.</p>";
                     } else {
@@ -879,7 +985,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <option value="en attente" '.($signalement["statut"] == "en_attente" ? "selected" : "").'>En attente</option>
                                     </select>
                                     <input type="hidden" name="reportID" value="'.$signalement["reportID"].'">
-                                    <button type="submit">Mettre à jour</button>
+                                    <button type="submit" name="action" value="updateStatus">Mettre à jour</button>
                                 </form>
                             </div>';
                         }
@@ -891,8 +997,71 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <!-- Section Gestion des utilisateurs -->
             <section>
                 <h2>Gestion des utilisateurs</h2>
-                <a href="user-management.php">Accédez à la gestion des utilisateurs</a>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>UserID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Actions</th> <!-- Column for buttons -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                            
+                            $users = recuperationUtilisateurs($pdo,$console);
+
+                            // Exemple de table avec des utilisateurs
+                            foreach ($users as $user) {
+                                echo "<tr>
+                                        <td>" . htmlspecialchars($user['userID']) . "</td>
+                                        <td>" . htmlspecialchars($user['username']) . "</td>
+                                        <td>" . htmlspecialchars($user['email']) . "</td>
+                                        <td>********</td> <!-- Ne jamais afficher le mot de passe en clair -->
+                                        <td>
+                                            <!-- Modifier Button -->
+                                            <button type='button' onclick='showEditForm(" . $user['userID'] . ")'>Modifier</button>
+                                            
+                                            <!-- Supprimer Button -->
+                                            <form action='index.php' method='post' style='display:inline-block;'>
+                                                <input type='hidden' name='userID' value='" . $user['userID'] . "' />
+                                                <button type='submit' name='action' value='supprimer' class='btn-supprimer' onclick='return confirm(\"Êtes-vous sûr de vouloir supprimer cet utilisateur ?\");'>Supprimer</button>
+                                            </form>
+                                        </td>
+                                    </tr>";
+
+                                // Formulaire de modification caché
+                                echo "<tr id='edit-form-" . $user['userID'] . "' style='display:none;'>
+                                        <td colspan='5'>
+                                            <form class='formulaireUtilisateur' action='index.php' method='post'>
+                                                <input type='hidden' name='userID' value='" . $user['userID'] . "' />
+                                                <label for='edit-username-" . $user['userID'] . "'>Nom d'utilisateur :</label>
+                                                <input type='text' id='edit-username-" . $user['userID'] . "' name='username' value='" . htmlspecialchars($user['username']) . "' /><br />
+                                                
+                                                <label for='edit-email-" . $user['userID'] . "'>Email :</label>
+                                                <input type='email' id='edit-email-" . $user['userID'] . "' name='email' value='" . htmlspecialchars($user['email']) . "' /><br />
+                                                
+                                                <label for='edit-password-" . $user['userID'] . "'>Mot de passe :</label>
+                                                <input type='password' id='edit-password-" . $user['userID'] . "' name='password' value='' /><br />
+                                                
+                                                <button type='submit' name='action' value='updateUtilisateur'>Mettre à jour</button>
+                                                <button type='button' onclick='hideEditForm(" . $user['userID'] . ")'>Annuler</button>
+                                            </form>
+                                        </td>
+                                    </tr>";
+                            }
+                        ?>
+                    </tbody>
+                </table>
+                <div id="pagination"></div> <!-- Pagination area -->
             </section>
+            </script>
+
+
+
+
 
             <!-- Section Gestion des forums -->
             <section class="forum-management">
