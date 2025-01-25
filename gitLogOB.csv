@@ -1,0 +1,104 @@
+5d8ba57,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FIX : bug fix + corrections de bug de merge
+dcc751b,MixFgams,b.fmohamedse@gmail.com,2025-01-24,Merge branch 'farouk' into V2
+4445da1,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FIX : - footer profendeur dossier - session start dans toutes les pages qui contiennent un header ou footer
+d544b13,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FIX : switch de valeur de session à valeur global pour la profondeur sur le header, sinon cela va s'appliquer a toutes les pages
+26274fd,MixFgams,b.fmohamedse@gmail.com,2025-01-24,PREF : optimisation des imports de films et series + gestion d'erreurs
+8c488be,MixFgams,b.fmohamedse@gmail.com,2025-01-24,PREF : optimisation de la console
+574330a,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FEAT: Tentative échouée avec l'API TVDB pour l'importation de films et séries, mise en place d'un formulaire d'importation manuelle avec choix entre série et film
+07c2ce2,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FEAT : ajout de la fonction de recherche de films et series de l'api
+496afd3,MixFgams,b.fmohamedse@gmail.com,2025-01-24,RESET : revenir à l'ancienne version du style.css avant organisation
+bf24d54,MixFgams,b.fmohamedse@gmail.com,2025-01-24,STYLE : organisation du code pour une meilleur comprehension mini-FEAT : ajout des liens de navigations sur le header
+d65e6fe,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FEAT : gestion des forums - Affichage des forums et leurs informations (ID, titre, description) sous forme de tableau. - Ajout de la possibilité de modifier les informations d'un forum via un formulaire intégré (titre et description). - Ajout de la possibilité de supprimer un forum depuis le tableau. - Intégration d'une console pour afficher la dernière action réalisée (modification/suppression) ou les éventuelles erreurs.
+fd77d3e,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FEAT : ajout de la console pour afficher la derniere action faites ou des erreurs provenant de l'action FEAT : gestion des utilisateurs      - Affichage des users et leurs informations sous format de tableau      - Possibilité de modifier leurs informations et compris le mot de passe, ainsi que la possibilité de supprimer l'utilisateur STYLE : style du tableau, et du formulaire dans le tabbleau
+eae514b,MixFgams,b.fmohamedse@gmail.com,2025-01-24,FEAT: gestion des signalements   - récupération des signalements   - possibilité de modifier le statut d'un signalement si nécessaire
+6ca144f,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-24,Fix bug page Contenu, index et couleur boutons
+6e5aac2,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-23,page contenu dynamique et profil corrige
+1236eac,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Merge Merging Nathan + Modif Page Contenu
+8e061ce,MixFgams,b.fmohamedse@gmail.com,2025-01-23,FEAT : system de refus et de redirection à la page d'accueil si jamais l'utilisateur n'est pas un admin
+48ce490,MixFgams,b.fmohamedse@gmail.com,2025-01-23,FIX : correction de la structure html du headeer FEAT : gestion de la profondeur pour des liens corrects dans d'autres dossiers
+f88f67f,Billel-69,billel.hakkas@gmail.com,2025-01-23,Update profile.php
+5c2efed,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Ajout des redirections dans la page profil
+7d71b7b,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Redirections Contenus / Collections
+a192818,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Boutons voir tout dans catalogue
+f622775,MixFgams,b.fmohamedse@gmail.com,2025-01-23,modification du header pour etre compatible avec le system de deconnexion
+840d3c6,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Merge Nathan - V1.2
+cebb619,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Forums populaires
+bb8bdb9,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Fix double header dans communauté
+8c6a65a,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-23,Merge Nathan - V1.1
+e4310f2,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-22,Changement CSS catalogue
+7824c94,Marwane El,marwane.el-boumyaoui@etu.univ-lyon1.fr,2025-01-22,barre recherche dans communauté
+b7d50c9,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-22,Pages Collection
+c3126a7,Marwane El,marwane.el-boumyaoui@etu.univ-lyon1.fr,2025-01-21,Barre de recherche sur tout les page plus affichage du poster
+b1378c1,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-21,Recommandations Personnalisées
+26f23e5,Marwane El Boumyaoui,marw2ne4007@gmail.com,2025-01-21,On peut mettre des contenu en regarde en cliquant sur l'oeil
+03b997d,MixFgams,b.fmohamedse@gmail.com,2025-01-21,reset à la v1.1 avant le merge
+3cf162c,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-20,Merge V1.1 Nathan, include connDB
+cea5e2a,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-20,Fix barre de recherche
+b5f330c,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-20,derniere correction avant la fin page contenu
+ae47c39,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-20,forum css fait
+4ec9d9b,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-20,Tri par genre des contenus du Catalogue
+a01b186,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-20,Merge V1.1 Nathan, modification page contenu
+96b762f,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-20,Page Catalogue presque finie
+f004a9b,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-20,css de la page forum partiellement refait
+b1e30c4,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-20,Tris en cours
+d1741a6,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-20,catalogue et contenu
+1063113,MixFgams,b.fmohamedse@gmail.com,2025-01-20,Merge branch 'V1.1' of https://github.com/MixFgams/SAE into V1.1
+d3e17e4,MixFgams,b.fmohamedse@gmail.com,2025-01-20,Ajout des fonctionnalités de connexion, inscription et importation
+5e47231,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2025-01-19,Fix bugs d'affichages sur le catalogue
+a587d32,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-19,systeme de like et dislike
+c3586b2,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-19,creation de son forum dans la pge communaute
+e1bdbe5,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-19,change bd
+85350c3,Marwane El Boumyaoui,marw2ne4007@gmail.com,2025-01-19,Page profil raccordé à la base de données et quelque changement dans les connexion à la nouvelle base de données dans quelque fichier
+a5bcb69,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-19,page d accueil + page forum + page communaute
+00b4dcc,Liegeon,nathan.liegeon@etu.univ-lyon1.fr,2025-01-14,Lien catalogue, BD, et page contenu
+32ef6ab,Marwane El,marwane.el-boumyaoui@etu.univ-lyon1.fr,2025-01-13,Ajout de la pagination
+09a1ea1,Marwane El Boumyaoui,marw2ne4007@gmail.com,2025-01-10,Ajout des image dans les resultats de recherche
+ef5e163,Marwane El,marwane.el-boumyaoui@etu.univ-lyon1.fr,2025-01-10,Ajout d'une barre de recherche dynamique
+e1fdf33,Marwane El Boumyaoui,marw2ne4007@gmail.com,2025-01-08,minor change
+b95ebdb,Billel-69,billel.hakkas@gmail.com,2025-01-08,Update catalogue.php
+86b6bcc,Billel-69,billel.hakkas@gmail.com,2025-01-08,Update index.php
+38fe93e,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-08,j espere sa marche
+87f4244,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-08,page catalogue forum communaute gestion dynamique de la page d accueil fusion de la barre recherche
+05f6522,Marwane El,marwane.el-boumyaoui@etu.univ-lyon1.fr,2025-01-06,On peut recherche dans la barre de recherche
+6dfd9b8,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2025-01-02,fonction de notation refait la page apropos et communaute
+1f2ba3e,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-29,Amelioration visuel et ajout d'animations
+d361515,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-28,Ajout d'une barre de recherche dans le header
+8fdadfc,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-26,On peut rediriger vers la page de présentation d'un contenu quand on clique dessus dans l'index
+e3b4941,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-24,Responsive design pour les forum populaire dans l'index
+6edd06f,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-23,Ajustement de la 1ere section dans profil
+fef518b,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2024-12-10,Modif checkbox (elle marche toujours pas je hurle) 😭
+303518f,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-12-10,Merge branch 'V1.1' of https://github.com/MixFgams/SAE into V1.1
+be3041c,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-12-10,pas de readme
+c97c2f1,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-12-10,js+profil
+a52c71b,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-10,Mise en commun d'index et de profil pour le css
+57746e5,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-08,Ajout des collections et des série en feu dans index html, généralisation du scroll dans toute la page html, et modification du css des choses ajoutées.
+198fede,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-12-07,Ajout de la fonctionnalité de scroll dans les recommendantion : Index
+1654d0c,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2024-11-28,J'ai supprimé le readme de con
+addc21c,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2024-11-28,Ajouts commentaires de tests + Petits fix de trucs
+46e0128,Billel-69,billel.hakkas@gmail.com,2024-11-28,Update profile.php
+2c6f824,Billel-69,billel.hakkas@gmail.com,2024-11-28,Update profiles.css
+621efb3,Marwane-EL,marw2ne4007@gmail.com,2024-11-28,Ajout d'un film en exemple pour index
+eb52b80,Marwane-EL,marw2ne4007@gmail.com,2024-11-28,Update script.js pour index et ses forums populaires
+942d5bb,Marwane-EL,marw2ne4007@gmail.com,2024-11-28,Update index.php ajout des forums populaires
+9fad95e,MixFgams,b.fmohamedse@gmail.com,2024-11-28,BIG BIG HOTFIX :
+99ab54c,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2024-11-27,Merge de page contenu avec V1.1
+a795f40,MixFgams,75123923+MixFgams@users.noreply.github.com,2024-11-14,Hotfix readme.md
+e72da54,MixFgams,75123923+MixFgams@users.noreply.github.com,2024-11-14,Ajout des informations actuelles de la branche
+b610cf8,Foudou,nathan.liegeon@etu.univ-lyon1.fr,2024-11-27,Ajout page contenu
+ca81096,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-11-23,css fait
+a4c6649,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-11-23,Merge branch 'V1.1' of https://github.com/MixFgams/SAE into V1.1
+58dabd1,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-11-23,html fait
+d354e65,MixFgams,b.fmohamedse@gmail.com,2024-11-22,HOTFIX : -Correction du display dans javascript qui interferai avec le display felx dans style.css
+27f353d,MixFgams,b.fmohamedse@gmail.com,2024-11-21,HOTFIX :
+4f4223d,MixFgams,b.fmohamedse@gmail.com,2024-11-19,HOTFIX : readme.md
+"8162fa1,MixFgams,b.fmohamedse@gmail.com,2024-11-19,-Ajout ""responsivite"" tres basique pour le header et footer"
+8cfa872,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-11-18,Merge branch 'V1.1' of https://github.com/MixFgams/SAE into V1.1
+8b7e8df,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-11-18,page profil
+7ed14e2,Marwane El Boumyaoui,marw2ne4007@gmail.com,2024-11-18,Ajout de l'html pour la page accueil
+5245824,billel hakkas,billel.hakkas@etu.univ-lyon1.fr,2024-11-18,correction de faute d orthographe
+12d4762,MixFgams,b.fmohamedse@gmail.com,2024-11-18,HOTFIX : readme.md
+fb3eca5,MixFgams,b.fmohamedse@gmail.com,2024-11-18,HotFix : ajout des links et correction du header
+e1f34bc,MixFgams,b.fmohamedse@gmail.com,2024-11-14,- Ajout de l'option de connexion via pseudo ou email - Correction des fonctions JavaScript pour basculer entre les formulaires - Amélioration de l'affichage des champs selon le choix (pseudo/email) - Affichage conditionnel des formulaires de connexion et inscription
+3ac756d,MixFgams,b.fmohamedse@gmail.com,2024-11-14,Update readme avec les informations de la branche  1.1
+cd60050,MixFgams,b.fmohamedse@gmail.com,2024-11-14,Initialisation 2.0 : Ajout du footer et header (Marwane/Farouk)
+895483f,MixFgams,b.fmohamedse@gmail.com,2024-10-19,Initialisation

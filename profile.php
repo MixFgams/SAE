@@ -143,7 +143,7 @@
             </section>
 
             <section class="SectionIndex">
-                <h2>Film regardés</h2>
+                <h2>Films regardés</h2>
                 <div class="scrollable-container">
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">
@@ -174,7 +174,7 @@
             </section>
 
             <section class="SectionIndex">
-                <h2>Série regardées</h2>
+                <h2>Séries regardées</h2>
                 <div class="scrollable-container">
                     <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
                     <div class="recommendations-scrollable scrollable-content">

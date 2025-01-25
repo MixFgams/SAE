@@ -30,8 +30,9 @@ if(isset($_SESSION['idUser'])) {
             $sql = "SELECT *
                     FROM
                     (
-                        (SELECT forumTitle, `description`, nbComment
+                        (SELECT forumTitle, f.description, nbComment, posterUrl
                         FROM forum f
+                        JOIN film on film.contentID = f.pk_ContentID
                         JOIN (SELECT contentID as forumID, COUNT(commentID) as nbComment 
                             FROM comment 
                             WHERE pk_ContentType = 'forum'
@@ -39,8 +40,9 @@ if(isset($_SESSION['idUser'])) {
                         ON f.forumID = c.forumID 
                         ORDER BY nbComment DESC)
                         UNION
-                        (SELECT forumTitle, `description`, 0 as nbComment
+                        (SELECT forumTitle, f.description, 0 as nbComment, posterUrl
                         FROM forum f
+                        JOIN film on film.contentID = f.pk_ContentID
                         WHERE forumID 
                         NOT IN (SELECT contentID as nbComment 
                             FROM comment 
@@ -55,10 +57,9 @@ if(isset($_SESSION['idUser'])) {
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     echo '<div class="forum-item">';
-                    echo '<img src="img/afficheFilm.jpg" alt="Image du forum">'; // Ajouter une image par défaut
+                    echo '<img src="' . htmlspecialchars($row['posterUrl']) .'">';
                     echo '<div class="forum-description">';
                     echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
-                    echo '<p>Nombre de commentaires : ' . htmlspecialchars($row['nbComment']) . '</p>'; // Ajouter les sujets
                     echo '<p>Description : ' . htmlspecialchars($row['description']) . '</p>'; // Description (optionnel si présent)
                     echo '</div>';
                     echo '</div>';
@@ -119,6 +120,7 @@ if(isset($_SESSION['idUser'])) {
                     echo '<p>Aucune recommandations trouvées.</p>';
                 }
                 ?>
+                
             </div>
 
             <button class="scroll-button right" aria-label="Défiler à droite">▶</button>

@@ -49,7 +49,7 @@ main {
 
 .Forum h3 {
     font-size: 1.5rem;
-    color: #007bff;
+    color: #d9641d;
     margin-bottom: 10px;
 }
 
@@ -60,7 +60,7 @@ main {
 
 /* Create Forum Button */
 form input[type="submit"] {
-    background-color: #007bff;
+    background-color: #f44336;
     color: white;
     border: none;
     padding: 10px 20px;

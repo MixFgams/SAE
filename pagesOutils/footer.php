@@ -13,7 +13,6 @@ if (isset($GLOBALS["profendeurDossier"])) {
             <img src="<?php echo str_repeat("../", $profendeur); ?>img/obLogo.png" alt="Logo OB">
         </a>
         <a href="mailto:FaroukMohamed.Bendeddouche@outlook.com">Contacter l'assistance</a>
-        <a href="">FAQ</a>
         <a href="<?php echo str_repeat("../", $profendeur); ?>aPropos.php">Conditions et confidentialité</a>
         
         <?php

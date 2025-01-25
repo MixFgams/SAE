@@ -13,13 +13,15 @@ include 'pagesOutils/connDB.php' ;
     <title>Collection</title>
 </head>
 <body>
+    
     <?php include("pagesOutils/header.php") ;
+    echo '<main>';
+    echo '<h1>Liste des collections</h2>';
     if (isset($_SESSION['idUser'])) {
         $userID = $_SESSION['idUser'] ;
     } else {
         $userID = 0 ;
     } ?>
-    <main>
         <?php
         if (!isset($_GET['id'])) {
             showGeneralPage($pdo, $userID) ;
@@ -71,7 +73,7 @@ function showGeneralPage(PDO $conn, int $userID) {
         $result = $stmtContent->fetchAll(PDO::FETCH_ASSOC) ;
 
         echo "<section class='SectionIndex'>
-                    <a href='collection.php?id=$collectionID'><h2>$collectionName</h2></a>
+                    <a id='titreCollection' href='collection.php?id=$collectionID'><h2>Collection $collectionName</h2></a>
                     <div class='scrollable-container'>
                         <button class='scroll-button left' aria-label='Défiler à gauche'>◀</button>
                         <div class='scrollable-content recommendations-scrollable'>" ;
@@ -89,7 +91,7 @@ function showGeneralPage(PDO $conn, int $userID) {
                     </div>
                 </section>";
     }
-    echo "<button id='createCollection'>+ Créer une collection</button>" ;
+    echo "<a href='creer_collection.php'><button id='createCollection'>+ Créer une collection</button></a>" ;
 }
 
 function showCollection(PDO $conn, int $collectionID, string $collectionName) {

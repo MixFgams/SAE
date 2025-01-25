@@ -225,18 +225,70 @@ document.addEventListener("click", (event) => {
     }
 });
 
-document.addEventListener("DOMContentLoaded", () => {
-    const searchInput = document.getElementById("searchInput");
-    const suggestionsBox = document.getElementById("suggestions");
 
-    if (searchInput && suggestionsBox) {
-        // Place ici tout le code relatif à la barre de recherche
-        console.log("Barre de recherche initialisée");
+
+//-----------------------------------------------------------------------------------------------------------------------------------//
+//-------------------- Barre recherche pour choisir un forum                                  ---------------------------------------//
+//-----------------------------------------------------------------------------------------------------------------------------------//
+
+const forumContent = document.getElementById("forumContent");
+const suggestionsBoxCommunaute = document.getElementById("suggestions-com");
+
+forumContent.addEventListener("input", () => {
+    const query = forumContent.value.trim();
+    if (query.length > 0) {
+        fetch(`communaute.php?query=${encodeURIComponent(query)}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Erreur réseau");
+                }
+                return response.json(); // Lire le corps de la réponse une seule fois
+            })
+            .then(data => {
+                console.log(data); // Afficher les données JSON
+                suggestionsBoxCommunaute.innerHTML = ""; // Vider les suggestions précédentes
+
+                if (data.length > 0) {
+                    data.forEach(item => {
+                        // Conteneur pour chaque suggestion
+                        const suggestion = document.createElement("div");
+                        suggestion.classList.add("suggestion-item");
+
+                        // Titre de la suggestion
+                        const text = document.createElement("span");
+                        text.textContent = item.name;
+                        text.classList.add("suggestion-text");
+
+                        // Ajouter l'événement de clic sur la suggestion
+                        suggestion.addEventListener("click", () => {
+                            forumContent.value = item.name; // Mettre à jour la barre de recherche avec le nom du film
+                            suggestionsBoxCommunaute.style.display = "none"; // Masquer la boîte de suggestions
+                        });
+
+                        // Ajouter le texte au conteneur de la suggestion
+                        suggestion.appendChild(text);
+
+                        // Ajouter la suggestion au conteneur de la boîte
+                        suggestionsBoxCommunaute.appendChild(suggestion);
+                    });
+                    suggestionsBoxCommunaute.style.display = "block"; // Afficher la boîte
+                } else {
+                    suggestionsBoxCommunaute.innerHTML = "<div class='suggestion-item'>Aucun résultat</div>";
+                    suggestionsBoxCommunaute.style.display = "none";
+                }
+            })
+            .catch(error => console.error("Erreur lors de la recherche :", error));
     } else {
-        console.log("Barre de recherche non disponible sur cette page");
+        suggestionsBoxCommunaute.style.display = "none"; // Masquer la boîte si aucune requête
     }
 });
 
+// Fermer la boîte si on clique ailleurs
+document.addEventListener("click", (event) => {
+    if (!event.target.closest(".search-container")) {
+        suggestionsBoxCommunaute.style.display = "none";
+    }
+});
 
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
