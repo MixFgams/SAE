@@ -159,7 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
                     echo '<p>Date de création : ' . htmlspecialchars($row['creationDate']) . '</p>';
                     echo '<form method="post">
                     <input type="hidden" name="forumID" value="' . htmlspecialchars($row['forumID']) . '">
-                    <input type="submit" value="Rejoindre">
+                    <input type="submit" name="acceder" value="Rejoindre">
                   </form>';
                     echo '</div>';
                 }

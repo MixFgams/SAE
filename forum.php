@@ -56,7 +56,6 @@ function addMessage($pdo, $forumID, $userID, $message) {
         ':message' => trim($message),
     ]);
 }
-
 if (isset($_POST['envoyer']) && !empty($_POST['message'])) {
     $userID = $_SESSION['userID'] ?? 1; // Utilisateur par défaut
     addMessage($pdo, $forumID, $userID, $_POST['message']);

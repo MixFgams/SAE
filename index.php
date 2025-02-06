@@ -37,9 +37,10 @@ try {
         <h2>Forums populaires</h2>
         <div class="forums-container">
             <?php
-            $sql = "SELECT forumTitle, forum.description, totalSubjectNumber, posterUrl
+            $sql = "SELECT forumTitle, forum.description, totalSubjectNumber, posterUrl, count(subjectID) as total
                 FROM forum 
                 join film on film.contentID = forum.pk_ContentID
+                join subject on forum.forumID = subject.pk_ForumID
                 ORDER BY totalSubjectNumber DESC 
                 LIMIT 5"; // Ajouter une limite pour éviter un affichage trop long
 
@@ -51,7 +52,7 @@ try {
                     echo '<img src="' . htmlspecialchars($row['posterUrl']) .'">';
                     echo '<div class="forum-description">';
                     echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
-                    echo '<p>Nombre de sujets : ' . htmlspecialchars($row['totalSubjectNumber']) . '</p>'; // Ajouter les sujets
+                    echo '<p>Nombre de sujets : ' . htmlspecialchars($row['total']) . '</p>'; // Ajouter les sujets
                     echo '<p>Description : ' . htmlspecialchars($row['description']) . '</p>'; // Description (optionnel si présent)
                     echo '</div>';
                     echo '</div>';
