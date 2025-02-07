@@ -1,7 +1,6 @@
 <?php
-    session_start();
+session_start();
 ?>
-
 
 <!DOCTYPE html>
 <html>
@@ -15,10 +14,9 @@ include 'pagesOutils/connDB.php';
 
 // Vérifier si l'utilisateur est connecté
 if (!isset($_SESSION['idUser'])) {
-    $userID = 0 ;
-}
-else {
-    $userID = $_SESSION['idUser'] ;
+    $userID = 0;
+} else {
+    $userID = $_SESSION['idUser'];
 }
 
 $contentID = isset($_GET['id']) ? intval($_GET['id']) : -1;
@@ -28,6 +26,8 @@ if ($contentID < 0 || empty($contentType)) {
     echo "<h1>Le contenu que vous cherchez n'existe pas</h1>";
     exit;
 }
+
+
 
 // Définir les noms de table dynamiquement
 $watchedTable = ($contentType === 'film') ? 'filmwatched' : 'serieswatched';
@@ -72,18 +72,26 @@ $stmt = $pdo->prepare("SELECT c.contentID, c.name, c.description, c.releaseDate,
 $stmt->execute([':contentType' => $contentType, ':contentID' => $contentID]);
 $content = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$viewCount = $content['viewsCount'] ;
-$id = $content['contentID'] ;
-    
+$viewCount = $content['viewsCount'];
+$id = $content['contentID'];
+
 if (!isset($_SESSION["vu$id"]) || $_SESSION["vu$id"] !== $userID) {
-    $_SESSION["vu$id"] = $userID ;
-    $viewCount += 1 ;
-    $contentType = $content['contentType'] ;
+    $_SESSION["vu$id"] = $userID;
+    $viewCount += 1;
+    $contentType = $content['contentType'];
     $sql = "UPDATE $contentType SET viewsCount = $viewCount 
-            WHERE contentID = $id" ;
-    
-    $stmt = $pdo->prepare($sql) ;
-    $stmt->execute() ;
+            WHERE contentID = $id";
+
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute();
+}
+
+// Vérifier si le contenu a déjà été marqué comme "Déjà Vu" par l'utilisateur
+$isWatched = false;
+if ($userID > 0) {
+    $stmt = $pdo->prepare("SELECT * FROM $watchedTable WHERE $contentColumn = :contentID AND pk_UserID = :userID");
+    $stmt->execute([':contentID' => $contentID, ':userID' => $userID]);
+    $isWatched = $stmt->rowCount() > 0;
 }
 ?>
 <main>
@@ -107,21 +115,21 @@ if (!isset($_SESSION["vu$id"]) || $_SESSION["vu$id"] !== $userID) {
             <img src="<?= htmlspecialchars($content['posterUrl']) ?>" alt="Image du contenu" class="image-contenu">
         </div>
         <?php if ($userID > 0) { ?>
-        <div id="description-grid">
-            <form method="post">
-                <label>
-                    <input type="checkbox" name="dejaVu" onchange="this.form.submit()"> Déjà Vu
-                </label>
-            </form>
-            <form method="post">
-                <select name="collectionID">
-                    <?php foreach ($collections as $collection): ?>
-                        <option value="<?= $collection['collectionID'] ?>"> <?= htmlspecialchars($collection['name']) ?> </option>
-                    <?php endforeach; ?>
-                </select>
-                <button type="submit" name="ajoutCollection">Ajouter à une collection</button>
-            </form>
-        </div>
+            <div id="description-grid">
+                <form method="post">
+                    <label>
+                        <input type="checkbox" name="dejaVu" onchange="this.form.submit()" <?= $isWatched ? 'checked' : '' ?>> Déjà Vu
+                    </label>
+                </form>
+                <form method="post">
+                    <select name="collectionID">
+                        <?php foreach ($collections as $collection): ?>
+                            <option value="<?= $collection['collectionID'] ?>"> <?= htmlspecialchars($collection['name']) ?> </option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button type="submit" name="ajoutCollection">Ajouter à une collection</button>
+                </form>
+            </div>
         <?php } ?>
     </section>
 </main>
