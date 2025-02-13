@@ -16,7 +16,6 @@ include 'pagesOutils/connDB.php' ;
     
     <?php include("pagesOutils/header.php") ;
     echo '<main>';
-    echo '<h1>Liste des collections</h2>';
     if (isset($_SESSION['idUser'])) {
         $userID = $_SESSION['idUser'] ;
     } else {
@@ -50,6 +49,7 @@ include 'pagesOutils/connDB.php' ;
 <?php 
 function showGeneralPage(PDO $conn, int $userID) {
 
+    echo '<h1>Liste des collections</h2>';
     $sql = "SELECT collectionID, `name` from collection c
     WHERE pk_userID = ? ;" ;
     $stmt = $conn->prepare($sql) ;
@@ -124,5 +124,6 @@ function showCollection(PDO $conn, int $collectionID, string $collectionName) {
 
     }
     echo "</section>" ;
+    echo "<a href='collection.php'><button>Retour aux collections</button></a>" ;
 }
 ?>

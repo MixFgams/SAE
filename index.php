@@ -55,7 +55,7 @@ if(isset($_SESSION['idUser'])) {
             $stmt->execute() ;
 
             if ($stmt->rowCount() > 0) {
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                while ($row = $stmt->fetch(mode: PDO::FETCH_ASSOC)) {
                     echo '<div class="forum-item">';
                     echo '<img src="' . htmlspecialchars($row['posterUrl']) .'">';
                     echo '<div class="forum-description">';

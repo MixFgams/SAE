@@ -13,17 +13,28 @@ $message = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!empty($_POST['collectionName'])) {
         $collectionName = htmlspecialchars($_POST['collectionName']);
-
-        $insertQuery = "INSERT INTO collection (`name`, pk_userID) VALUES (?, ?)";
-        $stmt = $pdo->prepare($insertQuery);
-        $stmt->bindParam(1, $collectionName);
-        $stmt->bindParam(2, $userID);
-
-        if ($stmt->execute()) {
-            $message = "Collection créée avec succès.";
+        
+        $presentQuery = "SELECT `name`, pk_userID FROM collection WHERE `name` = ? AND pk_userID = ?" ;
+        $stmt = $pdo->prepare($presentQuery) ;
+        $stmt->bindParam(1, $collectionName) ;
+        $stmt->bindParam(2, $userID) ;
+        $stmt->execute() ;
+        
+        if ($stmt->fetch(PDO::FETCH_ASSOC)) {
+            $message = "Erreur, cette collection existe déjà" ;
         } else {
-            $message = "Erreur lors de la création de la collection.";
+            $insertQuery = "INSERT INTO collection (`name`, pk_userID) VALUES (?, ?)";
+            $stmt = $pdo->prepare($insertQuery);
+            $stmt->bindParam(1, $collectionName);
+            $stmt->bindParam(2, $userID);
+            
+            if ($stmt->execute()) {
+                $message = "Collection créée avec succès.";
+            } else {
+                $message = "Erreur lors de la création de la collection.";
+            }
         }
+
     } else {
         $message = "Veuillez entrer un nom pour la collection.";
     }
