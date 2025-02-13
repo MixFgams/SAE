@@ -90,7 +90,7 @@ if ($userID > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionI
             <div id="description-grid">
                 <form method="post">
                     <button type="submit" name="toggleWatched">
-                        <?= $isWatched ? 'Supprimer' : 'Ajouter' ?>
+                        <?= $isWatched ? 'Supprimer de la liste des films/séries regardées' : 'Ajouter de la liste des films/séries regardées' ?>
                     </button>
                 </form>
                 <form method="post">
