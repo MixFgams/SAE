@@ -72,7 +72,7 @@ include 'pagesOutils/connDB.php' ;
             $_SESSION['sort'] = $_POST['sort'] ;
         }?>
         <?php include 'pagesOutils/footer.php'?>
-        <script src="catalogue.js"></script>
+        <script src="./javaScriptExtra/catalogue.js"></script>
         <script src="script.js"></script>
     </body>
 </html>
