@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 // Connexion à la base de données avec PDO
 $servername = "localhost";
 $username = "root";
@@ -209,7 +208,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
 
             try {
                 // Requête pour récupérer les forums
-                $sql = "SELECT forumID,forumTitle, description FROM forum LIMIT :limit OFFSET :offset";
+                $sql = "SELECT f.forumID, f.forumTitle, f.description, 
+                        COALESCE(fm.posterurl, s.posterurl) AS posterurl
+                FROM forum f
+                LEFT JOIN film fm ON f.pk_ContentType = 1 AND fm.contentID = f.pk_ContentID
+                LEFT JOIN series s ON f.pk_ContentType = 2 AND s.contentID = f.pk_ContentID
+                LIMIT :limit OFFSET :offset";
+
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindValue(':limit', $itemsPerPage, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -224,12 +229,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
                 if (!empty($forums)) {
                     foreach ($forums as $forum) {
                         echo '<div class="Forum">';
+                        echo '<img id="imgForum" src="' . htmlspecialchars($forum['posterurl']) . '">';
+                        echo '<div class="Forum-content">';
                         echo '<h3>' . htmlspecialchars($forum['forumTitle']) . '</h3>';
                         echo '<form method="post">
-                                <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
-                                <input type="submit" name="acceder" value="Rejoindre">
+                            <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
+                            <input type="submit" name="acceder" value="Rejoindre">
                         </form>';
                         echo '</div>';
+                        echo '</div>';
+
                     }
                 } else {
                     echo "<p>Aucun forum pour le moment.</p>";

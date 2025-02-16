@@ -1,6 +1,5 @@
 <?php
 session_start();
-
 // Vérification si la variable de session 'idForum' existe
 if (isset($_SESSION['idForum'])) {
     $forumID = $_SESSION['idForum'];
@@ -8,6 +7,11 @@ if (isset($_SESSION['idForum'])) {
     echo "Forum non sélectionné. Veuillez revenir à la liste des forums.";
     exit;
 }
+
+
+echo $forumID;
+echo $_SESSION['idForum'];
+
 
 if(isset($_SESSION['idUser'])) {
     $userID = $_SESSION['idUser'];
@@ -30,16 +34,18 @@ try {
 
 // Récupération des informations du forum
 function getForumInfo($pdo, $forumID) {
-    $stmt = $pdo->prepare("SELECT title, subject.description, forumTitle 
-                           FROM subject 
-                           JOIN forum 
-                           ON subject.pk_ForumID = forum.forumID 
-                           WHERE pk_ForumID = :forumID");
+
+    $stmt = $pdo->prepare("SELECT forumTitle 
+                       FROM forum 
+                       LEFT JOIN subject 
+                       ON forum.forumID = subject.pk_ForumID
+                       WHERE forum.forumID = :forumID");
+
     $stmt->execute([':forumID' => $forumID]);
     $forum = $stmt->fetch(PDO::FETCH_ASSOC);
-
     return $forum;
 }
+
 
 
 $forum = getForumInfo($pdo, $forumID);
@@ -199,6 +205,7 @@ if (isset($_POST['publish'])) {
 <main>
 
     <h1><?php
+
         if(!empty($forum)){
             echo htmlspecialchars($forum['forumTitle']);
     } ?>      </h1>
