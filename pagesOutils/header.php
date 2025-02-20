@@ -5,7 +5,10 @@ include "connDB.php" ;
 // Vérifier si une recherche est effectuée
 if (isset($_GET['query']) && !empty($_GET['query'])) {
     $query = htmlspecialchars($_GET['query']);
-    $sql = "SELECT contentID, name, posterURL, contentType FROM film WHERE name LIKE :query LIMIT 10";
+    $sql = "SELECT contentID, name, posterURL, 'film' AS contentType FROM film WHERE name LIKE :query
+        UNION 
+        SELECT contentID, name, posterURL, 'series' AS contentType FROM series WHERE name LIKE :query
+        LIMIT 10";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['query' => "%$query%"]);
 
@@ -32,7 +35,7 @@ if (isset($GLOBALS["profendeurDossier"])) {
             <img src="<?php echo str_repeat('../', $profendeur); ?>img/obLogo.png" alt="Logo OB">
         </a>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Rechercher un film...">
+            <input type="text" id="searchInput" placeholder="Rechercher un film, une série...">
             <div id="suggestions" class="suggestions-box"></div>
         </div>
         <a href="<?php echo str_repeat('../', $profendeur); ?>index.php">Accueil</a>

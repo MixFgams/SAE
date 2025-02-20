@@ -138,6 +138,16 @@ redirectionContenu.forEach(image => {
         window.location.href = lien;
     })
 })
+
+const redirectionForum = document.querySelectorAll('.forums-container') ;
+redirectionForum.forEach(image => {
+    image.addEventListener('click', () => {
+        const lien = 'communaute.php';
+        console.log(lien);
+        console.log(window.location.href);
+        window.location.href = lien;
+    })
+})
 //-----------------------------------------------------------------------------------------------------------------------------------//
 
 const icone = document.querySelectorAll('.eye-icon');
