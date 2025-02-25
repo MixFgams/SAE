@@ -5,7 +5,7 @@ session_start();
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="refonte.css">
 </head>
 <body>
 <?php
@@ -143,7 +143,7 @@ if ($userID > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionI
         <?php if ($userID > 0) { ?>
             <div id="description-grid">
                 <form method="post">
-                    <button type="submit" name="toggleWatched">
+                    <button class="bouttonOrange" type="submit" name="toggleWatched">
                         <?= $isWatched
                             ? 'Supprimer de la liste des films/séries regardées'
                             : 'Ajouter de la liste des films/séries regardées'
@@ -151,14 +151,14 @@ if ($userID > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionI
                     </button>
                 </form>
                 <form method="post">
-                    <select name="collectionID">
+                    <select id="selectCollection" name="collectionID">
                         <?php foreach ($collections as $collection): ?>
                             <option value="<?= $collection['collectionID'] ?>">
                                 <?= htmlspecialchars($collection['name']) ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
-                    <button type="submit" name="ajoutCollection">
+                    <button class="bouttonOrange" type="submit" name="ajoutCollection">
                         Ajouter à une collection
                     </button>
                 </form>
@@ -211,4 +211,5 @@ if ($userID > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionI
 </section>
 <script src="script.js"></script>
 </body>
+<?php include 'pagesOutils/footer.php'; ?>
 </html>

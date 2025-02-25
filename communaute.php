@@ -44,8 +44,7 @@ $erreurTrouverForum = "";
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Forum de la Communauté</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="communaute.css">
+    <link rel="stylesheet" href="refonte.css">
 
 </head>
 <body>
@@ -72,12 +71,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
 
 
 } ?>
-<main>
-
+<main id="PageForum">
     <form method="GET">
-        <label for="barreRecherche">Recherchez un forum : </label>
-        <input id="barreRecherche" name="barreRecherche" type="search">
-        <h1>Liste des articles</h1>
+        <div class="rechercheForum">
+            <div class="search">
+                <label for="barreRecherche" >Rechercher un contenu :</label>
+                <input type="text" id="barreRecherche" name="barreRecherche" class="search__input" placeholder="Type your text">
+                <button class="search__button">
+                    <svg class="search__icon" aria-hidden="true" viewBox="0 0 24 24">
+                        <g>
+                            <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+                        </g>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <h1 id="titreForum">Liste des forums d'Ob</h1>
         <?php echo $erreurTrouverForum ?>
         <?php
         if (isset ($_POST['creerForum'])){
@@ -86,11 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
            <section id="forum">
            <h2>Créer un forum</h2>
           <div class="search-container">
-              <input type="text " id="forumContent" name="forumName" placeholder="Sujet">
+              <div class="input-container">
+                  <input placeholder="Sujet" id="forumContent" class="input-field" type="text" name="forumName">
+                  <label for="input-field" class="input-label">Enter text</label>
+                  <span class="input-highlight"></span>
+              </div>
               <div id="suggestions-com" class="suggestions-box-com"></div>
           </div>
-          <input type="submit" name="creerMonForum" value="Créer">
+          <input class="bouttonOrange" type="submit" name="creerMonForum" value="Créer">
           </section>
+          
 '   ;
 
         }
@@ -168,19 +182,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
             $recherche = $_GET['barreRecherche'];
             $stmt = $pdo->prepare($sql);
             $stmt->execute(['barreRecherche' => "%$recherche%"]);
-
-            echo "<h2>Forums correspondant à : " . htmlspecialchars($_GET['barreRecherche']) . "</h2>";
+            echo '<div class="resultatForum">';
+            echo "<h2>Forums correspondant à : " . "''" .htmlspecialchars($_GET['barreRecherche']) . "''" . "</h2>";
             echo '<div class="forum-container">'; // Ajout du conteneur principal
+            echo '</div>';
 
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     echo '<div class="Forum">'; // Utilisation de la même classe que pour les forums normaux
-                    echo '<h2>' . htmlspecialchars($row['forumTitle']) . '</h2>';
+                    echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
                     echo '<p>' . htmlspecialchars($row['description']) . '</p>';
-                    echo '<p>Date de création : ' . htmlspecialchars($row['creationDate']) . '</p>';
+                    echo '<p>' . htmlspecialchars($row['creationDate']) . '</p>';
                     echo '<form method="post">
                     <input type="hidden" name="forumID" value="' . htmlspecialchars($row['forumID']) . '">
-                    <input type="submit" value="Rejoindre">
+                    <input class="bouttonOrange" type="submit" name="acceder" value="Rejoindre">
                   </form>';
                     echo '</div>';
                 }
@@ -195,7 +210,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
     <section id="forum">
         <h2>Forum de Discussion</h2>
         <form method="POST">
-            <input type="submit" name="creerForum" value="Créer mon forum">
+            <input id="CreerForum" class="bouttonOrange" type="submit" name="creerForum" value="Créer mon forum">
         </form>
         <!-- Affichage des messages -->
         <div id="discussion">
@@ -234,10 +249,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
                         echo '<h3>' . htmlspecialchars($forum['forumTitle']) . '</h3>';
                         echo '<form method="post">
                             <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
-                            <input type="submit" name="acceder" value="Rejoindre">
+                            <input id="forumRejoindreButton" class="bouttonOrange" type="submit" name="acceder" value="Rejoindre">
                         </form>';
                         echo '</div>';
                         echo '</div>';
+                        echo '<hr>';
 
                     }
                 } else {

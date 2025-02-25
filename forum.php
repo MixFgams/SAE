@@ -9,10 +9,6 @@ if (isset($_SESSION['idForum'])) {
 }
 
 
-echo $forumID;
-echo $_SESSION['idForum'];
-
-
 if(isset($_SESSION['idUser'])) {
     $userID = $_SESSION['idUser'];
 } else {
@@ -195,20 +191,18 @@ if (isset($_POST['publish'])) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($forum['forumTitle']); ?></title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="forum.css">
+    <link rel="stylesheet" href="refonte.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
 <?php include 'pagesOutils/header.php'; ?>
 
-<main>
+<h1 id="titreForum">Forum <?php
 
-    <h1><?php
-
-        if(!empty($forum)){
-            echo htmlspecialchars($forum['forumTitle']);
+    if(!empty($forum)){
+        echo htmlspecialchars($forum['forumTitle']);
     } ?>      </h1>
+<main id="PageDiscussion">
         <!-- Notifications -->
         <?php if (isset($messageConfirmation)) echo "<p class='success'>$messageConfirmation</p>"; ?>
 
@@ -246,13 +240,13 @@ if (isset($_POST['publish'])) {
     $totalPages = ceil($totalItems / $limit);
         // Affichage des sujets
         if (!empty($subjects)): ?>
+            <h2 id="titreSujet">Liste des sujets</h2>
             <div id="subject">
-                <h2>Liste des sujets</h2>
                 <?php foreach ($subjects as $subject): ?>
                     <div class="subject">
                         <h3><?php echo htmlspecialchars($subject['title']); ?></h3>
                         <p>Nom d'utilisateur : <?php echo htmlspecialchars($subject['username']); ?></p>
-                        <p><?php echo htmlspecialchars($subject['description']); ?></p>
+                        <p>Description : <?php echo htmlspecialchars($subject['description']); ?></p>
 
                         <!-- Affichage des messages associés -->
                         <div id="messages">
@@ -269,7 +263,7 @@ if (isset($_POST['publish'])) {
                                             <input type="hidden" name="messageID" value="<?php echo $message['commentID']; ?>">
                                             <input type="hidden" name="forumID" value="<?php echo htmlspecialchars($subject['pk_ForumID']); ?>">
                                             <button type="submit" name="like" class="like-button"><i class="fa fa-thumbs-up"></i> Like</button>
-                                            <button type="submit" name="dislike" "dislike-button"> <i class="fa fa-thumbs-down"></i> Dislike</button>
+                                            <button  type="submit" name="dislike" class="dislike-button"><i class="fa fa-thumbs-down"></i> Dislike</button>
                                         </form>
                                         <p>Likes : <?php echo $message['likeCount']; ?> | Dislikes : <?php echo $message['dislikeCount']; ?></p>
                                     </div>
@@ -284,9 +278,10 @@ if (isset($_POST['publish'])) {
                             <form method="post" action="post_message.php">
                                 <textarea name="messageContent" rows="2" placeholder="Écrivez votre commentaire ici..." required></textarea>
                                 <input type="hidden" name="subjectID" value="<?php echo $subject['subjectID']; ?>">
-                                <button type="submit" name="envoyer">Envoyer</button>
+                                <button id="forumRejoindreButton" class="bouttonOrange" type="submit" name="envoyer">Envoyer</button>
                             </form>
                         </div>
+                        <hr>
                     </div>
                 <?php endforeach; ?>
             </div>
@@ -294,16 +289,16 @@ if (isset($_POST['publish'])) {
             <p>Aucun sujet trouvé pour ce forum.</p>
         <?php endif; ?>
 
-    <section>
-        <h2>Ajouter votre article ou votre question</h2>
+    <section class="AjouterArticle">
         <!-- Formulaire pour ajouter un article  -->
-        <form method="post">
+        <form id="formArticle" class="AjouterArticle" method="post">
+            <h2>Ajouter votre article ou votre question</h2>
             <input type="hidden" name="forumID" value="<?php echo $forumID; ?>">
             <label for="title">Titre :</label>
-            <input type="text" id="title" name="title" required>
+            <input placeholder="Titre de votre article ou de votre question..." type="text" id="title" name="title" required>
             <label for="content">Contenu :</label>
-            <textarea id="content" name="content" required></textarea>
-            <button type="submit" name="publish">Publier</button>
+            <textarea placeholder="Ecrivez le contenu ici..." id="content" name="content" required></textarea>
+            <button id="publierArticle" class="bouttonOrange" type="submit" name="publish">Publier</button>
         </form>
 
     </section>

@@ -35,7 +35,10 @@ if (isset($GLOBALS["profendeurDossier"])) {
             <img src="<?php echo str_repeat('../', $profendeur); ?>img/obLogo.png" alt="Logo OB">
         </a>
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Rechercher un film, une série...">
+            <!-- From Uiverse.io by boryanakrasteva -->
+            <div class="input-container">
+                <input type="text" name="text" id="searchInput" class="input" placeholder="Rechercher un film, une série...">
+            </div>
             <div id="suggestions" class="suggestions-box"></div>
         </div>
         <a href="<?php echo str_repeat('../', $profendeur); ?>index.php">Accueil</a>

@@ -7,7 +7,7 @@ include 'pagesOutils/connDB.php' ;
 <html>
     <head>
         <link rel="icon" src="img/obLogo.png" type="image/x-icon">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="refonte.css">
     </head>
 
     <body id="catalogue">
@@ -19,11 +19,20 @@ include 'pagesOutils/connDB.php' ;
             } ?>  
         <section>
             <form method="GET" action="" id="searchBarCatalogue">
-                <input type="text" name="searchBarCatalogue" placeholder="Rechercher un contenu">
-                <button type="submit">Rechercher</button>
+                <div class="search">
+                    <label for="searchBarCatalogue" >Rechercher un contenu :</label>
+                    <input type="text" id="barreRecherche" name="searchBarCatalogue" class="search__input" placeholder="Type your text">
+                    <button class="search__button">
+                        <svg class="search__icon" aria-hidden="true" viewBox="0 0 24 24">
+                            <g>
+                                <path d="M21.53 20.47l-3.66-3.66C19.195 15.24 20 13.214 20 11c0-4.97-4.03-9-9-9s-9 4.03-9 9 4.03 9 9 9c2.215 0 4.24-.804 5.808-2.13l3.66 3.66c.147.146.34.22.53.22s.385-.073.53-.22c.295-.293.295-.767.002-1.06zM3.5 11c0-4.135 3.365-7.5 7.5-7.5s7.5 3.365 7.5 7.5-3.365 7.5-7.5 7.5-7.5-3.365-7.5-7.5z"></path>
+                            </g>
+                        </svg>
+                    </button>
+                </div>
             </form>
         </section>
-        <main>
+        <main id="pageCatalogue">
             <section id="sortFilter">
                 <h3>Tris</h3>
                 <form id="radio-list" method="POST">
@@ -177,7 +186,7 @@ include 'pagesOutils/connDB.php' ;
         // Affichage des résultats pour les films
         if (isset($contents['film'])) {
             $hasContent = True ;
-            echo "<h2>Films</h2>" ;
+            echo "<h2>Films</h2>";
             echo "<div class='catalogueSection'>" ;
             $contentCount = 0 ;
             foreach($contents['film'] as $row) {
@@ -188,7 +197,9 @@ include 'pagesOutils/connDB.php' ;
                 showContentDiv($id, $contentName, $imgURL, $row['contentType'], "film", $contentCount, 8) ;
             }
             if ($contentCount > 8)
-                echo "<button param='film' class='viewMoreCatalogue'>Voir Tout</button>" ;
+                echo "<div id='divVoirTout'>";
+                echo "<button param='series' id='voirTout' class='bouttonOrange'>Voir Tout</button>" ;
+                echo "</div>";
             echo "</div>" ;
         } 
 
@@ -206,8 +217,10 @@ include 'pagesOutils/connDB.php' ;
                 showContentDiv($id, $contentName, $imgURL, $row['contentType'], "series", $contentCount, 8) ;
 
             }
-            if ($contentCount > 8)
-                echo "<button param='series' class='viewMoreCatalogue'>Voir Tout</button>" ;
+            if ($contentCount > 6)
+                echo "<div id='divVoirTout'>";
+                echo "<button param='series' id='voirTout' class='bouttonOrange'>Voir Tout</button>" ;
+                echo "</div>";
             echo "</div>" ;
         } 
         
@@ -242,7 +255,7 @@ include 'pagesOutils/connDB.php' ;
     
                 if ($currentLetter != $previousLetter) {
                     if ($contentCount > 4) {
-                        echo "<button param=$currentLetter class='viewMoreCatalogue'>Voir Tout</button>" ;
+                        echo "<button param='series' id='voirTout' class='bouttonOrange'>Voir Tout</button>" ;
                     }
 
                     if ($previousLetter != null) {
@@ -265,7 +278,7 @@ include 'pagesOutils/connDB.php' ;
             }
 
             if ($contentCount > 4)
-                echo "<button param=$currentLetter class='viewMoreCatalogue'>Voir Tout</button>" ;
+                echo "<button param='series' id='voirTout' class='bouttonOrange'>Voir Tout</button>" ;
             echo "</div></div>" ;
         }
     }
@@ -311,7 +324,7 @@ include 'pagesOutils/connDB.php' ;
                     $currentGenre = $genreStmt->fetch(PDO::FETCH_ASSOC)['genreName'] ;
                     if ($currentGenre != $previousGenre) {
                         if ($contentCount > 4) {
-                            echo "<button param=$currentGenre class='viewMoreCatalogue'>Voir Tout</button>" ;
+                            echo "<button param='series' id='voirTout' class='bouttonOrange'>Voir Tout</button>" ;
                         }
                         
                         if ($previousGenre != null) {
@@ -337,7 +350,7 @@ include 'pagesOutils/connDB.php' ;
             echo "<p class='no-results'>Aucun résultat trouvé pour : $searchQuery. Essayez une autre recherche.</p>";
         else {
             if ($contentCount > 4)
-                echo "<button param=$currentGenre class='viewMoreCatalogue'>Voir Tout</button>" ;
+                echo "<button param='series' id='voirTout' class='bouttonOrange'>Voir Tout</button>" ;
             echo "</div>" ;
         }
     }
