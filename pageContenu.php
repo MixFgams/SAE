@@ -123,7 +123,7 @@ if ($userID > 0 && isset($_POST['ajoutCollection']) && isset($_POST['collectionI
     <section id="cadre-contenu">
         <div id="contenu">
             <div id="info-contenu">
-                <h3><?= htmlspecialchars($content['name']) ?></h3>
+                <h2><?= htmlspecialchars($content['name']) ?></h2>
                 <h3>Type de Contenu</h3>
                 <p><?= htmlspecialchars($content['contentType']) ?></p>
                 <h3>Date de Sortie</h3>

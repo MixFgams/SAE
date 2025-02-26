@@ -7,7 +7,7 @@
 <html>
     <head>
         <link rel="icon" href="img/obLogo.png   " type="image/x-icon">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="refonte.css">
     </head>
     <?php
     if(isset($_SESSION['idUser'])) {
@@ -107,8 +107,8 @@
                             <div id="progress-bar" style="width: <?= $progressPercent ?>%;"></div>
                         </div>
                         <form method="post" enctype="multipart/form-data">
-                            <input type="file" name="profilePicture" accept="image/*" required>
-                            <input type="submit" name="uploadPhoto" value="Changer la photo">
+                            <input id="changerPhoto" class="bouttonOrange" type="file" name="profilePicture" accept="image/*" required>
+                            <input id="changerPhoto" class="bouttonOrange" type="submit" name="uploadPhoto" value="Changer la photo">
                         </form>
 
                     </div>

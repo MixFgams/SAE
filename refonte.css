@@ -197,6 +197,11 @@ footer a:hover {
     margin-left: 0;
 }
 
+#decouvrir:hover {
+    background-color: #232858;
+    color: white;
+}
+
 .SectionIndex {
     width: 100%;
     background-color: #232858;
@@ -1055,6 +1060,12 @@ form input[type="text"]:focus, form textarea:focus {
     text-underline-offset: 7px;
 }
 
+#info-contenu h2 {
+    font-size: 3rem;
+    color: white;
+    margin-bottom: 5px;
+}
+
 #info-contenu p {
     font-size: 1.5rem;
     color: white;
@@ -1063,12 +1074,12 @@ form input[type="text"]:focus, form textarea:focus {
 
 /* Image du contenu */
 .image-contenu {
-    width: 90%;
+    width: 80%;
     height: auto;
     object-fit: cover;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-left: 5%;
+    margin-left: 8%;
     border: solid white 5px;
 }
 
@@ -1128,6 +1139,7 @@ form input[type="text"]:focus, form textarea:focus {
 
 .bouttonOrange{
     transition: background-color 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 
 .bouttonOrange:hover {
@@ -1203,4 +1215,69 @@ form input[type="text"]:focus, form textarea:focus {
     font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
     font-size: 18px;
     color: #60666d;
+}
+
+/*-----------------------------------------------------------------------------------------------------*/
+
+
+#user{
+    display: flex;
+    justify-content: center;
+}
+
+#user section{
+    display:flex;
+    margin-right: 100px;
+    background-color: #da6018;
+    border-radius: 20px;
+    padding: 10px;
+    margin-bottom: 1%;
+    margin-top: 1%;
+}
+
+#user section h3:nth-child(1){
+    text-align:left;
+    font-size: 30px;
+    text-transform: capitalize;
+}
+#user section img:first-child{
+    width: 150px;
+    height: 150px;
+}
+
+
+#user section p:nth-child(2),
+#user section p:nth-child(3) {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 15px;
+    margin: 2px 0;
+    display: inline-block;
+}
+
+#user section img {
+    margin-right: 20px;
+    width: 100px;
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    border: solid white 3px;
+}
+
+.invisible{
+    display:none;
+}
+.visible{
+    display:flex;
+}
+#noter{
+    width:100%
+}
+
+#changerPhoto {
+    background-color: white;
+    color: black;
 }
