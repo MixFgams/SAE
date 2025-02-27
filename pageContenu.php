@@ -55,6 +55,7 @@ if ($userID > 0 && isset($_POST['toggleWatched'])) {
         $stmt = $pdo->prepare("DELETE FROM $watchedTable
                                WHERE $contentColumn = :contentID
                                  AND pk_UserID = :userID");
+
         $stmt->execute([
             ':contentID' => $contentID,
             ':userID'    => $userID
@@ -65,6 +66,12 @@ if ($userID > 0 && isset($_POST['toggleWatched'])) {
                                SET viewsCount = viewsCount - 1
                                WHERE contentID = :contentID");
         $stmt->execute([':contentID' => $contentID]);
+
+        //Decrementer l experience
+        $stmt=$pdo->prepare("UPDATE user_levels set exp =exp-10 where user_id=:userID");
+        $stmt->execute([':userID'=>$userID]);
+
+
     } else {
         // Ajouter l'entrée dans la table watched
         $stmt = $pdo->prepare("INSERT INTO $watchedTable ($contentColumn, pk_UserID)
@@ -79,6 +86,9 @@ if ($userID > 0 && isset($_POST['toggleWatched'])) {
                                SET viewsCount = viewsCount + 1
                                WHERE contentID = :contentID");
         $stmt->execute([':contentID' => $contentID]);
+        //Incrementer l experience
+        $stmt=$pdo->prepare("UPDATE user_levels set exp =exp+10 where user_id=:userID");
+        $stmt->execute([':userID'=>$userID]);
     }
 
     // Rafraîchir la page pour mettre à jour l'affichage
