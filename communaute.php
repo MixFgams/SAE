@@ -189,7 +189,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
 
             if ($stmt->rowCount() > 0) {
                 while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    echo '<div class="Forum">'; // Utilisation de la même classe que pour les forums normaux
+                    echo '<div class="Forum2">'; // Utilisation de la même classe que pour les forums normaux
                     echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
                     echo '<p>' . htmlspecialchars($row['description']) . '</p>';
                     echo '<p>' . htmlspecialchars($row['creationDate']) . '</p>';

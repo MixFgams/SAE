@@ -9,6 +9,10 @@ footer {
     margin-top: -3%;
 }
 
+header {
+    margin-top: 30px;
+}
+
 header nav, footer nav {
     display: flex;
     justify-content: space-evenly;
@@ -108,6 +112,10 @@ footer a:hover {
     z-index: 1000;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
     border-radius: 4px;
+}
+
+header .search-container {
+    margin: 0;
 }
 
 .suggestions-box-com{
@@ -526,6 +534,16 @@ footer a:hover {
 }
 
 .Forum {
+    width: 100%;
+    padding: 10px;
+    /* Optionnel : une bordure pour séparer visuellement chaque forum */
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.Forum2 {
     width: 100%;
     padding: 10px;
     /* Optionnel : une bordure pour séparer visuellement chaque forum */
@@ -1281,3 +1299,144 @@ form input[type="text"]:focus, form textarea:focus {
     background-color: white;
     color: black;
 }
+
+/*-----------------------------------------------------------------------*/
+
+#pageAPropos {
+    margin-top: 2%;
+}
+
+#pageAPropos h2 {
+    text-decoration: underline;
+    text-underline-offset: 7px;
+}
+
+#pageAPropos section {
+    padding-left: 5%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 3%;
+    color: white;
+    background-color: #232858;
+    line-height: 150%;
+    font-size: 1.6em;
+}
+
+#pageAPropos #sectionBlanche {
+    color: black;
+    background-color: white;
+}
+
+#pageAPropos #sectionBlanche h1{
+    font-size: 1.8em;
+    background-color: #232858;
+    text-align: center;
+    color: white;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-left: -6%;
+}
+
+/*------------------------------------------------------------------*/
+
+/*c'etait un conflit avec le javasript, easy peasy*/
+#inscription-form, #connexion-form{
+    display: flex;
+    flex-direction: column;
+}
+#connexion-main {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 2%;
+    background-color: #232858;
+    padding-top: 1%;
+    margin-top: 2%;
+    margin-bottom: 6%;
+    border-radius: 40px;
+}
+
+#connexion-main h1{
+    color:white;
+    font-size: 2.6em;
+}
+
+#connexion-main input[type="email"], #connexion-main input[type="password"],#connexion-main input[type="text"]{
+    background: white;
+    color: black;
+    font-style: italic;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    border: none;
+    font-size: 1.3em;
+    text-transform: capitalize;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5%;
+    border-radius: 20px;
+    padding: 1%;
+    margin-bottom: 2%;
+}
+
+#connexion-main .bouttonOrange {
+    font-size: 1.3em;
+}
+
+/*-------------------------------------------------------------------------------------------------------------------------*/
+
+#mainCollection .scrollable-container {
+    min-height: 400px;
+}
+
+#mainCollection h1 {
+    margin-left: 5%;
+    font-size: 2.3em;
+}
+
+#mainCollection a {
+    text-decoration: none;
+    color: white;
+}
+
+#mainCollection .SectionIndex:last-of-type {
+    margin-bottom: 0;
+}
+
+#showCollection {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#showCollection h2{
+    font-size: 2em;
+}
+/*------------------------------------------------------------------------------------------------------------------------------*/
+
+#mainCreateCollection h1 {
+    font-size: 2.3em;
+}
+
+#mainCreateCollection {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#mainCreateCollection form {
+    background-color: #232858;
+    border-radius: 40px;
+    color: white;
+    padding: 4%;
+    font-size: 2em;
+}
+
+#mainCreateCollection input[type="text"]{
+    background: white;
+    color: black;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    padding: 1%;
+    font-size: 1em;
+    display: block;
+}
+
