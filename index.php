@@ -27,7 +27,7 @@ if(isset($_SESSION['idUser'])) {
         <div id="slogan">
             <h2>Ob</h2>
             <h3>Your hobbies in one place</h3>
-            <button class="bouttonOrange" id="decouvrir">Découvrir les contenus    <i class="fa-solid fa-arrow-right"></i></button>
+            <a href="catalogue.php"> <button class="bouttonOrange" id="decouvrir">Découvrir les contenus    <i class="fa-solid fa-arrow-right"></i></button></a>
         </div>
         <img src="img/mascotte.jpg">
     </section>
