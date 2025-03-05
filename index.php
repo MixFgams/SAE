@@ -22,6 +22,85 @@ if(isset($_SESSION['idUser'])) {
 }?>
 
 <main>
+    <!-- Section Films Populaires -->
+    <section class="SectionIndex">
+        <h2>Films populaires</h2>
+        <div class="scrollable-container">
+            <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
+            <div class="recommendations-scrollable scrollable-content">
+                <?php
+                $sqlFilmsPopulaires = "SELECT contentID, `name`, posterUrl, viewsCount
+                                   FROM film
+                                   ORDER BY viewsCount DESC
+                                   LIMIT 5"; // Limite de 5 films
+
+                $stmtFilms = $pdo->prepare($sqlFilmsPopulaires);
+                $stmtFilms->execute();
+
+                if ($stmtFilms->rowCount() > 0) {
+                    while ($row = $stmtFilms->fetch(PDO::FETCH_ASSOC)) {
+                        // On récupère l'ID et le type (film)
+                        $id   = $row['contentID'];
+                        $type = 'film';
+                        $url  = htmlspecialchars($row['posterUrl']);
+                        $name = htmlspecialchars($row['name']);
+
+                        echo '<div class="recommendation-card">';
+                        // On crée un lien vers pageContenu.php?id=...&type=film
+                        echo '<a href="pageContenu.php?id=' . $id . '&type=' . $type . '">';
+                        echo '<img src="' . $url . '" alt="' . $name . '">';
+                        echo '</a>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p>Aucun film trouvé.</p>';
+                }
+                ?>
+            </div>
+            <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
+        </div>
+    </section>
+
+    <!-- Section Séries Populaires -->
+    <section class="SectionIndex">
+        <h2>Séries populaires</h2>
+        <div class="scrollable-container">
+            <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
+            <div class="recommendations-scrollable scrollable-content">
+                <?php
+                $sqlSeriesPopulaires = "SELECT contentID, `name`, posterUrl, viewsCount
+                                    FROM series
+                                    ORDER BY viewsCount DESC
+                                    LIMIT 5"; // Limite de 5 séries
+
+                $stmtSeries = $pdo->prepare($sqlSeriesPopulaires);
+                $stmtSeries->execute();
+
+                if ($stmtSeries->rowCount() > 0) {
+                    while ($row = $stmtSeries->fetch(PDO::FETCH_ASSOC)) {
+                        // On récupère l'ID et le type (series)
+                        $id   = $row['contentID'];
+                        $type = 'series';
+                        $url  = htmlspecialchars($row['posterUrl']);
+                        $name = htmlspecialchars($row['name']);
+
+                        echo '<div class="recommendation-card">';
+                        // On crée un lien vers pageContenu.php?id=...&type=series
+                        echo '<a href="pageContenu.php?id=' . $id . '&type=' . $type . '">';
+                        echo '<img src="' . $url . '" alt="' . $name . '">';
+                        echo '</a>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo '<p>Aucune série trouvée.</p>';
+                }
+                ?>
+            </div>
+            <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
+        </div>
+    </section>
+
+
     <!-- Section Forums Populaires -->
     <section class="SectionIndex">
         <h2>Forums populaires</h2>
@@ -120,7 +199,7 @@ if(isset($_SESSION['idUser'])) {
                     echo '<p>Aucune recommandations trouvées.</p>';
                 }
                 ?>
-                
+
             </div>
 
             <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
@@ -207,7 +286,7 @@ function showRecommendedContents(PDO $conn, int $userID) {
             WHERE pk_userID = $userID) 
         ORDER BY RAND()
         LIMIT 3;" ;
-    
+
     $stmt = $conn->prepare($sql) ;
     $contentSet = [] ;
     foreach ($genres as $genre) {

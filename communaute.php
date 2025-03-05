@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-
 // Connexion à la base de données avec PDO
 $servername = "localhost";
 $username = "root";
@@ -17,7 +16,17 @@ try {
 
 if (isset($_GET['query']) && !empty($_GET['query'])) {
     $query = htmlspecialchars($_GET['query']);
-    $sql = "SELECT ContentID, name, posterURL FROM film WHERE name LIKE :query LIMIT 10";
+    $sql = "SELECT contentID, name, posterURL, 'film' AS type
+                 FROM film
+                 WHERE name LIKE :query 
+                 
+                 UNION 
+                 
+                 SELECT contentID, name, posterURL, 'series' AS type
+                 FROM series
+                 WHERE name LIKE :query 
+
+                 LIMIT 10";
     $stmt = $pdo->prepare($sql);
     $stmt->execute(['query' => "%$query%"]);
 
@@ -27,6 +36,7 @@ if (isset($_GET['query']) && !empty($_GET['query'])) {
     echo json_encode($results);  // Renvoie uniquement les données JSON
     exit;  // Arrête l'exécution pour ne pas ajouter de HTML après le JSON
 }
+$erreurTrouverForum = "";
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -68,6 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
         <label for="barreRecherche">Recherchez un forum : </label>
         <input id="barreRecherche" name="barreRecherche" type="search">
         <h1>Liste des articles</h1>
+        <?php echo $erreurTrouverForum ?>
         <?php
         if (isset ($_POST['creerForum'])){
 
@@ -80,64 +91,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
           </div>
           <input type="submit" name="creerMonForum" value="Créer">
           </section>
-';
+'   ;
 
         }
 
-        if (isset($_GET['creerMonForum']) && isset($_GET['forumName'])) {
-            // Sanitize input
-            $forumName = htmlspecialchars($_GET['forumName']);
-            $creationDate = date('Y-m-d H:i:s'); // Date de création actuelle
+            if (isset($_GET['creerMonForum']) && isset($_GET['forumName'])) {
+        // Sanitize input
+        $forumName = htmlspecialchars($_GET['forumName']);
+        $creationDate = date('Y-m-d H:i:s'); // Date de création actuelle
 
-            // Vérifier si le contenu existe (film ou série)
-            $checkContenu = "SELECT contentID 
-                        FROM film 
-                        WHERE UPPER(name) = UPPER(:forumName)
-                        UNION 
-                        SELECT contentID 
-                        FROM series 
-                        WHERE UPPER(name) = UPPER(:forumName);";
-            $stmt = $pdo->prepare($checkContenu);
-            $stmt->execute(['forumName' => $forumName]);
+        // Vérifier si le contenu existe (film ou série)
+        $checkContenu = "SELECT contentID, 'film' AS contentType
+                         FROM film 
+                         WHERE UPPER(name) = UPPER(:forumName)
+                         UNION 
+                         SELECT contentID, 'series' AS contentType
+                         FROM series 
+                         WHERE UPPER(name) = UPPER(:forumName);";
+        $stmt = $pdo->prepare($checkContenu);
+        $stmt->execute(['forumName' => $forumName]);
 
-            if ($stmt->rowCount() > 0) {
-                // Récupérer l'ID du contenu
-                $content = $stmt->fetch(PDO::FETCH_ASSOC);
-                $pk_ContentID = $content['contentID'];
+        if ($stmt->rowCount() > 0) {
+            // Récupérer l'ID du contenu
+            $content = $stmt->fetch(PDO::FETCH_ASSOC);
+            $pk_ContentID = $content['contentID'];
+            $pk_ContentType = $content['contentType'];
 
-                // Vérifier si un forum existe déjà pour ce contenu
-                $checkForum = "SELECT forumID 
-                       FROM forum 
-                       WHERE pk_ContentID = :pk_ContentID";
-                $stmt = $pdo->prepare($checkForum);
-                $stmt->execute(['pk_ContentID' => $pk_ContentID]);
+            // Convertir contentType en un identifiant numérique
+            if ($pk_ContentType == "film") {
+                $pk_ContentType = 1;
+            } elseif ($pk_ContentType == "series") {
+                $pk_ContentType = 2;
+            }
 
-                if ($stmt->rowCount() == 0) {
-                    try {
-                        // Insérer le nouveau forum
-                        $sql = "INSERT INTO forum (forumTitle, description, creationDate, pk_ContentID, totalSubjectNumber, pk_ContentType) 
-                        VALUES (:forumTitle, :description, :creationDate, :pk_ContentID, :totalSubjectNumber, :pk_ContentType)";
-                        $stmt = $pdo->prepare($sql);
-                        $stmt->execute([
-                            ':forumTitle' => $forumName,
-                            ':description' => 'Description par défaut', // À personnaliser
-                            ':creationDate' => $creationDate,
-                            ':pk_ContentID' => $pk_ContentID,
-                            ':totalSubjectNumber' => 0,
-                            ':pk_ContentType' => 1 // A modifier plus tard
-                        ]);
-                        echo "<p>Le forum a été créé avec succès.</p>";
-                    } catch (PDOException $e) {
-                        echo "<p>Erreur lors de la création du forum : " . $e->getMessage() . "</p>";
-                    }
-                } else {
-                    echo "<p>Erreur : Un forum existe déjà pour ce contenu.</p>";
+            // Vérifier si un forum existe déjà pour ce contenu
+            $checkForum = "SELECT forumID 
+                           FROM forum 
+                           WHERE pk_ContentID = :pk_ContentID 
+                           AND pk_ContentType = :pk_ContentType";
+            $stmt = $pdo->prepare($checkForum);
+            $stmt->execute(['pk_ContentID' => $pk_ContentID, 'pk_ContentType' => $pk_ContentType]);
+
+            if ($stmt->rowCount() == 0) {
+                try {
+                    // Insérer le nouveau forum
+                    $sql = "INSERT INTO forum (forumTitle, description, creationDate, pk_ContentID, totalSubjectNumber, pk_ContentType) 
+                            VALUES (:forumTitle, :description, :creationDate, :pk_ContentID, :totalSubjectNumber, :pk_ContentType)";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([
+                        ':forumTitle' => $forumName,
+                        ':description' => 'Description par défaut', // À personnaliser
+                        ':creationDate' => $creationDate,
+                        ':pk_ContentID' => $pk_ContentID,
+                        ':totalSubjectNumber' => 0,
+                        ':pk_ContentType' => $pk_ContentType // Utiliser la valeur correcte pour le type de contenu
+                    ]);
+                    echo "<p>Le forum a été créé avec succès.</p>";
+                    header('Location: ' . $_SERVER['PHP_SELF']);
+                    exit();
+                } catch (PDOException $e) {
+                    echo "<p>Erreur lors de la création du forum : " . $e->getMessage() . "</p>";
                 }
             } else {
-                echo "<p>Erreur : Nous n'avons pas trouvé ce contenu.</p>";
+                echo "<p>Erreur : Un forum existe déjà pour ce contenu.</p>";
             }
+        } else {
+            echo "<p>Erreur : Nous n'avons pas trouvé ce contenu.</p>";
         }
-        ?>
+    }?>
+
         <?php
         if (!empty($_GET['barreRecherche'])) {
             $_isSearched = true;
@@ -180,13 +202,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
 
             <?php
             // Gestion de la pagination
-            $itemsPerPage = 10;
+            $itemsPerPage = 2;
             $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int)$_GET['page'] : 1;
             $offset = ($page - 1) * $itemsPerPage;
 
             try {
                 // Requête pour récupérer les forums
-                $sql = "SELECT forumID,forumTitle, description FROM forum LIMIT :limit OFFSET :offset";
+                $sql = "SELECT f.forumID, f.forumTitle, f.description, 
+                        COALESCE(fm.posterurl, s.posterurl) AS posterurl
+                FROM forum f
+                LEFT JOIN film fm ON f.pk_ContentType = 1 AND fm.contentID = f.pk_ContentID
+                LEFT JOIN series s ON f.pk_ContentType = 2 AND s.contentID = f.pk_ContentID
+                LIMIT :limit OFFSET :offset";
+
                 $stmt = $pdo->prepare($sql);
                 $stmt->bindValue(':limit', $itemsPerPage, PDO::PARAM_INT);
                 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
@@ -201,12 +229,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
                 if (!empty($forums)) {
                     foreach ($forums as $forum) {
                         echo '<div class="Forum">';
+                        echo '<img id="imgForum" src="' . htmlspecialchars($forum['posterurl']) . '">';
+                        echo '<div class="Forum-content">';
                         echo '<h3>' . htmlspecialchars($forum['forumTitle']) . '</h3>';
                         echo '<form method="post">
-                                <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
-                                <input type="submit" name="acceder" value="Rejoindre">
-      </form>';
+                            <input type="hidden" name="forumID" value="' . $forum['forumID'] . '">
+                            <input type="submit" name="acceder" value="Rejoindre">
+                        </form>';
                         echo '</div>';
+                        echo '</div>';
+
                     }
                 } else {
                     echo "<p>Aucun forum pour le moment.</p>";
@@ -217,10 +249,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['message'])) {
             if (isset($_POST['forumID'])) {
                 $_SESSION['idForum'] = $forum['forumID'];
                 header('Location: forum.php');
+                exit;
             }
             ?>
         </div>
-
 
     <!-- Pagination -->
     <ul class="pagination">

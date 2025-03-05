@@ -31,13 +31,15 @@ main {
     margin-bottom: 20px;
 }
 
-/* Forum items */
+
 .Forum {
-    background-color: #fff;
+    display: flex;
+    align-items: center; /* Aligne les éléments verticalement */
+    background-color: #ffffff;
     padding: 15px;
-    border: 1px solid #ddd;
+    border: 1px solid #e0e0e0;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     margin-bottom: 20px;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
@@ -47,20 +49,41 @@ main {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.Forum h3 {
-    font-size: 1.5rem;
-    color: #d9641d;
-    margin-bottom: 10px;
+.Forum img {
+    width: 20%;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-right: 15px;
+    flex-shrink: 0; /* Empêche l'image de rétrécir */
 }
 
-.Forum p {
-    font-size: 1rem;
-    color: #555;
+.Forum-content {
+    display: flex;
+    flex-direction: column; /* Pour empiler le titre et le bouton */
+    justify-content: center; /* Centre verticalement */
+    flex: 1; /* Permet au texte et au bouton de prendre l'espace restant */
+}
+
+.Forum h3 {
+    font-size: 2rem;
+    text-decoration: underline;
+    color: black;
+    margin-bottom: 8px;
+    font-weight: bold;
+    text-underline-offset: 7px;
+}
+
+.Forum form {
+    margin-top: 5px;
+}
+
+.Forum input[type="submit"]:hover {
+    background-color: red;
 }
 
 /* Create Forum Button */
 form input[type="submit"] {
-    background-color: #f44336;
+    background-color: #282d5c;
     color: white;
     border: none;
     padding: 10px 20px;

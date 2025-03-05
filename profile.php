@@ -1,6 +1,7 @@
 <?php
     session_start();
     include 'pagesOutils/connDB.php' ;
+
 ?>
 
 <!DOCTYPE html>
@@ -15,6 +16,34 @@
     } else {
         $userID = 0;
     }
+    ?>
+    <?php
+    $stmt=$pdo->prepare("Select * from user_levels where user_id=:userID");
+    $stmt->execute([':userID' => $userID]);
+    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+
+
+    if ($result === false){
+        echo 'aucun level pour le moment';
+        $stmt=$pdo->prepare("Insert into user_levels (user_id) values (:userID)");
+        $stmt->execute([':userID'=> $userID]);
+        header("Location: " . $_SERVER['PHP_SELF'] . " ");
+    }
+    else{
+        $level_user=$result['level'];
+        $rank_user=$result['rank'];
+        $exp=$result['exp'];
+
+    }
+    if ($exp>=100){
+        $stmt=$pdo->prepare("Update user_levels set exp=exp%100 ,level=level+1 where user_id=:userID");
+        $stmt->execute([':userID'=>$userID]);
+
+    }
+
+
+
     ?>
 
     <body>
@@ -86,7 +115,7 @@
                 $niveau = ($userType === 'admin') ? 'Admin' : 'Utilisateur standard';
 
                 // Barre de progression simulée (exemple, en pourcentage)
-                $progressPercent = ($userType === 'admin') ? 100 : 50;
+                $progressPercent = $exp;
                 } else {
                 echo "Utilisateur non trouvé.";
                 exit;
@@ -102,7 +131,9 @@
                     <div id="detail-user">
                         <h3><?= $username ?></h3>
                         <p>Inscrit depuis le : <?= $registrationDate ?></p>
-                        <p>Niveau : <?= $niveau ?></p>
+                        <p>Niveau : <?= $level_user ?></p>
+                        <p>Rang : <?= $rank_user ?></p>
+                        <p>Exp : <?= $exp ?>/100</p>
                         <div id="progress-container">
                             <div id="progress-bar" style="width: <?= $progressPercent ?>%;"></div>
                         </div>
@@ -188,7 +219,7 @@
                             ORDER BY series.releaseDate DESC
                             LIMIT 20");
                         $stmt->execute([':userID' => $userID]) ;
-                        
+
                         if ($stmt->rowCount() > 0) {
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 $id = htmlspecialchars($row['contentID']) ;
@@ -205,8 +236,39 @@
                 </div>
             </section>
         </main>
-    
+
         <?php include 'pagesOutils/footer.php'?>
         <script src="script.js"></script>
+
+            <script>
+                // Utilisation de la variable PHP dans du JS
+                var exp = <?php echo json_encode($exp); ?>;
+                var div=document.getElementById("progress-bar")
+                if (exp<15){
+                    div.style.backgroundColor="red"
+
+                }
+                if(exp>15 && exp<25){
+                    div.style.backgroundColor="orange"
+
+                }
+                if (exp>25 && exp<40){
+                    div.style.backgroundColor="yellow"
+
+                }
+                if (exp>40 && exp<60){
+                    div.style.backgroundColor="green"
+
+                }
+                if (exp>60 && exp<80){
+                    div.style.backgroundColor="blue"
+
+                }
+                if (exp>80){
+                    div.style.backgroundColor="purple"
+
+                }
+
+        </script>
     </body>
 </html>
