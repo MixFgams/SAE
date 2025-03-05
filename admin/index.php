@@ -1142,11 +1142,80 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     }
     */
+    }
+
+    /*
+    $phpPath = 'C:\wamp64\bin\php\php8.4.3\php.exe'; // Remplace par la version exacte de PHP
+    $maxProcesses = 10;
+    $activeProcesses = [];
     
+    // Escape token string
+    $escapedToken = escapeshellarg($token["token"]);
 
-}
-
-
+    // Boucle pour lancer les processus
+    for ($i = 0; $i < 100; $i++) {
+        while (count($activeProcesses) >= $maxProcesses) {
+            foreach ($activeProcesses as $index => $process) {
+                $status = proc_get_status($process['handle']);
+                if (!$status['running']) {
+                    if (is_resource($process['pipes'][1])) fclose($process['pipes'][1]);
+                    if (is_resource($process['pipes'][2])) fclose($process['pipes'][2]);
+                    proc_close($process['handle']);
+                    unset($activeProcesses[$index]);
+                }
+            }
+            usleep(50000); // Wait for processes to finish
+        }
+    
+        // Command with arguments
+        $cmd = $phpPath . ' -r "' . addslashes("
+            \$i = $i;
+            function importFilm(\$tvdbBaseUrl, \$escapedToken, \$pdo, \$i) {
+                echo 'Importing Film ' . \$i . \"\\n\";
+            }
+            function importSeries(\$tvdbBaseUrl, \$escapedToken, \$pdo, \$i) {
+                echo 'Importing Series ' . \$i . \"\\n\";
+            }
+            \$tvdbBaseUrl = '$tvdbBaseUrl';
+            \$token = $escapedToken;
+            \$pdo = new PDO('mysql:host=localhost;dbname=your_database', 'your_user', 'your_password');
+            importFilm(\$tvdbBaseUrl, \$token, \$pdo, \$i);
+            importSeries(\$tvdbBaseUrl, \$token, \$pdo, \$i);
+        ") . '"';
+    
+        $descriptorspec = [
+            ['pipe', 'r'],  // STDIN
+            ['pipe', 'w'],  // STDOUT
+            ['pipe', 'w'],  // STDERR
+        ];
+        
+        $process = proc_open($cmd, $descriptorspec, $pipes);
+        
+        if (is_resource($process)) {
+            $stdout = stream_get_contents($pipes[1]);
+            $stderr = stream_get_contents($pipes[2]);
+    
+            // Close the pipes
+            fclose($pipes[0]);
+            fclose($pipes[1]);
+            fclose($pipes[2]);
+    
+            // Print stdout and stderr
+            echo "Process $i output: $stdout\n";
+            echo "Process $i errors: $stderr\n";
+    
+            // Add process to the active processes list
+            $activeProcesses[] = ['handle' => $process, 'pipes' => $pipes];
+        } else {
+            echo "Failed to start process for index $i\n";
+        }
+    }
+    
+    // Close all remaining processes
+    foreach ($activeProcesses as $process) {
+        proc_close($process['handle']);
+    }
+    */
 
 ?>
 
