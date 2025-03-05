@@ -9,6 +9,7 @@
     <head>
         <link rel="icon" href="img/obLogo.png   " type="image/x-icon">
         <link rel="stylesheet" href="refonte.css">
+
     </head>
     <?php
     if(isset($_SESSION['idUser'])) {
@@ -167,7 +168,7 @@
                                     $posterUrl = htmlspecialchars($row['posterUrl']) ;
                                     $name = htmlspecialchars($row['name']) ;
                                     echo '<div class="recommendation-card">';
-                                    echo "<img id='id=$id&type=film' src='$posterUrl' alt='$name'>" ;
+                                    echo "<a href='pageContenu.php?id=$id&type=film'><img src='$posterUrl' alt='$name'></a>";
                                     echo "</div>";
                                 }
                             } else {

@@ -1440,3 +1440,20 @@ form input[type="text"]:focus, form textarea:focus {
     display: block;
 }
 
+#progress-container {
+    width: 100%;
+    height: 20px;
+    background-color: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 10px;
+}
+
+#progress-bar {
+    width: 70%;
+    height: 100%;
+    background-color: #4caf50;
+    border-radius: 10px 0 0 10px;
+    transition: width 0.3s ease;
+}
