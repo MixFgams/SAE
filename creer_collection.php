@@ -35,20 +35,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="refonte.css">
     <title>Créer une collection</title>
 </head>
 <body>
     <?php include("pagesOutils/header.php"); ?>
-    <main>
+    <main id="mainCreateCollection">
         <h1>Créer une nouvelle collection</h1>
         <form method="POST" action="">
             <label for="collectionName">Nom de la collection :</label>
             <input type="text" id="collectionName" name="collectionName" required>
-            <button type="submit">Créer</button>
+            <button class="bouttonOrange" type="submit">Créer</button>
         </form>
         <p><?php echo $message; ?></p>
-        <a href="collection.php">Retour aux collections</a>
+        <a href="collection.php"><button class="bouttonOrange" id="createCollection">Retour aux collections</button></a>
     </main>
 </body>
 </html>

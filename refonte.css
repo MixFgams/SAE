@@ -1,0 +1,1442 @@
+body {
+    font-family: 'Century Gothic', sans-serif;
+    width: 100%;
+    margin: 0;
+}
+
+footer {
+    text-align: center;
+    margin-top: -3%;
+}
+
+header {
+    margin-top: 30px;
+}
+
+header nav, footer nav {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-weight: bold;
+    width: 100vw;
+    font-size: 1.3em;
+}
+
+header img, footer img {
+    width: 5em;
+    margin-right: 15px;
+}
+
+header a, footer a {
+    color: black;
+    text-decoration: none;
+    transition: 0.5s;
+}
+
+header a:hover {
+    text-decoration: underline;
+    color: darkblue;
+    font-size: larger;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* From Uiverse.io by boryanakrasteva */
+.input-container {
+    width: 220px;
+    position: relative;
+}
+
+.icon {
+    position: absolute;
+    right: 10px;
+    top: calc(50% + 5px);
+    transform: translateY(calc(-50% - 5px));
+}
+
+.input {
+    width: 100%;
+    height: 40px;
+    padding: 10px;
+    transition: .2s linear;
+    border: 2.5px solid black;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.input:focus {
+    outline: none;
+    border: 0.5px solid black;
+    box-shadow: -5px -5px 0px black;
+}
+
+.input-container:hover > .icon {
+    animation: anim 1s linear infinite;
+}
+
+@keyframes anim {
+    0%,
+    100% {
+        transform: translateY(calc(-50% - 5px)) scale(1);
+    }
+
+    50% {
+        transform: translateY(calc(-50% - 5px)) scale(1.1);
+    }
+}
+
+.search-container {
+    position: relative;
+    width: 300px;
+}
+
+#searchInput {
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.suggestions-box{
+    display: none;
+    position: absolute; /* Position relative à .search-container */
+    top: calc(100% + 5px); /* Juste en dessous de l'input */
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+header .search-container {
+    margin: 0;
+}
+
+.suggestions-box-com{
+    display: none;
+    position: absolute; /* Position relative à .search-container */
+    top: calc(100% + 5px); /* Juste en dessous de l'input */
+    left: 0;
+    width: 100%;
+    border: 1px solid #ccc;
+    background-color: white;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center; /* Aligner verticalement l'image et le texte */
+    padding: 8px;
+    cursor: pointer;
+    gap: 10px; /* Espacement entre l'image et le texte */
+    border-bottom  : solid black 1px;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
+}
+
+
+.suggestion-image {
+    width: 35%;
+    border-radius: 4px; /* Coins arrondis pour l'image */
+    object-fit: cover; /* Maintenir le ratio de l'image */
+}
+
+.suggestion-text {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+}
+
+#accueilWelcome {
+    display: flex;
+    justify-content: space-around;
+}
+
+#slogan {
+}
+
+#slogan h2{
+    font-size: 6em;
+    margin-bottom: -0.2em;
+}
+
+#slogan h3{
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    margin-bottom: -0.2em;
+}
+
+#accueilWelcome img {
+    width: 22em;
+    height: auto;
+    webkit-mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+    mask-image: radial-gradient(circle, rgba(0, 0, 0, 1) 50%, rgba(0, 0, 0, 0) 100%);
+}
+
+.bouttonOrange {
+    padding: 10px 20px;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    background-color: #da6018;
+    color: black;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    margin: 1em;
+    justify-self: center;
+    align-self: center;
+    width: 20em;
+}
+
+#decouvrir {
+    font-size: 1.1em;
+    margin-left: 0;
+}
+
+#decouvrir:hover {
+    background-color: #232858;
+    color: white;
+}
+
+.SectionIndex {
+    width: 100%;
+    background-color: #232858;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 2%;
+    margin-bottom: 5%;
+}
+
+.SectionIndex h2 {
+    overflow-wrap: break-word;
+    margin-left: 5%;
+    font-size: 3em;
+}
+
+.recommendations-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow-x: hidden;
+}
+
+.recommendations-scrollable {
+    display: flex;
+    gap: 20px; /* Espacement entre les cartes */
+    justify-content: space-around;
+    overflow-x: auto; /* Permet de défiler horizontalement */
+    scroll-behavior: smooth; /* Transition fluide */
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+.scrollable-container {
+    display: flex;
+    position: relative;
+    align-items: center;
+}
+
+.recommendation-card {
+    width: 600px; /* Taille fixe des cartes */
+    padding: 10px;
+}
+
+.recommendation-card img {
+    width: 100%; /* L'image occupe toute la largeur de la carte */
+    border-radius: 8px;
+}
+
+.recommendation-card img {
+    width: 300px;
+    border-radius: 8px;
+}
+
+.SectionIndex img, .Collection, .catalogueImages {
+    transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease;
+}
+.SectionIndex img:hover, .Collection:hover, .catalogueImages:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    opacity: 0.8;
+}
+
+
+.scroll-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px; /* Taille adaptée */
+    height: 50px;
+    background-color:white; /* Légère transparence */
+    color: black;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation au survol */
+.scroll-button:hover {
+    background-color: black;
+    color: rgba(255, 255, 255, 0.8);
+    transform: translateY(-50%) scale(1.1);
+}
+
+/* Position des boutons */
+.scroll-button.left {
+    left: 10px;
+    margin-left:1% ;
+}
+
+.scroll-button.right {
+    right: 10px;
+    margin-right:1% ;
+}
+
+/* Style pour les icônes (flèches) */
+.scroll-button::before {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+.forums-container {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    gap: 1%;
+    position: relative;
+    width: 100%;
+    overflow: auto;
+}
+
+.SectionIndexForum h2 {
+    overflow-wrap: break-word;
+    font-size: 3em;
+}
+
+.SectionIndexForum {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-bottom: 2%;
+}
+.forum-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.forum-container::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+}
+
+.forum-item {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+    padding: 15px;
+}
+
+.forum-item img{
+    width: 40%;
+    height: 90%;
+    border-radius: 8px;
+}
+
+.forum-item p {
+    font-size: 1.3em;
+}
+
+.forum-description {
+    flex: 1;
+}
+
+.forums-container .forum-item:nth-child(n+3) {
+    display: none;
+}
+
+#showMoreBtn {
+    font-size: 1.1em;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+#ListeCollection {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: scroll;
+    gap: 10px;
+    padding: 10px;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc transparent;
+    margin-left: 5%;
+}
+
+.Collection {
+    flex: 0 0 auto;
+    background-color: #da6018;
+    color: #232858;
+    border-radius: 50px;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    min-width: 150px;
+    font-size: 1.5em;
+    font-weight: bold;
+    max-width: 300px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.Collection:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+}
+
+.SectionIndexCollection {
+    width: 100%;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 2%;
+    margin-bottom: 5%;
+}
+
+.SectionIndexCollection h2 {
+    overflow-wrap: break-word;
+    font-size: 3em;
+    color: black;
+    margin-left: 5%;
+}
+
+.SectionIndexCollection a {
+    text-decoration: none;
+}
+
+.SectionIndexCollection .scroll-button {
+    background-color: #232858;
+    color: white;
+}
+
+#createCollection {
+    margin-top: 2%;
+    background-color: #232858;
+    color: white;
+    align-items: flex-end;
+    margin-left: 5%;
+}
+
+/*-----------------------------------------------------------------------------------*/
+
+.rechercheForum {
+    font-size: 2em;
+    letter-spacing: 0.1em;
+    text-align: center;
+    margin-top: 3%;
+    justify-content: center;
+}
+
+/* From Uiverse.io by joe-watson-sbf */
+.search {
+    margin-left: 5%;
+    display: flex;
+    align-items: center;
+    text-align: center;
+}
+
+.search__input {
+    font-family: inherit;
+    font-size: inherit;
+    background-color: #f4f2f2;
+    border: none;
+    color: #646464;
+    padding: 0.7rem 1rem;
+    border-radius: 30px;
+    width: 12em;
+    transition: all ease-in-out .5s;
+    margin-right: -2rem;
+    margin-left: 2%;
+}
+
+.search__input:hover, .search__input:focus {
+    box-shadow: 0 0 1em #00000013;
+}
+
+.search__input:focus {
+    outline: none;
+    background-color: #f0eeee;
+}
+
+.search__input::-webkit-input-placeholder {
+    font-weight: 100;
+    color: #ccc;
+}
+
+.search__input:focus + .search__button {
+    background-color: #f0eeee;
+}
+
+.search__button {
+    border: none;
+    background-color: #f4f2f2;
+    margin-top: .1em;
+}
+
+.search__button:hover {
+    cursor: pointer;
+}
+
+.search__icon {
+    height: 1.3em;
+    width: 1.3em;
+    fill: #b4b4b4;
+}
+
+#titreForum {
+    background-color: #232858;
+    color: white;
+    font-size: 4.5em;
+    text-align: center;
+    padding: 10px;
+    justify-content: center;
+}
+
+#forum h2{
+    font-size: 2em;
+}
+
+#PageForum {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5%;
+}
+
+/* Forum Section */
+#forum {
+    background-color: #fff;
+    margin-left: 5%;
+    margin-bottom: 2%;
+}
+
+.Forum {
+    width: 100%;
+    padding: 10px;
+    /* Optionnel : une bordure pour séparer visuellement chaque forum */
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.Forum2 {
+    width: 100%;
+    padding: 10px;
+    /* Optionnel : une bordure pour séparer visuellement chaque forum */
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.Forum img {
+    width: 300px;
+    height: 300px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 15px;
+    object-position: bottom;
+}
+
+.Forum-content {
+    display: flex;
+    flex-direction: column; /* Pour empiler le titre et le bouton */
+    justify-content: center; /* Centre verticalement */
+    flex: 1; /* Permet au texte et au bouton de prendre l'espace restant */
+}
+
+.Forum h3 {
+    font-size: 2rem;
+    text-decoration: underline;
+    color: black;
+    margin-bottom: 8px;
+    margin-left: 2%;
+    font-weight: bold;
+    text-underline-offset: 7px;
+    text-align: left;
+}
+
+
+.Forum p {
+    margin: 5px 0;
+    text-align: left;
+    margin-left: 20px;  /* Indente les paragraphes pour créer une "tabulation" */
+}
+
+hr {
+    border-radius: 5px;
+    height: 2px;
+    background-color: black; /* Couleur grise */
+    margin-right: 5%;
+}
+
+
+/* Pagination */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    list-style: none;
+    margin-top: 20px;
+    margin-bottom: -3%;
+}
+
+.pagination li {
+    display: inline-block;
+}
+
+.pagination li:hover {
+    color: white;
+}
+
+.pagination a {
+    display: inline-block;
+    padding: 8px 16px;
+    text-decoration: none;
+    color: white;
+    background-color: #232858;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #232858;
+    color: white;
+}
+
+.pagination a.active {
+    background-color: #da6018;
+    color: white;
+    cursor: default;
+}
+
+.pagination a.disabled {
+    color: #aaa;
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+#forumRejoindreButton {
+    background-color: #232858;
+    color: white;
+    font-size: 1em;
+}
+
+#CreerForum {
+    background-color: #232858;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1.3em;
+}
+
+#PageForum input[type="submit"]:hover {
+    background-color: #da6018;
+    transition: background-color 0.3s ease;
+}
+
+.search-container {
+    margin-top: 2%;
+}
+
+/* From Uiverse.io by Satwinder04 */
+/* Input container */
+.input-container {
+    position: relative;
+    margin-left: 5%;
+}
+
+/* Input field */
+.input-field {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    font-size: 20px;
+    border: none;
+    border-bottom: 2px solid #ccc;
+    outline: none;
+    background-color: transparent;
+}
+
+/* Input label */
+.input-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 16px;
+    color: rgba(204, 204, 204, 0);
+    pointer-events: none;
+    transition: all 0.3s ease;
+}
+
+/* Input highlight */
+.input-highlight {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 2px;
+    width: 0;
+    background-color: #232858;
+    transition: all 0.3s ease;
+}
+
+/* Input field:focus styles */
+.input-field:focus + .input-label {
+    top: -20px;
+    font-size: 16px;
+    color: #232858;
+}
+
+.input-field:focus + .input-label + .input-highlight {
+    width: 100%;
+}
+
+
+#PageForum p {
+    margin-left: 5%;
+    color: darkred;
+    font-weight: bold;
+}
+
+.resultatForum {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 10px;
+    border-radius: 10px;
+    background-color: #232858;
+    color: white;
+    display: flex;
+    flex-direction: column;  /* Pour empiler les forums verticalement */
+}
+
+
+#PageForum .resultatForum p {
+    color: white;
+}
+
+#PageForum .resultatForum h2 {
+    font-size: 2em;
+}
+
+#PageForum .resultatForum h3 {
+    font-size: 2em;
+    color: white;
+    text-decoration: none;
+    text-align: center;
+    margin: 0;
+}
+
+/*----------------------------------------------------------------------------------------------------------*/
+
+#PageDiscussion > *{
+    margin-left: 5%;
+}
+
+.AjouterArticle > *{
+    background-color: #232858;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5%;
+    border-radius: 20px;
+    padding: 1%;
+    margin-bottom: 2%;
+}
+
+#subject{
+    background-color: #da6018;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5%;
+    border-radius: 20px;
+    padding: 1%;
+    margin-bottom: 2%;
+}
+
+.AjouterArticle h2 {
+    font-size: 2.5em;
+    margin: -5px;
+}
+
+.AjouterArticle label {
+    font-size: 2em;
+    font-weight: bold;
+}
+
+.AjouterArticle input[type="text"], .AjouterArticle textarea {
+    background: white;
+    color: black;
+    font-style: italic;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    border: none;
+    font-size: 1.3em;
+    text-transform: capitalize;
+    max-width: 93%;
+}
+
+.AjouterArticle input[type="text"]:focus, .AjouterArticle textarea:focus {
+    outline: none;
+}
+
+#publierArticle {
+    display: block;
+    background-color: #da6018;
+    color: white;
+    font-size: 1.6em;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+
+#titreSujet {
+    font-size: 3em;
+}
+
+#subject h3, #subject h4 {
+    font-size: 2em;
+}
+
+.message {
+    background-color: #232858;
+    color: white;
+    padding: 1%;
+    border-radius: 20px;
+    margin-right: 6%;
+}
+
+.like-button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px 30px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1.3em;
+    margin-right: 10px;
+}
+
+.like-button:hover {
+    background-color: #45a049;
+}
+
+.dislike-button{
+    font-size: 1.3em;
+    width: fit-content;
+    background-color: #f44336;
+    color: white;
+    padding:20px 30px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+}
+
+.dislike-button:hover {
+    background-color: #e53935;
+}
+
+#PageDiscussion .pagination {
+    margin-bottom: 4%;
+    margin-top: 2%;
+}
+
+#subject p {
+    font-size: 1.5em;
+}
+
+.message p {
+    font-size: 1.2em;
+}
+
+.message strong {
+    font-size: 1.5em;
+}
+
+#post-message {
+    margin-right: 6%;
+}
+
+#post-message input[type="text"],
+#post-message textarea,
+#post-message select {
+    width: 100%;
+    background: white;
+    color: black;
+    font-style: italic;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    border: none;
+    font-size: 1.3em;
+    text-transform: capitalize;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5%;
+    border-radius: 20px;
+    padding: 1%;
+    margin-bottom: 2%;
+}
+
+
+form input[type="text"]:focus, form textarea:focus {
+    outline: none;
+}
+
+#PageDiscussion hr {
+    border: none;
+    height: 4px;
+}
+
+#PageDiscussion h4 {
+    margin-bottom: 10px;
+}
+
+#PageDiscussion p {
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+/*----------------------------------------------------------------------------------*/
+
+#sortFilter {
+    max-height: fit-content;
+    width:25vw ;
+    max-width: 200px;
+    background-color: #232858;
+    border-radius: 30px;
+    color: white;
+    padding: 0 0 1% 1%;
+    margin-right: 2%;
+    margin-top: 4%;
+}
+
+.catalogueContent {
+    margin : 2% ;
+    max-width : 20% ;
+    text-align: center;
+}
+
+.catalogueContent img {
+    border-radius: 8px ;
+}
+
+.catalogueImages {
+    max-width: 90%;
+    margin : 0 ;
+    padding : 0 ;
+    object-fit: scale-down;
+}
+
+.catalogueSection {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin: 0;
+    background-color: #232858;
+    border-radius: 30px;
+    height: fit-content;
+    min-height: 600px;
+    margin-bottom: 5%;
+}
+
+
+.catalogueContent a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.5em;
+}
+
+.catalogueContent a h3 {
+    height: 2em;              /* Hauteur fixe (à ajuster selon la police) */
+    overflow: hidden;         /* Masque le texte qui dépasse */
+    text-overflow: ellipsis;  /* Ajoute des points de suspension si besoin */
+    white-space: nowrap;      /* Force le texte sur une seule ligne */
+    margin: 0;                /* Pour éviter les marges indésirables */
+}
+
+#searchBarCatalogue {
+    height : fit-content ;
+}
+
+#searchBarCatalogue .search{
+    margin-left: 12%;
+}
+
+#searchBarCatalogue .search #barreRecherche{
+    margin-top: 10px;
+    width: 600px;
+}
+
+
+#searchBarCatalogue > input {
+    width : 80vw ;
+}
+
+#catalogue, .catalogueDisplay, #radio-list {
+    display : flex ;
+    flex-wrap : wrap ;
+    flex-direction: column;
+}
+
+.catalogueDisplay {
+    width : 100svw ;
+}
+
+.catalogueDisplay h2 {
+    width: 100%;
+    font-size: 1.7em;
+    color: black;
+    text-decoration: underline;
+    text-underline-offset: 7px;
+}
+
+#catalogue main {
+    display : flex ;
+    min-height : 42.5vw ;
+    flex-direction: row;
+    max-width : 95vw ;
+    margin : 1vw ;
+}
+
+#divVoirTout {
+    order: 999;
+    flex-basis: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    margin-top: 20px;
+    margin-left: 2%;
+}
+
+#voirTout {
+    font-size: 1.2em;
+    width: 100%;
+}
+
+/*-----------------------------------------------------------------------------*/
+
+
+/* Cadre du contenu */
+#cadre-contenu {
+    background-color: #232858;
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-top: 3%;
+}
+
+/* Disposition du contenu (image + info) */
+#contenu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* Informations du contenu */
+#info-contenu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+#info-contenu h3 {
+    font-size: 1.7rem;
+    color: white;
+    margin-bottom: 5px;
+    text-decoration: underline;
+    text-underline-offset: 7px;
+}
+
+#info-contenu h2 {
+    font-size: 3rem;
+    color: white;
+    margin-bottom: 5px;
+}
+
+#info-contenu p {
+    font-size: 1.5rem;
+    color: white;
+    margin: 0;
+}
+
+/* Image du contenu */
+.image-contenu {
+    width: 80%;
+    height: auto;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-left: 8%;
+    border: solid white 5px;
+}
+
+/* Grille de description */
+#description-grid {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+/* Boîtes pour les actions (Déjà vu, Ajouter à une collection) */
+.blue-box {
+    background-color: #BECACF;
+    padding: 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    width: 100%;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Description */
+#description-div {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#description-div h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+#description-div p {
+    color: #555;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Boutons */
+#cadre-contenu button {
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    font-size: 1.3rem;
+}
+
+#cadre-contenu button:hover {
+    background-color: white;
+}
+
+.bouttonOrange{
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.bouttonOrange:hover {
+    background-color: white;
+}
+
+/* Noter section */
+#noter {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#noter button {
+    width: 100%;
+}
+
+#noter .invisible {
+    display: none;
+}
+
+#noter .visible {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Section des commentaires */
+#Commentaires {
+    margin-top: 40px;
+}
+
+#liste-commentaire {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.commentaire-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.pp-commentaire {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.commentaire-text {
+    font-size: 1rem;
+    color: #555;
+    margin-top: 10px;
+}
+
+/* Voir Plus */
+.texte-page-contenue {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 1.1rem;
+    color: #007bff;
+    text-decoration: none;
+}
+
+.texte-page-contenue:hover {
+    text-decoration: underline;
+}
+
+
+#selectCollection {
+    font-family: 'Open Sans', 'Helvetica Neue', 'Segoe UI', 'Calibri', 'Arial', sans-serif;
+    font-size: 18px;
+    color: #60666d;
+}
+
+/*-----------------------------------------------------------------------------------------------------*/
+
+
+#user{
+    display: flex;
+    justify-content: center;
+}
+
+#user section{
+    display:flex;
+    margin-right: 100px;
+    background-color: #da6018;
+    border-radius: 20px;
+    padding: 10px;
+    margin-bottom: 1%;
+    margin-top: 1%;
+}
+
+#user section h3:nth-child(1){
+    text-align:left;
+    font-size: 30px;
+    text-transform: capitalize;
+}
+#user section img:first-child{
+    width: 150px;
+    height: 150px;
+}
+
+
+#user section p:nth-child(2),
+#user section p:nth-child(3) {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    font-size: 12px;
+    padding: 3px 8px;
+    border-radius: 15px;
+    margin: 2px 0;
+    display: inline-block;
+}
+
+#user section img {
+    margin-right: 20px;
+    width: 100px;
+    height: auto;
+    border-radius: 50%;
+    object-fit: cover;
+    border: solid white 3px;
+}
+
+.invisible{
+    display:none;
+}
+.visible{
+    display:flex;
+}
+#noter{
+    width:100%
+}
+
+#changerPhoto {
+    background-color: white;
+    color: black;
+}
+
+/*-----------------------------------------------------------------------*/
+
+#pageAPropos {
+    margin-top: 2%;
+}
+
+#pageAPropos h2 {
+    text-decoration: underline;
+    text-underline-offset: 7px;
+}
+
+#pageAPropos section {
+    padding-left: 5%;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 3%;
+    color: white;
+    background-color: #232858;
+    line-height: 150%;
+    font-size: 1.6em;
+}
+
+#pageAPropos #sectionBlanche {
+    color: black;
+    background-color: white;
+}
+
+#pageAPropos #sectionBlanche h1{
+    font-size: 1.8em;
+    background-color: #232858;
+    text-align: center;
+    color: white;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-left: -6%;
+}
+
+/*------------------------------------------------------------------*/
+
+/*c'etait un conflit avec le javasript, easy peasy*/
+#inscription-form, #connexion-form{
+    display: flex;
+    flex-direction: column;
+}
+#connexion-main {
+    margin-left: 5%;
+    margin-right: 5%;
+    padding-left: 2%;
+    background-color: #232858;
+    padding-top: 1%;
+    margin-top: 2%;
+    margin-bottom: 6%;
+    border-radius: 40px;
+}
+
+#connexion-main h1{
+    color:white;
+    font-size: 2.6em;
+}
+
+#connexion-main input[type="email"], #connexion-main input[type="password"],#connexion-main input[type="text"]{
+    background: white;
+    color: black;
+    font-style: italic;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    border: none;
+    font-size: 1.3em;
+    text-transform: capitalize;
+    display: flex;
+    flex-direction: column;
+    margin-right: 5%;
+    border-radius: 20px;
+    padding: 1%;
+    margin-bottom: 2%;
+}
+
+#connexion-main .bouttonOrange {
+    font-size: 1.3em;
+}
+
+/*-------------------------------------------------------------------------------------------------------------------------*/
+
+#mainCollection .scrollable-container {
+    min-height: 400px;
+}
+
+#mainCollection h1 {
+    margin-left: 5%;
+    font-size: 2.3em;
+}
+
+#mainCollection a {
+    text-decoration: none;
+    color: white;
+}
+
+#mainCollection .SectionIndex:last-of-type {
+    margin-bottom: 0;
+}
+
+#showCollection {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#showCollection h2{
+    font-size: 2em;
+}
+/*------------------------------------------------------------------------------------------------------------------------------*/
+
+#mainCreateCollection h1 {
+    font-size: 2.3em;
+}
+
+#mainCreateCollection {
+    margin-left: 5%;
+    margin-right: 5%;
+}
+
+#mainCreateCollection form {
+    background-color: #232858;
+    border-radius: 40px;
+    color: white;
+    padding: 4%;
+    font-size: 2em;
+}
+
+#mainCreateCollection input[type="text"]{
+    background: white;
+    color: black;
+    font-family: "Century Gothic", sans-serif;
+    font-weight: bold;
+    border: none;
+    border-radius: 20px;
+    padding: 1%;
+    font-size: 1em;
+    display: block;
+}
+

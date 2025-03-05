@@ -6,14 +6,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css"> 
+    <link rel="stylesheet" href="refonte.css">
     <title>Document</title>
 </head>
 <body>
     <?php include 'pagesOutils/header.php'?>
 
-    <main>
-        <section>
+    <main id="pageAPropos">
+        <section id="sectionBlanche">
             <h1>À propos de nous</h1>
             <p>Bienvenue sur notre site, un espace dédié à l'échange et à la découverte de films, séries et livres ! Notre objectif est de créer une plateforme éthique et respectueuse des utilisateurs, tout en encourageant un environnement sain de discussions et de partages. Nous croyons fermement qu'internet doit être un lieu où les normes éthiques et les droits des créateurs sont respectés.</p>
         </section>

@@ -6,8 +6,9 @@
 <html lang="fr">
 <head>
     <link rel="icon" href="img/obLogo.png" type="image/x-icon">
-    <link rel="stylesheet" href="style.css">
-    <title>Ob, Your hobbys in one place</title>
+    <link rel="stylesheet" href="refonte.css">
+    <title>Ob, Your hobbies in one place</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 <?php
@@ -22,6 +23,14 @@ if(isset($_SESSION['idUser'])) {
 }?>
 
 <main>
+    <section id="accueilWelcome">
+        <div id="slogan">
+            <h2>Ob</h2>
+            <h3>Your hobbies in one place</h3>
+            <button class="bouttonOrange" id="decouvrir">Découvrir les contenus    <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+        <img src="img/mascotte.jpg">
+    </section>
     <!-- Section Films Populaires -->
     <section class="SectionIndex">
         <h2>Films populaires</h2>
@@ -32,7 +41,7 @@ if(isset($_SESSION['idUser'])) {
                 $sqlFilmsPopulaires = "SELECT contentID, `name`, posterUrl, viewsCount
                                    FROM film
                                    ORDER BY viewsCount DESC
-                                   LIMIT 5"; // Limite de 5 films
+                                   LIMIT 20"; // Limite de 5 films
 
                 $stmtFilms = $pdo->prepare($sqlFilmsPopulaires);
                 $stmtFilms->execute();
@@ -61,6 +70,38 @@ if(isset($_SESSION['idUser'])) {
         </div>
     </section>
 
+    <!-- Section Collections -->
+    <section class="SectionIndexCollection">
+        <a href="collection.php">
+            <h2>Collections</h2>
+        </a>
+        <div class="scrollable-container">
+            <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
+            <div id="ListeCollection" class="scrollable-content">
+                <?php
+                $sql = "SELECT collectionID, `name` FROM collection
+                        WHERE pk_userID = $userID
+                        ORDER BY collectionID ASC";
+                $stmt = $pdo->prepare($sql);
+                $stmt->execute() ;
+
+                if ($stmt->rowCount() > 0) {
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        $id = $row['collectionID'] ;
+                        echo "<div id='id=$id' class='Collection'><h3>" . htmlspecialchars($row['name']) . "</h3></div>";
+                    }
+                } else {
+                    echo '<p>Aucune collection trouvée.</p>';
+                }
+                ?>
+            </div>
+            <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
+        </div>
+        <a href="collection.php">
+            <button class="bouttonOrange" id="createCollection">+ Créer une collection</button>
+        </a>
+    </section>
+
     <!-- Section Séries Populaires -->
     <section class="SectionIndex">
         <h2>Séries populaires</h2>
@@ -71,7 +112,7 @@ if(isset($_SESSION['idUser'])) {
                 $sqlSeriesPopulaires = "SELECT contentID, `name`, posterUrl, viewsCount
                                     FROM series
                                     ORDER BY viewsCount DESC
-                                    LIMIT 5"; // Limite de 5 séries
+                                    LIMIT 20"; // Limite de 5 séries
 
                 $stmtSeries = $pdo->prepare($sqlSeriesPopulaires);
                 $stmtSeries->execute();
@@ -102,7 +143,7 @@ if(isset($_SESSION['idUser'])) {
 
 
     <!-- Section Forums Populaires -->
-    <section class="SectionIndex">
+    <section class="SectionIndexForum">
         <h2>Forums populaires</h2>
         <div class="forums-container">
             <?php
@@ -138,7 +179,7 @@ if(isset($_SESSION['idUser'])) {
                     echo '<div class="forum-item">';
                     echo '<img src="' . htmlspecialchars($row['posterUrl']) .'">';
                     echo '<div class="forum-description">';
-                    echo '<h3>' . htmlspecialchars($row['forumTitle']) . '</h3>';
+                    echo '<h2>' . htmlspecialchars($row['forumTitle']) . '</h2>';
                     echo '<p>Description : ' . htmlspecialchars($row['description']) . '</p>'; // Description (optionnel si présent)
                     echo '</div>';
                     echo '</div>';
@@ -148,39 +189,7 @@ if(isset($_SESSION['idUser'])) {
             }
             ?>
         </div>
-        <button id="showMoreBtn">Voir plus +</button>
-    </section>
-
-    <!-- Section Collections -->
-    <section class="SectionIndex">
-        <a href="collection.php">
-            <h2>Collections</h2>
-        </a>
-        <div class="scrollable-container">
-            <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
-            <div id="ListeCollection" class="scrollable-content">
-                <?php
-                $sql = "SELECT collectionID, `name` FROM collection
-                        WHERE pk_userID = $userID
-                        ORDER BY collectionID ASC";
-                $stmt = $pdo->prepare($sql);
-                $stmt->execute() ;
-
-                if ($stmt->rowCount() > 0) {
-                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                        $id = $row['collectionID'] ;
-                        echo "<div id='id=$id' class='Collection'><h3>" . htmlspecialchars($row['name']) . "</h3></div>";
-                    }
-                } else {
-                    echo '<p>Aucune collection trouvée.</p>';
-                }
-                ?>
-            </div>
-            <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
-        </div>
-        <a href="collection.php">
-            <button id="createCollection">+ Créer une collection</button>
-        </a>
+        <button class="bouttonOrange" id="showMoreBtn">Voir plus +</button>
     </section>
 
     <!-- Section Recommandations -->
@@ -300,9 +309,12 @@ function showRecommendedContents(PDO $conn, int $userID) {
                 $name = htmlspecialchars($content['name']) ;
                 $url = htmlspecialchars($content['posterURL']) ;
                 $type = htmlspecialchars($content['contentType']) ;
-
+                echo '<div class="recommendation-card">';
+                echo '<a href="pageContenu.php?id=' . $id . '&type=' . $type . '">';
                 echo "<img id='id=$id&type=$type' src='$url' alt='$name'>" ;
                 $contentSet[$content['name']] = true ;
+                echo '</a>';
+                echo '</div>';
             }
         }
     }

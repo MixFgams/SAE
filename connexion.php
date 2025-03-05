@@ -109,8 +109,7 @@
         <link rel="icon" href="img/obLogo.png" type="image/x-icon">
         <meta charset="UTF-8">
         <title>LogIn - OB</title>
-        <link rel="stylesheet" href="style.css">
-        <link rel="stylesheet" href="cssExtraPages/connexion.css">
+        <link rel="stylesheet" href="refonte.css">
     </head>
 
     <body id="connexion-body">
@@ -126,8 +125,8 @@
                         <!-- Choix entre pseudo et email-->
                         <div>
 
-                            <button type="button" onclick="connexionPseudo()" class="connexion-selection-button">Pseudo</button>
-                            <button type="button" onclick="connexionEmail()">Email</button>
+                            <button type="button" onclick="connexionPseudo()" class="bouttonOrange">Pseudo</button>
+                            <button class="bouttonOrange" type="button" onclick="connexionEmail()">Email</button>
 
                         </div>
 
@@ -139,9 +138,9 @@
 
                         
                         <input type="password" name="mp-c" id="connexion-mp" placeholder="Mot de passe">
-                        <input type="submit" name ="typeForm" value="connexion">
+                        <input class="bouttonOrange" type="submit" name ="typeForm" value="connexion">
 
-                        <button type="button" onclick="montrerInscription()">Première fois sur ce site ?</button>
+                        <button class="bouttonOrange" type="button" onclick="montrerInscription()">Première fois sur ce site ?</button>
                     </div>
 
                     <div id="inscription-form">
@@ -150,9 +149,9 @@
                         <input type="email" name="mail-i" id="inscription-mail" placeholder="Email">
                         <input type="password" name="mp-i" id="inscription-mp" placeholder="Mot de passe">
                         
-                        <input type="submit" name ="typeForm" value="inscription">
+                        <input class="bouttonOrange" type="submit" name ="typeForm" value="inscription">
 
-                        <button type="button" onclick="montrerConnexion()">Vous avez déjà un compte ?</button>
+                        <button class="bouttonOrange" type="button" onclick="montrerConnexion()">Vous avez déjà un compte ?</button>
                     </div>
 
                 </form>

@@ -9,13 +9,13 @@ include 'pagesOutils/connDB.php' ;
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="refonte.css">
     <title>Collection</title>
 </head>
 <body>
     
     <?php include("pagesOutils/header.php") ;
-    echo '<main>';
+    echo '<main id="mainCollection">';
     echo '<h1>Liste des collections</h2>';
     if (isset($_SESSION['idUser'])) {
         $userID = $_SESSION['idUser'] ;
@@ -91,11 +91,11 @@ function showGeneralPage(PDO $conn, int $userID) {
                     </div>
                 </section>";
     }
-    echo "<a href='creer_collection.php'><button id='createCollection'>+ Créer une collection</button></a>" ;
+    echo "<a href='creer_collection.php'><button class='bouttonOrange' id='createCollection'>+ Créer une collection</button></a>" ;
 }
 
 function showCollection(PDO $conn, int $collectionID, string $collectionName) {
-    echo "<section><h2>$collectionName</h2>" ;
+    echo "<section id='showCollection'><h2>$collectionName</h2>" ;
     echo "<div class='catalogueSection'>" ;
 
     $contentQuery = "SELECT u.contentID, u.posterUrl, u.`name`, u.contentType FROM

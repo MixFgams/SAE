@@ -504,6 +504,7 @@ input:focus, textarea:focus {
     position: relative;
     max-width: 1000px;
 }
+
 .SectionIndex button {
     align-self: flex-end;
     margin-top: auto;

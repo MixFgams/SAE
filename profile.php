@@ -8,7 +8,7 @@
 <html>
     <head>
         <link rel="icon" href="img/obLogo.png   " type="image/x-icon">
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="refonte.css">
     </head>
     <?php
     if(isset($_SESSION['idUser'])) {
@@ -138,40 +138,13 @@
                             <div id="progress-bar" style="width: <?= $progressPercent ?>%;"></div>
                         </div>
                         <form method="post" enctype="multipart/form-data">
-                            <input type="file" name="profilePicture" accept="image/*" required>
-                            <input type="submit" name="uploadPhoto" value="Changer la photo">
+                            <input id="changerPhoto" class="bouttonOrange" type="file" name="profilePicture" accept="image/*" required>
+                            <input id="changerPhoto" class="bouttonOrange" type="submit" name="uploadPhoto" value="Changer la photo">
                         </form>
 
                     </div>
                 </section>
             </div>
-
-            <section class="SectionIndex">
-                    <h2>Collections suivies</h2>
-                    <div class="scrollable-container">
-                        <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
-                        <div id="ListeCollection" class="scrollable-content">
-                            <?php
-                                $stmt = $pdo->prepare(
-                                    "SELECT collectionID, `name`
-                                    FROM collection
-                                    WHERE pk_userID = :userID;
-                                    ");
-                                $stmt->execute([':userID' => $userID]);
-
-                                if ($stmt->rowCount() > 0) {
-                                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                                        $id = htmlspecialchars($row['collectionID']) ;
-                                        echo "<div id='id=$id'class='Collection'><h3>" . htmlspecialchars($row['name']) . '</h3></div>';
-                                    }
-                                } else {
-                                    echo '<p>Aucune collection trouvée.</p>';
-                                }
-                            ?>
-                        </div>
-                        <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
-                    </div>
-            </section>
 
             <section class="SectionIndex">
                 <h2>Films regardés</h2>
@@ -193,11 +166,40 @@
                                     $id = htmlspecialchars($row['contentID']) ;
                                     $posterUrl = htmlspecialchars($row['posterUrl']) ;
                                     $name = htmlspecialchars($row['name']) ;
+                                    echo '<div class="recommendation-card">';
                                     echo "<img id='id=$id&type=film' src='$posterUrl' alt='$name'>" ;
+                                    echo "</div>";
                                 }
                             } else {
                             echo '<p>Aucuns films trouvés.</p>';
                             }
+                        ?>
+                    </div>
+                    <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
+                </div>
+            </section>
+
+            <section class="SectionIndexCollection">
+                <h2>Collections suivies</h2>
+                <div class="scrollable-container">
+                    <button class="scroll-button left" aria-label="Défiler à gauche">◀</button>
+                    <div id="ListeCollection" class="scrollable-content">
+                        <?php
+                        $stmt = $pdo->prepare(
+                            "SELECT collectionID, `name`
+                                    FROM collection
+                                    WHERE pk_userID = :userID;
+                                    ");
+                        $stmt->execute([':userID' => $userID]);
+
+                        if ($stmt->rowCount() > 0) {
+                            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                                $id = htmlspecialchars($row['collectionID']) ;
+                                echo "<div id='id=$id'class='Collection'><h3>" . htmlspecialchars($row['name']) . '</h3></div>';
+                            }
+                        } else {
+                            echo '<p>Aucune collection trouvée.</p>';
+                        }
                         ?>
                     </div>
                     <button class="scroll-button right" aria-label="Défiler à droite">▶</button>
@@ -225,7 +227,9 @@
                                 $id = htmlspecialchars($row['contentID']) ;
                                 $posterUrl = htmlspecialchars($row['posterUrl']) ;
                                 $name = htmlspecialchars($row['name']) ;
+                                echo '<div class="recommendation-card">';
                                 echo "<img id='id=$id&type=series' src='$posterUrl' alt='$name'>" ;
+                                echo '</div>';
                             }
                         } else {
                             echo '<p>Aucunes séries trouvées.</p>';
